@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
+import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "./userInfo";
 
 export const Login = () =>{
     const navigate = useNavigate(); // Get the navigate function using useNavigate hook
@@ -25,18 +29,39 @@ export const Login = () =>{
 }
 
 export const CreateAccount = ()=>{
+    // const auth = getAuth();
     const navigate = useNavigate();
+    const {userData, updateUserData} = useContext(UserContext); 
+    const [confirmPass, setConfirmPass] = useState("");
+
+    const handleSubmit = (e) => {
+        //prevent form from submitting
+        e.preventDefault(); 
+        console.log(userData.userEmail, userData.userPassword);
+
+        if(userData.userPassword !== confirmPass){
+            console.log("passwords don't match");
+        }else{
+            createUserWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
+                .then((userCredential) =>{
+                    const user = userCredential.user;
+                    console.log("user ", user);
+                }).catch((error) =>{
+                    console.log("error ", error);
+                })
+        }
+    };
 
     return(
         <div>
             <section className="header">
                 <h1> Cattagram </h1>
             </section>
-            <form className="createForm">
-                <input type="text" placeholder="Email" id="userEmail"></input>
-                <input type="text" placeholder="Name" id="userName"></input>
-                <input type="text" placeholder="Passworrd" id="userPass"></input>
-                <input type="text" placeholder="Confirm Password" id="userConfirmPass"></input>
+            <form className="createForm" onSubmit={handleSubmit}>
+                <input type="text" placeholder="Email" id="userEmail" onChange={(e) => updateUserData('userEmail', e.target.value)}></input>
+                <input type="text" placeholder="Name" id="userName" onChange={(e) => updateUserData('userName', e.target.value)}></input>
+                <input type="text" placeholder="Passworrd" id="userPass" onChange={(e) => updateUserData('userPassword', e.target.value)}></input>
+                <input type="text" placeholder="Confirm Password" id="userConfirmPass" onChange={(e) => setConfirmPass(e.target.value)}></input>
                 <button type="submit"> Sign Up</button>
             </form>
             <section className="oldUser">
