@@ -1,12 +1,33 @@
 import React, { useContext, useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
-import { auth } from "../firebase";
+import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./userInfo";
 
 export const Login = () =>{
     const navigate = useNavigate(); // Get the navigate function using useNavigate hook
+    const {userData, updateUserData} = useContext(UserContext); 
+    const [loginStatus, setLoginStatus] = useState(""); //shows errors when user can't login
+
+    const handleSubmit = (e) =>{
+        e.preventDefault();
+        signInWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                updateUserData('userEmail', userData.userEmail);
+                updateUserData('userPassword', userData.userPassword);
+                setLoginStatus("Login Successfully!");
+                navigate("/homepage");
+                localStorage.setItem("isLogged", "true");
+            })
+            .catch((error) => {
+                console.log("error ", error.code);
+                if(error.code === "auth/invalid-credential"){
+                    setLoginStatus("Invalid email or password");
+                }
+            });
+    }
 
     return(
         <div>
@@ -14,9 +35,9 @@ export const Login = () =>{
                 <h1> Cattagram </h1>
                 <p> Welcome Back! </p>
             </section>
-            <form className="loginForm">
-                <input type="text" placeholder="Email" id="userEmail"></input>
-                <input type="text" placeholder="Password" id="userPassword"></input>
+            <form className="loginForm" onSubmit={handleSubmit}>
+                <input type="text" placeholder="Email" id="userEmail" onChange={(e) => updateUserData('userEmail', e.target.value)}></input>
+                <input type="text" placeholder="Password" id="userPassword" onChange={(e) => updateUserData('userPassword', e.target.value)}></input>
                 <button type="submit"> Login </button>
             </form>
             <section className="newUser">
@@ -24,6 +45,7 @@ export const Login = () =>{
                 {/* ()=> so that the function only goes through when it is being clicked on */}
                 <button className="createAccBtn" onClick={()=> navigate("/createAcc")}> Sign up</button>
             </section>
+            <p> {loginStatus} </p>
         </div>
     )
 }
@@ -33,6 +55,7 @@ export const CreateAccount = ()=>{
     const navigate = useNavigate();
     const {userData, updateUserData} = useContext(UserContext); 
     const [confirmPass, setConfirmPass] = useState("");
+    const [loginStatus, setLoginStatus] = useState(""); //shows create acc error to user
 
     const handleSubmit = (e) => {
         //prevent form from submitting
@@ -40,14 +63,23 @@ export const CreateAccount = ()=>{
         console.log(userData.userEmail, userData.userPassword);
 
         if(userData.userPassword !== confirmPass){
-            console.log("passwords don't match");
+            setLoginStatus("Passwords don't match");
         }else{
             createUserWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
                 .then((userCredential) =>{
                     const user = userCredential.user;
-                    console.log("user ", user);
-                }).catch((error) =>{
-                    console.log("error ", error);
+                    setLoginStatus("Account created successfully");
+                    navigate("/homepage");
+                    localStorage.setItem("isLogged", "true");
+                }).catch((error) =>{ //displays error when the user is creating an account
+                    console.log("error ", error.code);
+                    if(error.code === "auth/invalid-email"){
+                        setLoginStatus("Invalid Email");
+                    }else if(error.code === "auth/weak-password"){
+                        setLoginStatus("Password must be at least 6 characters");
+                    }else if(error.code === "auth/email-already-in-use"){
+                        setLoginStatus("Account already exist with this email");
+                    }
                 })
         }
     };
@@ -66,8 +98,9 @@ export const CreateAccount = ()=>{
             </form>
             <section className="oldUser">
                 <p> Already have an account? </p>
-                <button className="signUpBtn" onClick={()=> navigate("/")}> Sign In </button>
+                <button className="signUpBtn" onClick={()=> navigate("/login")}> Sign In </button>
             </section>
+            <p> {loginStatus} </p>
         </div>
     )
 }
