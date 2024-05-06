@@ -20,6 +20,7 @@ export const Login = () =>{
                 setLoginStatus("Login Successfully!");
                 navigate("/homepage");
                 localStorage.setItem("isLogged", "true");
+                localStorage.setItem("userEmail", userData.userEmail);
             })
             .catch((error) => {
                 console.log("error ", error.code);
@@ -71,6 +72,8 @@ export const CreateAccount = ()=>{
                     setLoginStatus("Account created successfully");
                     navigate("/homepage");
                     localStorage.setItem("isLogged", "true");
+                    localStorage.setItem("userEmail", userData.userEmail);
+                    localStorage.setItem("userName", userData.userName);
                 }).catch((error) =>{ //displays error when the user is creating an account
                     console.log("error ", error.code);
                     if(error.code === "auth/invalid-email"){
