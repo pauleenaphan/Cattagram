@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
-import { collection, addDoc, getDoc } from "firebase/firestore"; 
+import { collection, addDoc, getDocs } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
@@ -30,11 +30,9 @@ export const Home = () =>{
         }))
     }
     
-    // useFocusEffect(
-    //     React.useCallback(()=>{
-    //         getFeed();
-    //     }, [])
-    // )
+    useEffect(() => {
+        getFeed();
+    }, [feedPost]);
 
     //creates new post 
     const handleSubmit = async (e) =>{
@@ -55,15 +53,15 @@ export const Home = () =>{
 
     const getFeed = async () =>{
         try{
-            const post = await getDoc(collection(db, "Homepage Feed"));
+            const post = await getDocs(collection(db, "Homepage Feed"));
             const postReceived = post.docs.map(doc =>({
+                id: doc.id,
                 title: doc.data().title,
                 desc: doc.data().desc,
                 img: doc.data().img,
                 user: doc.data().user,
                 date: doc.data().date,
             }))
-
             setFeedPost(postReceived);
         }catch(error){
             console.log("error ", error);
@@ -83,7 +81,7 @@ export const Home = () =>{
                 </form>
             </Popup>
             {feedPost.map(post =>(
-                console.log(post.title)
+                <p key={post.id}> {post.title} </p>
             ))}
         </div>
     )
