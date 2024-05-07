@@ -6,7 +6,8 @@ export const UserProvider = ({children}) =>{
     const [userData, setUserData] = useState({
         userName: "",
         userEmail: "",
-        userPassword: ""
+        userPassword: "",
+        userPicture: null
     });
     
     //updates any of the userData above
