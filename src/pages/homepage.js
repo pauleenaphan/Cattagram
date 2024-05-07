@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Popup from 'reactjs-popup';
+import { Modal } from "flowbite-react";
 import { collection, addDoc, getDocs } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
@@ -22,6 +22,8 @@ export const Home = () =>{
     })
 
     const [feedPost, setFeedPost] = useState([]);
+    const [postPopup, setPostPopup] = useState(false);
+    
 
     const setNewPost = (postField, userInput) =>{
         setUserPost(prevDate => ({
@@ -30,14 +32,14 @@ export const Home = () =>{
         }))
     }
     
-    // const isMounted = useRef(true);
+    const isMounted = useRef(true);
 
-    // useEffect(() => {
-    //     if (isMounted.current) {
-    //         getFeed();
-    //         isMounted.current = false;
-    //     }
-    // }, [feedPost]);
+    useEffect(() => {
+        if (isMounted.current) {
+            getFeed();
+            isMounted.current = false;
+        }
+    }, [feedPost]);
 
     //creates new post 
     const handleSubmit = async (e) =>{
@@ -50,32 +52,73 @@ export const Home = () =>{
                 user: localStorage.getItem("userName"),
                 date: getDate()
             }); 
-
-            setUserPost({
-                "title": "",
-                "desc": "",
-                "img": null
-            });
-
+            getFeed();
+            setPostPopup(false);
             console.log("entry added successfully");
         }catch(error){
             console.log("error ", error);
         }
+        
     }
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0]; // Get the selected file
 
-        // Read the selected file as a data URL
+        // Create a new FileReader instance
         const reader = new FileReader();
-        reader.onload = () => {
-            // Update the img state with the data URL
+
+        // Set up FileReader onload callback function
+        reader.onload = (event) => {
+            // Compress the image before uploading
+            compressImage(event.target.result);
+        };
+
+        // Read the selected file as a data URL
+        reader.readAsDataURL(file);
+    };
+
+    const compressImage = (dataUrl) => {
+        const imageElement = new Image();
+        imageElement.src = dataUrl;
+
+        // Set up image onload callback function
+        imageElement.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxWidth = 800; // Max width for the compressed image
+            const maxHeight = 600; // Max height for the compressed image
+            let width = imageElement.width;
+            let height = imageElement.height;
+
+            // Calculate new dimensions while maintaining aspect ratio
+            if (width > height) {
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+            }
+
+            // Set canvas dimensions
+            canvas.width = width;
+            canvas.height = height;
+
+            // Draw the image on the canvas
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(imageElement, 0, 0, width, height);
+
+            // Convert canvas to data URL with JPEG format and quality 0.7
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 1);
+
+            // Set the compressed image as the new image state
             setUserPost(prevData => ({
                 ...prevData,
-                img: reader.result
+                img: compressedDataUrl
             }));
         };
-        reader.readAsDataURL(file);
     };
 
     const getFeed = async () =>{
@@ -99,19 +142,29 @@ export const Home = () =>{
         <div>
             <Navbar/>
             <h1> WE IN HOME PAGE </h1>
-            <Popup trigger={<button> New Post </button>} position="right center" closeOnDocumentClick={false}>
-                <form className="newPost" onSubmit={handleSubmit}>
-                    <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)}></input>
-                    <input type="text" placeholder="Description" onChange={(e) => setNewPost("desc", e.target.value)}></input>
-                    <input type="file" placeholder="Image (optional)" onChange={handleImageUpload}></input>
-                    <button type="submit"> Post! </button>
-                </form>
-            </Popup>
+            <button onClick={() => {setPostPopup(true)}}> New Post </button>
+            <Modal show={postPopup} onClose={() =>{setPostPopup(false)}}>
+                <Modal.Header> Create New Post </Modal.Header>
+                <Modal.Body>
+                    <form className="newPost" onSubmit={handleSubmit}>
+                        <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
+                        <input type="text" placeholder="Description" onChange={(e) => setNewPost("desc", e.target.value)} />
+                        <input type="file" placeholder="Image (optional)" onChange={handleImageUpload} />
+                        <button type="submit"> Post! </button>
+                    </form> 
+                </Modal.Body>
+            </Modal>
+            
             {feedPost.map(post =>(
                 <div key={post.id}>
                     <p> {post.user} </p>
-                    <p> {post.title} </p>
-                    <p> {post.img} </p>
+                    {post.img &&( //checks whether or not img is null or undefined
+                        <img style={{width: "20%"}} src={post.img} alt="user post"/>
+                    )}
+                    <h1> {post.title} </h1>
+                    <p> {post.date} </p>
+                    <p> {post.desc} </p>
+                    
                 </div>
                 
             ))}
