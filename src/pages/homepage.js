@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Popup from 'reactjs-popup';
 import { collection, addDoc, getDocs } from "firebase/firestore"; 
 
@@ -18,7 +18,7 @@ export const Home = () =>{
     const [userPost, setUserPost] = useState({
         "title": "",
         "desc": "",
-        "img": ""
+        "img": null
     })
 
     const [feedPost, setFeedPost] = useState([]);
@@ -30,9 +30,14 @@ export const Home = () =>{
         }))
     }
     
-    useEffect(() => {
-        getFeed();
-    }, [feedPost]);
+    // const isMounted = useRef(true);
+
+    // useEffect(() => {
+    //     if (isMounted.current) {
+    //         getFeed();
+    //         isMounted.current = false;
+    //     }
+    // }, [feedPost]);
 
     //creates new post 
     const handleSubmit = async (e) =>{
@@ -45,11 +50,33 @@ export const Home = () =>{
                 user: localStorage.getItem("userName"),
                 date: getDate()
             }); 
+
+            setUserPost({
+                "title": "",
+                "desc": "",
+                "img": null
+            });
+
             console.log("entry added successfully");
         }catch(error){
             console.log("error ", error);
         }
     }
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0]; // Get the selected file
+
+        // Read the selected file as a data URL
+        const reader = new FileReader();
+        reader.onload = () => {
+            // Update the img state with the data URL
+            setUserPost(prevData => ({
+                ...prevData,
+                img: reader.result
+            }));
+        };
+        reader.readAsDataURL(file);
+    };
 
     const getFeed = async () =>{
         try{
@@ -76,12 +103,17 @@ export const Home = () =>{
                 <form className="newPost" onSubmit={handleSubmit}>
                     <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)}></input>
                     <input type="text" placeholder="Description" onChange={(e) => setNewPost("desc", e.target.value)}></input>
-                    <input type="text" placeholder="Image (optional)" onChange={(e) => setNewPost("img", e.target.value)}></input>
+                    <input type="file" placeholder="Image (optional)" onChange={handleImageUpload}></input>
                     <button type="submit"> Post! </button>
                 </form>
             </Popup>
             {feedPost.map(post =>(
-                <p key={post.id}> {post.title} </p>
+                <div key={post.id}>
+                    <p> {post.user} </p>
+                    <p> {post.title} </p>
+                    <p> {post.img} </p>
+                </div>
+                
             ))}
         </div>
     )
