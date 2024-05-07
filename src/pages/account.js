@@ -1,40 +1,53 @@
 import React, { useContext, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc} from "firebase/firestore"; 
 
-import { auth } from "../firebaseConfig";
+import '../style/acc.css';
+import logo from "../imgs/logo/logo.png";
+import logoError from "../imgs/logo/invalidLogo.png";
+import logoPass from "../imgs/logo/invalidPassLogo.png";
+import logoEmail from "../imgs/logo/invalidEmailPass.png";
+import shortLogoPass from "../imgs/logo/shortPassLogo.png";
+import emailExistLogo from "../imgs/logo/emailExistLogo.png";
+
+import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./userInfo";
 
 export const Login = () =>{
     const navigate = useNavigate(); // Get the navigate function using useNavigate hook
     const {userData, updateUserData} = useContext(UserContext); 
-    const [loginStatus, setLoginStatus] = useState(""); //shows errors when user can't login
+    const [loginStatusPic, setLoginStatusPic] = useState(logo); //shows errors when user can't login
+
+    const setLocalStorage = () =>{
+        localStorage.setItem("isLogged", "true");
+        localStorage.setItem("userEmail", userData.userEmail);
+        localStorage.setItem("userName", userData.userName);
+    }
 
     const handleSubmit = (e) =>{
         e.preventDefault();
         signInWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
-            .then((userCredential) => {
-                const user = userCredential.user;
+            .then(() => {
                 updateUserData('userEmail', userData.userEmail);
                 updateUserData('userPassword', userData.userPassword);
-                setLoginStatus("Login Successfully!");
                 navigate("/homepage");
-                localStorage.setItem("isLogged", "true");
-                localStorage.setItem("userEmail", userData.userEmail);
+                setLocalStorage();
             })
             .catch((error) => {
                 console.log("error ", error.code);
-                if(error.code === "auth/invalid-credential"){
-                    setLoginStatus("Invalid email or password");
+                if(error.code === "auth/invalid-email"){
+                    setLoginStatusPic(logoError);
+                }else if(error.code === "auth/invalid-credential"){
+                    setLoginStatusPic(logoError);
                 }
             });
     }
 
     return(
-        <div>
+        <div className="loginContainer">
             <section className="header">
-                <h1> Cattagram </h1>
-                <p> Welcome Back! </p>
+                <img src={loginStatusPic} alt="logo"/>
             </section>
             <form className="loginForm" onSubmit={handleSubmit}>
                 <input type="text" placeholder="Email" id="userEmail" onChange={(e) => updateUserData('userEmail', e.target.value)}></input>
@@ -46,7 +59,7 @@ export const Login = () =>{
                 {/* ()=> so that the function only goes through when it is being clicked on */}
                 <button className="createAccBtn" onClick={()=> navigate("/createAcc")}> Sign up</button>
             </section>
-            <p> {loginStatus} </p>
+            {/* <p> {loginStatus} </p> */}
         </div>
     )
 }
@@ -56,7 +69,24 @@ export const CreateAccount = ()=>{
     const navigate = useNavigate();
     const {userData, updateUserData} = useContext(UserContext); 
     const [confirmPass, setConfirmPass] = useState("");
-    const [loginStatus, setLoginStatus] = useState(""); //shows create acc error to user
+    const [loginStatusPic, setLoginStatusPic] = useState(logo); //shows create acc error to user
+
+    const setFirebase = async () => {
+        try{
+            await addDoc(collection(db, "Users"), {
+                name: userData.userName,
+                pic: "default pic for now"
+            })
+        }catch(error){
+            console.log("error ", error);
+        }
+    }
+
+    const setLocalStorage = () =>{
+        localStorage.setItem("isLogged", "true");
+        localStorage.setItem("userEmail", userData.userEmail);
+        localStorage.setItem("userName", userData.userName);
+    }
 
     const handleSubmit = (e) => {
         //prevent form from submitting
@@ -64,38 +94,36 @@ export const CreateAccount = ()=>{
         console.log(userData.userEmail, userData.userPassword);
 
         if(userData.userPassword !== confirmPass){
-            setLoginStatus("Passwords don't match");
+            setLoginStatusPic(logoPass);
         }else{
             createUserWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
-                .then((userCredential) =>{
-                    const user = userCredential.user;
-                    setLoginStatus("Account created successfully");
+                .then(() =>{
+                    // setLoginStatus("Account created successfully");
                     navigate("/homepage");
-                    localStorage.setItem("isLogged", "true");
-                    localStorage.setItem("userEmail", userData.userEmail);
-                    localStorage.setItem("userName", userData.userName);
+                    setLocalStorage();
+                    setFirebase();
                 }).catch((error) =>{ //displays error when the user is creating an account
                     console.log("error ", error.code);
                     if(error.code === "auth/invalid-email"){
-                        setLoginStatus("Invalid Email");
+                        setLoginStatusPic(logoEmail);
                     }else if(error.code === "auth/weak-password"){
-                        setLoginStatus("Password must be at least 6 characters");
+                        setLoginStatusPic(shortLogoPass);
                     }else if(error.code === "auth/email-already-in-use"){
-                        setLoginStatus("Account already exist with this email");
+                        setLoginStatusPic(emailExistLogo);
                     }
                 })
         }
     };
 
     return(
-        <div>
+        <div className="createContainer">
             <section className="header">
-                <h1> Cattagram </h1>
+                <img src={loginStatusPic} alt="logo"/>
             </section>
             <form className="createForm" onSubmit={handleSubmit}>
                 <input type="text" placeholder="Email" id="userEmail" onChange={(e) => updateUserData('userEmail', e.target.value)}></input>
                 <input type="text" placeholder="Name" id="userName" onChange={(e) => updateUserData('userName', e.target.value)}></input>
-                <input type="text" placeholder="Passworrd" id="userPass" onChange={(e) => updateUserData('userPassword', e.target.value)}></input>
+                <input type="text" placeholder="Password" id="userPass" onChange={(e) => updateUserData('userPassword', e.target.value)}></input>
                 <input type="text" placeholder="Confirm Password" id="userConfirmPass" onChange={(e) => setConfirmPass(e.target.value)}></input>
                 <button type="submit"> Sign Up</button>
             </form>
@@ -103,7 +131,6 @@ export const CreateAccount = ()=>{
                 <p> Already have an account? </p>
                 <button className="signUpBtn" onClick={()=> navigate("/login")}> Sign In </button>
             </section>
-            <p> {loginStatus} </p>
         </div>
     )
 }
