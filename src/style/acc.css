@@ -19,7 +19,7 @@
     width: auto;
 }
 
-input[type=text]{
+.createForm input[type=text], .loginForm button{
     font-size: 20px;
     padding: 10%;
     width: 200%;
