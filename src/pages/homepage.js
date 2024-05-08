@@ -4,6 +4,10 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
+import '../style/home.css';
+
+import { FaRegPlusSquare} from "react-icons/fa";
+
 
 //returns date in month/day/year format
 const getDate = () => {
@@ -139,35 +143,41 @@ export const Home = () =>{
     }
 
     return(
-        <div>
+        <div className="homeContainer">
             <Navbar/>
-            <h1> WE IN HOME PAGE </h1>
-            <button onClick={() => {setPostPopup(true)}}> New Post </button>
-            <Modal show={postPopup} onClose={() =>{setPostPopup(false)}}>
-                <Modal.Header> Create New Post </Modal.Header>
+            {/* <button onClick={() => {setPostPopup(true)}}> New Post </button> */}
+            <div className="headerContainer">
+                <h1> New post </h1>
+                <FaRegPlusSquare className="postIcon" onClick={() => {setPostPopup(true)}}/>
+            </div>
+            
+            <Modal show={postPopup} onClose={() =>{setPostPopup(false)}} className="newPostModal">
+                <Modal.Header className="modalHeader"> Create a meowtastic post! </Modal.Header>
                 <Modal.Body>
                     <form className="newPost" onSubmit={handleSubmit}>
                         <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
-                        <input type="text" placeholder="Description" onChange={(e) => setNewPost("desc", e.target.value)} />
-                        <input type="file" placeholder="Image (optional)" onChange={handleImageUpload} />
+                        <textarea placeholder="Description" style={{width: '70%', height: "200px"}} onChange={(e) => setNewPost("desc", e.target.value)} />
+                        <input type="file" placeholder="show your cat" onChange={handleImageUpload} />
                         <button type="submit"> Post! </button>
                     </form> 
                 </Modal.Body>
             </Modal>
             
-            {feedPost.map(post =>(
-                <div key={post.id}>
-                    <p> {post.user} </p>
-                    {post.img &&( //checks whether or not img is null or undefined
-                        <img style={{width: "20%"}} src={post.img} alt="user post"/>
-                    )}
-                    <h1> {post.title} </h1>
-                    <p> {post.date} </p>
-                    <p> {post.desc} </p>
-                    
-                </div>
-                
-            ))}
+            <section className="feedContainer">
+                {feedPost.map(post =>(
+                    <div key={post.id} className="postContainer">
+                        <h1 className="userPostName"> {post.user} </h1>
+                        {post.img &&( //checks whether or not img is null or undefined
+                            <img style={{width: '80%'}} src={post.img} alt="user post"/>
+                        )}
+                        <div className="postHeader">
+                            <h2> {post.title} </h2>
+                            <p className="postDate"> {post.date} </p>
+                        </div>
+                        <p className="postDesc"> {post.desc} </p>
+                    </div>
+                ))}
+            </section>
         </div>
     )
 }
