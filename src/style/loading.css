@@ -1,0 +1,10 @@
+.pageContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.loadingGif{
+    height: 600px;
+}

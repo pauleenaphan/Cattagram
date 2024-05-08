@@ -1,0 +1,136 @@
+
+.homeContainer{
+    margin-top: 5%;
+}
+
+.headerContainer{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 1%;
+    gap: 10px;
+}
+
+.postIcon{
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+}
+
+.feedContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.postContainer{
+    background-color: rgb(226, 228, 230);
+    border-radius: 10px;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5%;
+    margin-top: -3%;
+}
+
+.userPostName{
+    width: 80%;
+    text-align: left;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.postHeader{
+    display: flex;
+    width: 80%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.postDate{
+    font-size: 20px;
+}
+
+.postDesc{
+    text-align: left;
+    width: 80%;
+    font-size: 18px;
+    margin-top: -1%;
+    margin-bottom: 5%;
+}
+
+.newPostModal{
+    background-color: white;
+    border-radius: 10px;
+    margin: auto;
+    padding: 50px;
+}
+
+.modalHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 30px;
+    margin: 0px 13%;
+}
+
+.modalHeader button{
+    border: none;
+    font-size: 30px;
+    padding: 10px;
+    background-color: white;
+}
+
+.modalHeader button:hover{
+    background-color: rgb(226, 228, 230);
+    border-radius: 10px;
+}
+
+.newPost{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.newPost input[type=text]{
+    font-size: 20px;
+    padding: 2%;
+    width: 70%;
+}
+
+.newPost textarea{
+    font-size: 20px;
+    padding: 2%;
+    resize: none;
+}
+
+.newPost input[type=text], .newPost textarea{
+    border: 5px solid #f8a526;
+    outline: none;
+    border-radius: 10px;
+}
+
+.newPost button{
+    background-color: #f8a526;
+    border: 3px solid #f8a526;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 10px 50px;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Add darker orange shadow */
+}
+
+.newPost input[type=file]{
+    font-size: 20px;
+}
+
+.newPost button:hover{
+    border: 3px solid #f8a526;
+    background-color: white;
+}
+
