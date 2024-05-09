@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Navbar } from './navbar';
+import '../style/settings.css';
 
 export const Settings = () =>{
     const navigate = useNavigate(); 
@@ -12,8 +13,8 @@ export const Settings = () =>{
     }
 
     return(
-        <div>
-            <Navbar/>
+        <div className="settingsContainer">
+            {/* <Navbar/> */}
             <h1> WE IN SETTINGS </h1>
             <button onClick={()=>{ logout() }}> Log Out </button>
         </div>
