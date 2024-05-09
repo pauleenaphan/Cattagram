@@ -1,14 +1,15 @@
-
-.homeContainer{
-    margin-top: 5%;
-}
-
-.headerContainer{
+.homeContainer .headerContainer{
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    margin-right: 1%;
+    right: 0;
+    padding: 0 20px;
+    position: fixed;
     gap: 10px;
+}
+
+.homeContainer .headerContainer:hover{
+    background-color: rgb(226, 228, 230);
+    border-radius: 10px;
 }
 
 .postIcon{
@@ -28,25 +29,31 @@
     background-color: rgb(226, 228, 230);
     border-radius: 10px;
     width: 30%;
+    height: 20%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 5%;
-    margin-top: -3%;
+    margin-top: 2%;
+}
+
+.postContainer img{
+    width: 100%;
 }
 
 .userPostName{
-    width: 80%;
+    width: 90%;
     text-align: left;
     font-weight: bold;
     font-size: 25px;
+    text-decoration: underline;
 }
 
 .postHeader{
     display: flex;
-    width: 80%;
+    width: 90%;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 20px;
 }
 
 .postDate{
@@ -55,9 +62,9 @@
 
 .postDesc{
     text-align: left;
-    width: 80%;
+    width: 90%;
     font-size: 18px;
-    margin-top: -1%;
+    margin-top: 1%;
     margin-bottom: 5%;
 }
 
@@ -100,6 +107,10 @@
     font-size: 20px;
     padding: 2%;
     width: 70%;
+}
+
+.newPost input[type=file]{
+    cursor: pointer;
 }
 
 .newPost textarea{
