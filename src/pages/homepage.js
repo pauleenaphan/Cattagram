@@ -6,7 +6,7 @@ import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
 
-import { FaRegPlusSquare} from "react-icons/fa";
+import { FaRegPlusSquare } from "react-icons/fa";
 
 
 //returns date in month/day/year format
@@ -20,8 +20,8 @@ const getDate = () => {
 
 export const Home = () =>{
     const [userPost, setUserPost] = useState({
-        "title": "",
-        "desc": "",
+        "title": "My dumb owner didn't put a title",
+        "desc": "My owner didn't have anything to say. I'm not surprised, they have a small brain.",
         "img": null
     })
 
@@ -76,7 +76,6 @@ export const Home = () =>{
             // Compress the image before uploading
             compressImage(event.target.result);
         };
-
         // Read the selected file as a data URL
         reader.readAsDataURL(file);
     };
@@ -146,11 +145,6 @@ export const Home = () =>{
         <div className="homeContainer">
             <Navbar/>
             {/* <button onClick={() => {setPostPopup(true)}}> New Post </button> */}
-            <div className="headerContainer">
-                <h1> New post </h1>
-                <FaRegPlusSquare className="postIcon" onClick={() => {setPostPopup(true)}}/>
-            </div>
-            
             <Modal show={postPopup} onClose={() =>{setPostPopup(false)}} className="newPostModal">
                 <Modal.Header className="modalHeader"> Create a meowtastic post! </Modal.Header>
                 <Modal.Body>
@@ -162,13 +156,17 @@ export const Home = () =>{
                     </form> 
                 </Modal.Body>
             </Modal>
+            <div className="headerContainer">
+                <h1> New post </h1>
+                <FaRegPlusSquare className="postIcon" onClick={() => {setPostPopup(true)}}/>
+            </div>
             
             <section className="feedContainer">
                 {feedPost.map(post =>(
                     <div key={post.id} className="postContainer">
                         <h1 className="userPostName"> {post.user} </h1>
                         {post.img &&( //checks whether or not img is null or undefined
-                            <img style={{width: '80%'}} src={post.img} alt="user post"/>
+                            <img src={post.img} alt="user post"/>
                         )}
                         <div className="postHeader">
                             <h2> {post.title} </h2>
