@@ -1,31 +1,47 @@
 .headerNav{
-    background-color: #f8a526;
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
-    justify-content: space-between;
-    align-items: center;
     position: fixed;
-    top: 0;
 }
 
 .headerNav img{
-    width: 15%;
+    width: 20%;
 }
 
 .icon{
-    height: 50px;
-    width: 50px;
+    height: 70%;
+    width: 20%;
 }
 
 .icon:hover{
     cursor: pointer;
-    color: blue;
+}
+
+.iconContainer{
+    display: flex;
+    align-items: center;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.iconContainer:hover{
+    background-color: #a76400;
+    border-radius: 10px;
+    color: white
+}
+
+.iconContainer p{
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .navigation{
+    background-color: #f8a526;
     display: flex;
-    margin-right: 1%;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-evenly;
+    flex-direction: column;
+    width: 20%;
+    gap: 5px;
+    height: 100vh;
 }
