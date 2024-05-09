@@ -75,11 +75,15 @@ export const CreateAccount = ()=>{
         try{
             await addDoc(collection(db, "Users"), {
                 name: userData.userName,
-                pic: "default pic for now"
+                pic: "default pic for now",
+                profileDesc: "",
+                datejoined: getDate()
             })
         }catch(error){
             console.log("error ", error);
         }
+
+
     }
 
     const setLocalStorage = () =>{
@@ -134,3 +138,11 @@ export const CreateAccount = ()=>{
         </div>
     )
 }
+
+const getDate = () => {
+    const currentDate = new Date();
+    const month = currentDate.getMonth() + 1; 
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
+    return `${month}/${day}/${year}`;
+};

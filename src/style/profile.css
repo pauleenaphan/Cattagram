@@ -1,0 +1,51 @@
+.profileContainer .headerContainer{
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    margin-top: 2%;
+    margin-left: 20%;
+    width: 80%;
+    gap: 2%;
+}
+
+.profileContainer .headerContainer img{
+    width: 20%;
+}
+
+.profileContainer .headerContainer img:hover{
+    cursor: pointer;
+    filter: grayscale(100%);
+}
+
+#userName{
+    font-size: 40px;
+}
+
+.descContainer{
+    width: 20%;
+}
+
+.tempBtnContainer{
+    position: absolute;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    font-size: 20px;
+    gap: 5px;
+    width: 15%;
+    font-weight: bold;
+    margin-left: 1%;
+    margin-top: 24%;
+    padding: 0 2.4% 0 0.6%;
+}
+
+.tempBtnContainer:hover{
+    background-color: #a76400;
+    border-radius: 10px;
+    color: white
+}
+
+.tempBtn{
+    width: 18%;
+    height: 20%;
+}
