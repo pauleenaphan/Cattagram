@@ -9,6 +9,7 @@ import '../style/profile.css';
 
 export const Profile = () =>{
     const [editPopup, setEditPopup] = useState(false);
+    const [feedPost, setFeedPost] = useState([]);
     const [userP, setUserP] = useState({
         "name": "",
         "desc": "",
@@ -27,14 +28,15 @@ export const Profile = () =>{
     useEffect(() => {
         if (isMounted.current) {
             getUserProfile();
+            getFeed();
             isMounted.current = false;
         }
     }, [userP]);
 
-    //sets user profile by searching for matching name in the doc
+    //gets the doc in the userInfo collection
     const getUserProfile = async () => {
         try {
-            const profile = await getDocs(collection(db, "Users"));
+            const profile = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
             profile.forEach(doc => {
                 const data = doc.data();
                 if (data.name === localStorage.getItem("userName")) {
@@ -50,7 +52,6 @@ export const Profile = () =>{
             console.log("error ", error);
         }
     }
-
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0]; // Get the selected file
@@ -114,65 +115,86 @@ export const Profile = () =>{
     const updateFirebase = async (e) =>{
         e.preventDefault();
         try{
-            const profile = await getDocs(collection(db, "Users"));
-            profile.forEach(profileDoc => { // Rename doc to profileDoc or any other unique name
-                const data = profileDoc.data();
-                if (data.name === localStorage.getItem("userName")) {
-                    //updates doc with user input
-                    const docRef = doc(db, "Users", profileDoc.id);
-                    const newData = {
-                        ...data,
-                        profileDesc: userP.desc,
-                        pic: userP.pic
-                    };
-                    if (userP.pic !== null) {
-                        newData.pic = userP.pic;
-                    }
-                    updateDoc(docRef, newData)
-                        .then(()=>{ //gets profile again after successfully updating the doc
-                            console.log("firebase successfully updated")
-                            getUserProfile();
-                        })
-                        .catch((error) => {
-                            console.error("Error updating document: ", error);
-                        });
-                }
+            const querySnapshot = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
+            await updateDoc(querySnapshot.docs[0].ref, { 
+                pic: userP.pic 
             });
         }catch (error){
             console.log("error ", error);
         }
+        setEditPopup(false);
     }
-    
+
+    //gets the user post from firebase
+    const getFeed = async () =>{
+        try{
+            const post = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "post"));
+            const postReceived = post.docs.map(doc =>({
+                id: doc.id,
+                title: doc.data().title,
+                desc: doc.data().desc,
+                img: doc.data().img,
+                user: doc.data().user,
+                date: doc.data().date,
+            }))
+            setFeedPost(postReceived);
+        }catch(error){
+            console.log("error ", error);
+        }
+    }
     
     return(
         <div className="profileContainer">
             <Navbar/>
-            <Modal show={editPopup} onClose={() =>{setEditPopup(false)}} className="editModal">
-                <Modal.Header> Edit your profile </Modal.Header>
-                <Modal.Body> 
-                    <form className="profileForm" onSubmit={updateFirebase}>
-                        <input type="file" placeholder="Change profile picture" onChange={handleImageUpload}/>
-                        <input type="text" placeholder="Update profile description" value={userP.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
-                        <button type="submit"> Update! </button>
-                    </form>
-                </Modal.Body>
-            </Modal>
+            {editPopup && (
+                <>
+                    <div className="overlay" onClick={() => setEditPopup(false)}></div>
+                    <Modal show={editPopup} onClose={() => setEditPopup(false)} className="editModal">
+                        <Modal.Header className="modalHeader">Edit your profile to look meowtastic</Modal.Header>
+                        <Modal.Body> 
+                            <form className="profileForm" onSubmit={updateFirebase}>
+                                <input type="file" placeholder="Change profile picture" onChange={handleImageUpload}/>
+                                <input type="text" placeholder="Update profile description" value={userP.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
+                                <button type="submit">Update!</button>
+                            </form>
+                        </Modal.Body>
+                    </Modal>
+                </>
+            )}
             <div className="tempBtnContainer">
                 <GoPencil className="tempBtn" onClick={() => setEditPopup(true)}/>
                 <p> Edit Profile </p>
             </div>
             
-            <section className="headerContainer">
-                <img src={userP.pic} alt="userPfp" onClick={() =>{ console.log("hi")}}/>
-                <div className="descContainer">
-                    <div className="captionContainer">
-                        <h1 id="userName"> {userP.name} </h1>
-                        <p id="userDesc"> {userP.desc} </p>
+            <div className="profileContainer">
+                <section className="headerContainer">
+                    <img src={userP.pic} alt="userPfp" onClick={() =>{ console.log("hi")}}/>
+                    <div className="descContainer">
+                        <div className="captionContainer">
+                            <h1 id="userName"> {userP.name} </h1>
+                            <p id="userDesc"> {userP.desc} </p>
+                        </div>
+                            <p id="userDate"> {userP.dateJoined} </p>
                     </div>
-                        <p id="userDate"> {userP.dateJoined} </p>
-                </div>
-                
-            </section>
+                </section>
+
+                <section className="feedContainer">
+                    {feedPost.map(post => (
+                    <div key={post.id} className="userPostContainer">
+                        <h1 className="userPostName">{post.user}</h1>
+                        {post.img && (
+                        <img src={post.img} alt="user post" />
+                        )}
+                        <div className="postHeader">
+                        <h2>{post.title}</h2>
+                        <p className="postDate">{post.date}</p>
+                        </div>
+                        <p className="postDesc">{post.desc}</p>
+                    </div>
+                    ))}
+                </section>
+            </div>
+            
         </div>
     )
 }
