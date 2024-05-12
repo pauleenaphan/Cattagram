@@ -24,6 +24,8 @@
     align-items: center;
     margin-left: 5%;
     margin-right: 5%;
+    padding: 0px 5px;
+    gap: 5%;
 }
 
 .iconContainer:hover{
