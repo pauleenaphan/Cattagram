@@ -73,17 +73,15 @@ export const CreateAccount = ()=>{
 
     const setFirebase = async () => {
         try{
-            await addDoc(collection(db, "Users"), {
+            await addDoc(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"), {
                 name: userData.userName,
                 pic: "default pic for now",
-                profileDesc: "",
+                profileDesc: "I'm new to cattagram!",
                 datejoined: getDate()
             })
         }catch(error){
             console.log("error ", error);
         }
-
-
     }
 
     const setLocalStorage = () =>{
