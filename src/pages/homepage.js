@@ -58,7 +58,20 @@ export const Home = () =>{
             }); 
             getFeed();
             setPostPopup(false);
-            console.log("entry added successfully");
+            console.log("post added to feed sucessfully");
+        }catch(error){
+            console.log("error ", error);
+        }
+
+        try{
+            await addDoc(collection(db, "Users", localStorage.getItem("userEmail"), "post"), {
+                title: userPost.title,
+                desc: userPost.desc,
+                img: userPost.img,
+                user: localStorage.getItem("userName"),
+                date: getDate()
+            })
+            console.log("post added to user's firebase feed sucessfully");
         }catch(error){
             console.log("error ", error);
         }
@@ -124,6 +137,7 @@ export const Home = () =>{
         };
     };
 
+    //gets the post from firebase
     const getFeed = async () =>{
         try{
             const post = await getDocs(collection(db, "Homepage Feed"));
@@ -141,41 +155,46 @@ export const Home = () =>{
         }
     }
 
-    return(
+    return (
         <div className="homeContainer">
-            <Navbar/>
-            {/* <button onClick={() => {setPostPopup(true)}}> New Post </button> */}
-            <Modal show={postPopup} onClose={() =>{setPostPopup(false)}} className="newPostModal">
-                <Modal.Header className="modalHeader"> Create a meowtastic post! </Modal.Header>
+          <Navbar />
+          {postPopup && (
+            <>
+              <div className="overlay" onClick={() => setPostPopup(false)}></div>
+              <Modal show={postPopup} onClose={() => setPostPopup(false)} className="newPostModal">
+                <Modal.Header className="modalHeader">Create a meowtastic post!</Modal.Header>
                 <Modal.Body>
-                    <form className="newPost" onSubmit={handleSubmit}>
-                        <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
-                        <textarea placeholder="Description" style={{width: '70%', height: "200px"}} onChange={(e) => setNewPost("desc", e.target.value)} />
-                        <input type="file" placeholder="show your cat" onChange={handleImageUpload} />
-                        <button type="submit"> Post! </button>
-                    </form> 
+                  <form className="newPost" onSubmit={handleSubmit}>
+                    <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
+                    <textarea placeholder="Description" style={{ width: '70%', height: "200px" }} onChange={(e) => setNewPost("desc", e.target.value)} />
+                    <input type="file" placeholder="show your cat" onChange={handleImageUpload} />
+                    <button type="submit">Post!</button>
+                  </form>
                 </Modal.Body>
-            </Modal>
-            <div className="headerContainer">
-                <h1> New post </h1>
-                <FaRegPlusSquare className="postIcon" onClick={() => {setPostPopup(true)}}/>
-            </div>
-            
-            <section className="feedContainer">
-                {feedPost.map(post =>(
-                    <div key={post.id} className="postContainer">
-                        <h1 className="userPostName"> {post.user} </h1>
-                        {post.img &&( //checks whether or not img is null or undefined
-                            <img src={post.img} alt="user post"/>
-                        )}
-                        <div className="postHeader">
-                            <h2> {post.title} </h2>
-                            <p className="postDate"> {post.date} </p>
-                        </div>
-                        <p className="postDesc"> {post.desc} </p>
-                    </div>
-                ))}
-            </section>
+              </Modal>
+            </>
+          )}
+          <div className="tempBtnContainer">
+            <FaRegPlusSquare className="postIcon" onClick={() => setPostPopup(true)} />
+            <p>New post</p>
+          </div>
+      
+          <section className="feedContainer">
+            {feedPost.map(post => (
+              <div key={post.id} className="postContainer">
+                <h1 className="userPostName">{post.user}</h1>
+                {post.img && (
+                  <img src={post.img} alt="user post" />
+                )}
+                <div className="postHeader">
+                  <h2>{post.title}</h2>
+                  <p className="postDate">{post.date}</p>
+                </div>
+                <p className="postDesc">{post.desc}</p>
+              </div>
+            ))}
+          </section>
         </div>
-    )
+      );
+      
 }
