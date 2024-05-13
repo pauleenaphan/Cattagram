@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from "flowbite-react";
-import { collection, addDoc, getDocs } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, getDoc } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
@@ -27,6 +27,22 @@ export const Home = () =>{
 
     const [feedPost, setFeedPost] = useState([]);
     const [postPopup, setPostPopup] = useState(false);
+    const [userPopup, setUserPopup] = useState(false);
+
+    const [userProfile, setUserProfile] = useState({
+        name: "",
+        desc: "",
+        date: "",
+        img: null,
+    })
+
+    //used to set userpopup profile
+    const setProfile = (postField, userInfo) =>{
+        setUserProfile(prevData => ({
+            ...prevData,
+            [postField]: userInfo
+        }))
+    }
     
 
     const setNewPost = (postField, userInput) =>{
@@ -155,46 +171,106 @@ export const Home = () =>{
         }
     }
 
+    const fetchUserInfo = async (userName) => {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'Users'));
+            console.log("hi1");
+            console.log("Query Snapshot:", querySnapshot);
+        
+            if (querySnapshot.empty) {
+                console.log("No documents found in 'Users' collection.");
+            } else {
+                for (const doc of querySnapshot.docs) {
+                    console.log("Document ID:", doc.id);
+                    console.log("Document Data:", doc.data());
+        
+                    // Fetch the 'userInfo' subcollection for the current document
+                    const userInfoSnapshot = await getDocs(collection(db, 'Users', doc.id, 'userInfo'));
+                    console.log("User Info Snapshot:", userInfoSnapshot);
+        
+                    // Process the 'userInfo' documents as needed
+                    userInfoSnapshot.forEach(userInfoDoc => {
+                        console.log("User Info Document ID:", userInfoDoc.id);
+                        console.log("User Info Document Data:", userInfoDoc.data());
+                    });
+                }
+            }
+    
+            // for (const userDoc of querySnapshot.docs) {
+            //     console.log("hi2");
+            //     const userInfoSnapshot = await getDocs(collection(db, 'Users', userDoc.id, 'userInfo'));
+            //     console.log(userInfoSnapshot);
+            //     console.log("hi2");
+    
+            //     userInfoSnapshot.forEach((userInfoDoc) => {
+            //         const userInfoData = userInfoDoc.data();
+            //         console.log("hi3");
+            //         if (userInfoData.name === userName) {
+            //             console.log('Found matching username for user with email:', userDoc.id);
+            //         }
+            //     });
+            // }
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        }
+    };
+
     return (
         <div className="homeContainer">
-          <Navbar />
-          {postPopup && (
+            <Navbar />
+            {userPopup &&(
+                <>
+                    <div className="overLay" onClick={() => setUserPopup(false)}></div>
+                    <Modal show={userPopup} onClose={() => setUserPopup(false)} className="userProfileModal">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                        <div className="userBodyModalCotainer">
+                            <Modal.Body>
+                                <img/>
+                            </Modal.Body>
+                        </div>
+                    </Modal>
+                </>
+            )}
+            {postPopup && (
             <>
-              <div className="overlay" onClick={() => setPostPopup(false)}></div>
-              <Modal show={postPopup} onClose={() => setPostPopup(false)} className="newPostModal">
-                <Modal.Header className="modalHeader">Create a meowtastic post!</Modal.Header>
-                <Modal.Body>
-                  <form className="newPost" onSubmit={handleSubmit}>
-                    <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
-                    <textarea placeholder="Description" style={{ width: '70%', height: "200px" }} onChange={(e) => setNewPost("desc", e.target.value)} />
-                    <input type="file" placeholder="show your cat" onChange={handleImageUpload} />
-                    <button type="submit">Post!</button>
-                  </form>
-                </Modal.Body>
-              </Modal>
+                <div className="overlay" onClick={() => setPostPopup(false)}></div>
+                <Modal show={postPopup} onClose={() => setPostPopup(false)} className="newPostModal">
+                    <Modal.Header className="modalHeader"></Modal.Header>
+                    <div className="bodyModalContainer">
+                        <h1> Create a meowtastic post! </h1>
+                        <Modal.Body>
+                            <form className="newPost" onSubmit={handleSubmit}>
+                                <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
+                                <textarea placeholder="Description" style={{ width: '80%', height: "200px" }} onChange={(e) => setNewPost("desc", e.target.value)} />
+                                <input type="file" placeholder="show your cat" onChange={ handleImageUpload } />
+                                <button type="submit">Post!</button>
+                            </form>
+                        </Modal.Body>
+                    </div>  
+                </Modal>
             </>
-          )}
-          <div className="tempBtnContainer">
+            )}
+            <div className="tempBtnContainer">
             <FaRegPlusSquare className="postIcon" onClick={() => setPostPopup(true)} />
             <p>New post</p>
-          </div>
-      
-          <section className="feedContainer">
+            </div>
+        
+            <section className="feedContainer">
             {feedPost.map(post => (
-              <div key={post.id} className="postContainer">
-                <h1 className="userPostName">{post.user}</h1>
+                <div key={post.id} className="postContainer">
+                <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
                 {post.img && (
-                  <img src={post.img} alt="user post" />
+                    <img src={post.img} alt="user post" />
                 )}
                 <div className="postHeader">
-                  <h2>{post.title}</h2>
-                  <p className="postDate">{post.date}</p>
+                    <h2>{post.title}</h2>
+                    <p className="postDate">{post.date}</p>
                 </div>
                 <p className="postDesc">{post.desc}</p>
-              </div>
+                </div>
             ))}
-          </section>
+            </section>
         </div>
-      );
-      
+        );
+        
 }
