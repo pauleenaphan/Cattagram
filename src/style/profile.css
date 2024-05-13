@@ -2,17 +2,18 @@
     display: flex;
     justify-content: center;
     margin: 0 auto;
-    padding: 30px;
-    width: 30%;
-    height: 50%;
+    padding: 20px 30px;
+    width: 40%;
+    height: 30%;
     gap: 2%;
     background-color: rgb(226, 228, 230);
     border-radius: 10px;
 }
 
 .profileContainer .headerContainer img{
-    height: 50%;
+    height: 5%;
     width: 50%;
+    border-radius: 10px;
 }
 
 .profileContainer .headerContainer img:hover{
@@ -28,7 +29,7 @@
     width: 50%;
     background-color: rgb(190, 192, 194);
     border-radius: 10px;
-    padding: 10px;
+    padding: 10px 40px 10px 10px;
 }
 
 .tempBtnContainer{
@@ -64,38 +65,42 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value to control the opacity */
     z-index: 999; /* Ensure the overlay appears above other content */
-  }
+}
 
 
-.editModal {
+.editModal:not(.modalHeader){
     background-color: white;
     border-radius: 10px;
     width: 40vw;
-    height: 60vh;
-    padding: 50px;
+    height: 80vh;
     margin: auto;
     z-index: 1000; /* Ensure the modal appears above the overlay */
-  }
-
-
+}
 .editModal .modalHeader{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;  
+    background-color: #f8a526;
     font-size: 30px;
+}
+
+.editModal h1{
+    text-align: center;
     margin-bottom: 10%;
 }
 
 .modalHeader button{
-    border: none;
+    border-radius: 10px;
     font-size: 30px;
     padding: 10px;
-    background-color: white;
+    margin-right: 2%;
+    background-color: rgb(226, 228, 230);
 }
 
-.modalHeader button:hover{
-    background-color: rgb(226, 228, 230);
-    border-radius: 10px;
+.profileSectionContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    width: 80%;
+    margin-left: 20%;
 }
 
 .profileForm{
@@ -109,7 +114,7 @@
 .profileForm input[type=text]{
     font-size: 20px;
     padding: 2%;
-    width: 70%;
+    width: 80%;
 }
 
 .profileForm input[type=file]{
@@ -123,7 +128,7 @@
 }
 
 .profileForm input[type=text], .newPost textarea{
-    border: 5px solid #f8a526;
+    border: 5px solid rgb(226, 228, 230);
     outline: none;
     border-radius: 10px;
 }
@@ -148,16 +153,9 @@
     background-color: white;
 }
 
-.profileContainer{
-    display: flex;
-    flex-direction: column;
-}
-
 .userPostContainer{
     background-color: rgb(226, 228, 230);
     border-radius: 10px;
-    width: 30%;
-    height: 20%;
     display: flex;
     flex-direction: column;
     align-items: center;
