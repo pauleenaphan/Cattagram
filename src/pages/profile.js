@@ -117,6 +117,7 @@ export const Profile = () =>{
         try{
             const querySnapshot = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
             await updateDoc(querySnapshot.docs[0].ref, { 
+                profileDesc: userP.desc,
                 pic: userP.pic 
             });
         }catch (error){
@@ -150,14 +151,18 @@ export const Profile = () =>{
                 <>
                     <div className="overlay" onClick={() => setEditPopup(false)}></div>
                     <Modal show={editPopup} onClose={() => setEditPopup(false)} className="editModal">
-                        <Modal.Header className="modalHeader">Edit your profile to look meowtastic</Modal.Header>
-                        <Modal.Body> 
-                            <form className="profileForm" onSubmit={updateFirebase}>
-                                <input type="file" placeholder="Change profile picture" onChange={handleImageUpload}/>
-                                <input type="text" placeholder="Update profile description" value={userP.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
-                                <button type="submit">Update!</button>
-                            </form>
-                        </Modal.Body>
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                        <div className="bodyModalContainer">
+                            <h1> Edit your profile to look meowtastic! </h1>
+                            <Modal.Body> 
+                                <form className="profileForm" onSubmit={updateFirebase}>
+                                    <input type="file" placeholder="Change profile picture" onChange={handleImageUpload}/>
+                                    <input type="text" placeholder="Update profile description" value={userP.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
+                                    <button type="submit">Update!</button>
+                                </form>
+                            </Modal.Body>
+                        </div>
+                        
                     </Modal>
                 </>
             )}
@@ -166,7 +171,7 @@ export const Profile = () =>{
                 <p> Edit Profile </p>
             </div>
             
-            <div className="profileContainer">
+            <div className="profileSectionContainer">
                 <section className="headerContainer">
                     <img src={userP.pic} alt="userPfp" onClick={() =>{ console.log("hi")}}/>
                     <div className="descContainer">
@@ -178,7 +183,7 @@ export const Profile = () =>{
                     </div>
                 </section>
 
-                <section className="feedContainer">
+                <section className="userFeedContainer">
                     {feedPost.map(post => (
                     <div key={post.id} className="userPostContainer">
                         <h1 className="userPostName">{post.user}</h1>
