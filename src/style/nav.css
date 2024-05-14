@@ -15,10 +15,6 @@
     width: 20%;
 }
 
-.icon:hover{
-    cursor: pointer;
-}
-
 .iconContainer{
     display: flex;
     align-items: center;
@@ -31,7 +27,8 @@
 .iconContainer:hover{
     background-color: #a76400;
     border-radius: 10px;
-    color: white
+    color: white;
+    cursor: pointer;
 }
 
 .iconContainer p{

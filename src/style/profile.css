@@ -79,6 +79,7 @@
 .editModal .modalHeader{
     background-color: #f8a526;
     font-size: 30px;
+    margin-bottom: -5%;
 }
 
 .editModal h1{
@@ -153,12 +154,20 @@
     background-color: white;
 }
 
-.userPostContainer{
-    background-color: rgb(226, 228, 230);
+.userFeedContainer{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.userFeedContainer .userPostContainer{
+    background: linear-gradient(to bottom, rgb(182, 185, 185), rgb(226, 228, 230));
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 60%;
     margin-top: 2%;
 }
 
