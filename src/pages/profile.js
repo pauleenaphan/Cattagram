@@ -166,8 +166,8 @@ export const Profile = () =>{
                     </Modal>
                 </>
             )}
-            <div className="tempBtnContainer">
-                <GoPencil className="tempBtn" onClick={() => setEditPopup(true)}/>
+            <div className="tempBtnContainer" onClick={() => setEditPopup(true)}>
+                <GoPencil className="tempBtn"/>
                 <p> Edit Profile </p>
             </div>
             
@@ -185,17 +185,17 @@ export const Profile = () =>{
 
                 <section className="userFeedContainer">
                     {feedPost.map(post => (
-                    <div key={post.id} className="userPostContainer">
-                        <h1 className="userPostName">{post.user}</h1>
-                        {post.img && (
-                        <img src={post.img} alt="user post" />
-                        )}
-                        <div className="postHeader">
-                        <h2>{post.title}</h2>
-                        <p className="postDate">{post.date}</p>
+                        <div key={post.id} className="userPostContainer">
+                            <h1 className="userPostName">{post.user}</h1>
+                            {post.img && (
+                            <img src={post.img} alt="user post" />
+                            )}
+                            <div className="postHeader">
+                            <h2>{post.title}</h2>
+                            <p className="postDate">{post.date}</p>
+                            </div>
+                            <p className="postDesc">{post.desc}</p>
                         </div>
-                        <p className="postDesc">{post.desc}</p>
-                    </div>
                     ))}
                 </section>
             </div>
