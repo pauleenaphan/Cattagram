@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc, setDoc, doc } from "firebase/firestore"; 
+import { collection, addDoc, setDoc, doc, getDoc } from "firebase/firestore"; 
 
 import '../style/acc.css';
 import logo from "../imgs/logo/logo.png";
@@ -25,14 +25,24 @@ export const Login = () =>{
         localStorage.setItem("userName", userData.userName);
     }
 
+    const getFirebase = async () =>{
+        try{
+            const doc = await getDoc(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
+            updateUserData(doc.data().name);
+        }catch(error){
+            console.log("error ", error);
+        }
+    }
+
     const handleSubmit = (e) =>{
         e.preventDefault();
         signInWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
             .then(() => {
                 updateUserData('userEmail', userData.userEmail);
                 updateUserData('userPassword', userData.userPassword);
-                navigate("/homepage");
+                getFirebase();
                 setLocalStorage();
+                navigate("/homepage");
             })
             .catch((error) => {
                 console.log("error ", error.code);
@@ -101,7 +111,7 @@ export const CreateAccount = ()=>{
     const handleSubmit = (e) => {
         //prevent form from submitting
         e.preventDefault(); 
-        console.log(userData.userEmail, userData.userPassword);
+        console.log(userData.userEmail, userData.userName, userData.userPassword);
 
         if(userData.userPassword !== confirmPass){
             setLoginStatusPic(logoPass);
@@ -109,9 +119,9 @@ export const CreateAccount = ()=>{
             createUserWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
                 .then(() =>{
                     // setLoginStatus("Account created successfully");
-                    navigate("/homepage");
                     setLocalStorage();
                     setFirebase();
+                    navigate("/homepage");
                 }).catch((error) =>{ //displays error when the user is creating an account
                     console.log("error ", error.code);
                     if(error.code === "auth/invalid-email"){
