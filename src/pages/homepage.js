@@ -241,13 +241,13 @@ export const Home = () =>{
     const addComment = async () =>{
         //add comment to the doc comment collection
         console.log(userComment);
+        console.log(localStorage.getItem("userName"));
         if(userComment === ""){
             alert("comment cannot be empty");
             return;
         }
-        console.log(userData.userName);
         await addDoc(collection(db, "Homepage Feed", currPostId, "comments"),{
-            name: userData.userName,
+            name: localStorage.getItem("userName"),
             comment: userComment
         })
         //load comments after adding a new one
@@ -354,7 +354,7 @@ export const Home = () =>{
                                 <p className="comments">
                                     {comments.map(comment =>(
                                         <div key={comment.id}>
-                                            <p> {comment.userCommentName} </p>
+                                            <h2> {comment.userCommentName} </h2>
                                             <p> {comment.comment} </p>
                                         </div> 
                                     ))}
