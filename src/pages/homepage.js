@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from "flowbite-react";
-import { collection, addDoc, getDocs, getDoc } from "firebase/firestore"; 
+import { collection, addDoc, getDocs } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
@@ -37,13 +37,13 @@ export const Home = () =>{
     })
     const [userProfilePost, setUserProfilePost] = useState([]);
 
-    //used to set userpopup profile
-    const setProfile = (postField, userInfo) =>{
-        setUserProfile(prevData => ({
-            ...prevData,
-            [postField]: userInfo
-        }))
-    }
+    // //used to set userpopup profile
+    // const setProfile = (postField, userInfo) =>{
+    //     setUserProfile(prevData => ({
+    //         ...prevData,
+    //         [postField]: userInfo
+    //     }))
+    // }
     
 
     const setNewPost = (postField, userInput) =>{

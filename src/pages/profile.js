@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Modal } from "flowbite-react";
-import { collection, getDocs, updateDoc, doc } from "firebase/firestore"; 
+import { collection, getDocs, updateDoc } from "firebase/firestore"; 
 import { GoPencil } from "react-icons/go";
 
 import { Navbar } from "./navbar";
