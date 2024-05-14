@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Modal } from "flowbite-react";
 import { collection, addDoc, getDocs } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
+import { UserContext } from "./userInfo";
 
 import { FaRegPlusSquare, FaRegComment } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
@@ -26,19 +27,21 @@ export const Home = () =>{
         "desc": "My owner didn't have anything to say. I'm not surprised, they have a small brain.",
         "img": null
     })
+    const [feedPost, setFeedPost] = useState([]); //feed post on the homepage
+    const [postPopup, setPostPopup] = useState(false); //visbiilty of creating a new post popup
+    const [userPopup, setUserPopup] = useState(false); //visbility of seeing a users profile popup
+    const {userData, updateUserData} = useContext(UserContext); 
+    const [userComment, setUserComment] = useState(""); //person who logged in comments
+    const [comments, setComments] = useState([]); //comments on the post 
 
-    const [feedPost, setFeedPost] = useState([]);
-    const [postPopup, setPostPopup] = useState(false);
-    const [userPopup, setUserPopup] = useState(false);
-    const [commentPopup, setCommentPopup] = useState(false);
-
-    const [userProfile, setUserProfile] = useState({
+    //setting values when you click on a username to see their profile
+    const [userProfile, setUserProfile] = useState({ 
         name: "",
         desc: "",
         date: "",
         img: null,
     })
-    const [userProfilePost, setUserProfilePost] = useState([]);
+    const [userProfilePost, setUserProfilePost] = useState([]); //user post popup
 
     const setNewPost = (postField, userInput) =>{
         setUserPost(prevDate => ({
@@ -49,15 +52,26 @@ export const Home = () =>{
 
     //sets all the 'comments popup' to false
     const [commentPopups, setCommentPopups] = useState(Array(feedPost.length).fill(false));
-    //when we toggle the post, we pass in the index of that post and set its value to true (making the post popup) 
-    const toggleCommentPopup = (index) => {
-        const newPopups = [...commentPopups];
-        newPopups[index] = !newPopups[index];
+    const [currPostId, setCurrPostId] = useState("");
+        //when we toggle the post, we pass in the index of that post and set its value to true (making the post popup) 
+        const toggleCommentPopup = (index, postId) => {
+        // Check if the clicked popup is already open
+        const isOpen = commentPopups[index];
+        // Close all open comment popups
+        const newPopups = commentPopups.map((popup, i) => (i === index ? !popup : false));
+        
+        // If the clicked popup was not already open, open it
+        if (!isOpen) {
+            // Open the clicked comment popup
+            newPopups[index] = true;
+            setCurrPostId(postId);
+            loadComment(postId);
+        }
         setCommentPopups(newPopups);
     };
     
+    //loads the current post on the homepage
     const isMounted = useRef(true);
-
     useEffect(() => {
         if (isMounted.current) {
             getFeed();
@@ -212,15 +226,42 @@ export const Home = () =>{
     //gets all the post that the user has posted
     const getUserProfilePost = async (userEmail) =>{
         const post = await getDocs(collection(db, "Users", userEmail, "post"));
-            const postReceived = post.docs.map(doc =>({
-                id: doc.id,
-                title: doc.data().title,
-                desc: doc.data().desc,
-                img: doc.data().img,
-                user: doc.data().user,
-                date: doc.data().date,
-            }))
-            setUserProfilePost(postReceived);
+        const postReceived = post.docs.map(doc =>({
+            id: doc.id,
+            title: doc.data().title,
+            desc: doc.data().desc,
+            img: doc.data().img,
+            user: doc.data().user,
+            date: doc.data().date,
+        }))
+        setUserProfilePost(postReceived);
+    }
+
+    //adds a comment to the post
+    const addComment = async () =>{
+        //add comment to the doc comment collection
+        console.log(userComment);
+        if(userComment === ""){
+            alert("comment cannot be empty");
+            return;
+        }
+        console.log(userData.userName);
+        await addDoc(collection(db, "Homepage Feed", currPostId, "comments"),{
+            name: userData.userName,
+            comment: userComment
+        })
+        //load comments after adding a new one
+        loadComment(currPostId);
+    }
+
+    //loads all comments on the specific post
+    const loadComment = async (postId) =>{
+        const postDocs = await getDocs(collection(db, "Homepage Feed", postId, "comments"));
+        const docComments = postDocs.docs.map(doc =>({
+            userCommentName: doc.data().name,
+            comment: doc.data().comment
+        }))
+        setComments(docComments);
     }
 
     return (
@@ -301,37 +342,33 @@ export const Home = () =>{
                         <p className="postDesc">{post.desc}</p>
                         <div className="footerContainer">
                             <AiOutlineLike className="icons"/>
-                            <FaRegComment className="icons" onClick={() => toggleCommentPopup(index)}/>
+                            <FaRegComment className="icons" id="commentIcon" onClick={() => {
+                                toggleCommentPopup(index, post.id);
+                                }}/>
                         </div>
                     </div>
                     <div className="commentPopupContainer">
                         {commentPopups[index] ? (
                             <div className="userComments">
                                 <h1> Comments </h1>
-                                <p className="comments"> Load comments here </p>
-                                <div class="inputContainer">
-                                    <input type="text" placeholder="Comment"></input>
-                                    <IoIosSend className="icon"/> 
+                                <p className="comments">
+                                    {comments.map(comment =>(
+                                        <div key={comment.id}>
+                                            <p> {comment.userCommentName} </p>
+                                            <p> {comment.comment} </p>
+                                        </div> 
+                                    ))}
+                                </p>
+                                <div className="inputContainer">
+                                    <input type="text" placeholder="Comment" onChange={(text)=> setUserComment(text.target.value)}></input>
+                                    <IoIosSend className="icon" onClick={() => addComment()}/> 
                                 </div>
-                                
                             </div>
                         ) : <div />}
                     </div>
                 </div>
             ))}
             </section>
-
-            {/* <Modal show={commentPopup} onClose={() => setCommentPopup(false)} className="commentModal">
-                <Modal.Header className="commentModalHeader"></Modal.Header>
-                <h1> Comments </h1>
-                <Modal.Body>
-                    <p> comments go here</p>
-                    <div className="commentInputContainer">
-                        <textarea placeholder="Comment on this cool cat post"></textarea>
-                        <button> Send </button>
-                    </div>
-                </Modal.Body>
-            </Modal> */}
         </div>
         );
         
