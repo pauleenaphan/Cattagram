@@ -15,20 +15,20 @@ export const Navbar = () => {
     <nav className="headerNav">
         <img src={cattagramLogo} alt="cattagram logo"/>
         <section className="navigation">
-            <div className="iconContainer">
-                <IoHomeOutline className="icon" onClick={()=> navigate("/homepage")}/>
+            <div className="iconContainer" onClick={()=> navigate("/homepage")}>
+                <IoHomeOutline className="icon"/>
                 <p> Home </p>
             </div>
-            <div className="iconContainer">
-                <CgProfile className="icon" onClick={()=> navigate("/profilepage")}/>
+            <div className="iconContainer" onClick={()=> navigate("/profilepage")}>
+                <CgProfile className="icon"/>
                 <p> Profile </p>
             </div>
             <div className="iconContainer">
                 <IoChatbubbleEllipsesOutline className="icon"/>
                 <p> Chat </p>
             </div>
-            <div className="iconContainer">
-                <IoSettingsOutline className="icon" onClick={() => navigate("/settings")}/>
+            <div className="iconContainer" onClick={() => navigate("/settings")}>
+                <IoSettingsOutline className="icon"/>
                 <p> Settings </p>
             </div>
         </section>
