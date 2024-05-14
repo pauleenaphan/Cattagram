@@ -25,22 +25,74 @@
     align-items: center;
     width: 80%;
     margin-left: 20%;
+    gap: 20px;
+
 }
 
 /* user post feed */
 .postContainer{
-    background: linear-gradient(to bottom, rgb(182, 185, 185), rgb(226, 228, 230));
-    border-radius: 10px;
-    width: 40%;
-    height: 10%;
+    /* background: linear-gradient(to bottom, rgb(182, 185, 185), rgb(226, 228, 230)); */
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 2%;
+    flex-direction: row; /* Ensure the flex direction is column */
+    flex-grow: 1; /* Allow postContainer to grow to fill available space */
+    width: 60%;
 }
 
-.postContainer img{
+
+.postContainer2{
+    background-color: beige;
     width: 100%;
+}
+
+.postContainer2 img{
+    width: 100%;
+}
+
+.commentPopupContainer{
+    width: 30%;
+    position: relative;
+}
+
+.commentPopupContainer h1{
+    text-align: center;
+}
+
+.userComments{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    background-color: yellowgreen;
+    width: 150%;
+}
+
+.comments{
+    height: 80%;
+    padding: 10px;
+    margin: 10px;
+}
+
+.userComments .inputContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.userComments .icon{
+    height: 50%;
+    width: 20%;
+    margin-left: -5%;
+    cursor: pointer;
+}
+
+.userComments input[type="text"]{
+    margin: 10px;
+    padding: 10px;
+    font: 20px;
+    width: 80%;
+    border: none;
+    border-radius: 10px;
 }
 
 .userPostName{
@@ -84,7 +136,7 @@
     background-color: white;
     border-radius: 10px;
     width: 40vw;
-    height: 80vh;
+    height: 90vh;
     z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
@@ -173,18 +225,12 @@
     border-radius: 10px;
 }
 
-.userBodyModalContainer{
-    display: flex;
-    justify-content: center;
-}
-
 .userProfileModal .profileContainer{
     display: flex;
     background-color: rgb(226, 228, 230);
-    border-radius: 10px;
     justify-content: center;
     width: 100%;
-    margin-bottom: 10%;
+    margin-bottom: 5%;
     padding: 5% 0px;
     gap: 10px;
 }
@@ -209,7 +255,7 @@
 }
 
 .userProfilePostContainer .userPostContainer{
-    background: linear-gradient(to bottom, rgb(182, 185, 185), rgb(226, 228, 230));
+    background-color: rgb(226, 228, 230);
     width: 60%;
     display: flex;
     flex-direction: column;
@@ -218,4 +264,21 @@
     border-radius: 10px;
 }
 
+.footerContainer{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 90%;
+    margin-bottom: 2%;
+}
 
+.footerContainer .icons{
+    width: 8%;
+    height: 8%;
+    cursor: pointer;
+    position: relative;
+}
+
+.footerContainer .icons:hover{
+    color: pink;
+}

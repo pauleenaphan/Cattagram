@@ -6,7 +6,9 @@ import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
 
-import { FaRegPlusSquare } from "react-icons/fa";
+import { FaRegPlusSquare, FaRegComment } from "react-icons/fa";
+import { IoIosSend } from "react-icons/io";
+import { AiOutlineLike } from "react-icons/ai";
 
 
 //returns date in month/day/year format
@@ -28,6 +30,7 @@ export const Home = () =>{
     const [feedPost, setFeedPost] = useState([]);
     const [postPopup, setPostPopup] = useState(false);
     const [userPopup, setUserPopup] = useState(false);
+    const [commentPopup, setCommentPopup] = useState(false);
 
     const [userProfile, setUserProfile] = useState({
         name: "",
@@ -37,21 +40,21 @@ export const Home = () =>{
     })
     const [userProfilePost, setUserProfilePost] = useState([]);
 
-    // //used to set userpopup profile
-    // const setProfile = (postField, userInfo) =>{
-    //     setUserProfile(prevData => ({
-    //         ...prevData,
-    //         [postField]: userInfo
-    //     }))
-    // }
-    
-
     const setNewPost = (postField, userInput) =>{
         setUserPost(prevDate => ({
             ...prevDate,
             [postField]: userInput
         }))
     }
+
+    //sets all the 'comments popup' to false
+    const [commentPopups, setCommentPopups] = useState(Array(feedPost.length).fill(false));
+    //when we toggle the post, we pass in the index of that post and set its value to true (making the post popup) 
+    const toggleCommentPopup = (index) => {
+        const newPopups = [...commentPopups];
+        newPopups[index] = !newPopups[index];
+        setCommentPopups(newPopups);
+    };
     
     const isMounted = useRef(true);
 
@@ -92,7 +95,6 @@ export const Home = () =>{
         }catch(error){
             console.log("error ", error);
         }
-        
     }
 
     const handleImageUpload = (e) => {
@@ -285,20 +287,51 @@ export const Home = () =>{
             </div>
         
             <section className="feedContainer">
-            {feedPost.map(post => (
+            {feedPost.map((post, index) => (
                 <div key={post.id} className="postContainer">
-                <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
-                {post.img && (
-                    <img src={post.img} alt="user post" />
-                )}
-                <div className="postHeader">
-                    <h2>{post.title}</h2>
-                    <p className="postDate">{post.date}</p>
-                </div>
-                <p className="postDesc">{post.desc}</p>
+                    <div className="postContainer2">
+                        <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
+                        {post.img && (
+                            <img src={post.img} alt="user post" />
+                        )}
+                        <div className="postHeader">
+                            <h2>{post.title}</h2>
+                            <p className="postDate">{post.date}</p>
+                        </div>
+                        <p className="postDesc">{post.desc}</p>
+                        <div className="footerContainer">
+                            <AiOutlineLike className="icons"/>
+                            <FaRegComment className="icons" onClick={() => toggleCommentPopup(index)}/>
+                        </div>
+                    </div>
+                    <div className="commentPopupContainer">
+                        {commentPopups[index] ? (
+                            <div className="userComments">
+                                <h1> Comments </h1>
+                                <p className="comments"> Load comments here </p>
+                                <div class="inputContainer">
+                                    <input type="text" placeholder="Comment"></input>
+                                    <IoIosSend className="icon"/> 
+                                </div>
+                                
+                            </div>
+                        ) : <div />}
+                    </div>
                 </div>
             ))}
             </section>
+
+            {/* <Modal show={commentPopup} onClose={() => setCommentPopup(false)} className="commentModal">
+                <Modal.Header className="commentModalHeader"></Modal.Header>
+                <h1> Comments </h1>
+                <Modal.Body>
+                    <p> comments go here</p>
+                    <div className="commentInputContainer">
+                        <textarea placeholder="Comment on this cool cat post"></textarea>
+                        <button> Send </button>
+                    </div>
+                </Modal.Body>
+            </Modal> */}
         </div>
         );
         
