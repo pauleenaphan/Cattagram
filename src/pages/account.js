@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc} from "firebase/firestore"; 
+import { collection, addDoc, setDoc, doc } from "firebase/firestore"; 
 
 import '../style/acc.css';
 import logo from "../imgs/logo/logo.png";
@@ -78,6 +78,14 @@ export const CreateAccount = ()=>{
                 pic: "default pic for now",
                 profileDesc: "I'm new to cattagram!",
                 datejoined: getDate()
+            })
+        }catch(error){
+            console.log("error ", error);
+        }
+
+        try{
+            await setDoc(doc(db, "Users", localStorage.getItem("userEmail")), {
+                placeholder: ""
             })
         }catch(error){
             console.log("error ", error);
