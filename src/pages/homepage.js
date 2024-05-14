@@ -35,6 +35,7 @@ export const Home = () =>{
         date: "",
         img: null,
     })
+    const [userProfilePost, setUserProfilePost] = useState([]);
 
     //used to set userpopup profile
     const setProfile = (postField, userInfo) =>{
@@ -171,61 +172,89 @@ export const Home = () =>{
         }
     }
 
+    //gets info of the user when pressed on and set its values
     const fetchUserInfo = async (userName) => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'Users'));
-            console.log("hi1");
-            console.log("Query Snapshot:", querySnapshot);
-        
-            if (querySnapshot.empty) {
-                console.log("No documents found in 'Users' collection.");
-            } else {
-                for (const doc of querySnapshot.docs) {
-                    console.log("Document ID:", doc.id);
-                    console.log("Document Data:", doc.data());
-        
-                    // Fetch the 'userInfo' subcollection for the current document
-                    const userInfoSnapshot = await getDocs(collection(db, 'Users', doc.id, 'userInfo'));
-                    console.log("User Info Snapshot:", userInfoSnapshot);
-        
-                    // Process the 'userInfo' documents as needed
-                    userInfoSnapshot.forEach(userInfoDoc => {
-                        console.log("User Info Document ID:", userInfoDoc.id);
-                        console.log("User Info Document Data:", userInfoDoc.data());
-                    });
-                }
+            const usersSnapshot = await getDocs(collection(db, "Users"));
+            
+            if(usersSnapshot.empty){
+                console.log("empty")
+            }else{
+                console.log("not empty")
             }
-    
-            // for (const userDoc of querySnapshot.docs) {
-            //     console.log("hi2");
-            //     const userInfoSnapshot = await getDocs(collection(db, 'Users', userDoc.id, 'userInfo'));
-            //     console.log(userInfoSnapshot);
-            //     console.log("hi2");
-    
-            //     userInfoSnapshot.forEach((userInfoDoc) => {
-            //         const userInfoData = userInfoDoc.data();
-            //         console.log("hi3");
-            //         if (userInfoData.name === userName) {
-            //             console.log('Found matching username for user with email:', userDoc.id);
-            //         }
-            //     });
-            // }
-        } catch (error) {
+            //loops thru each of the docs to find a matching username 
+            for (const userDoc of usersSnapshot.docs) {
+                const userInfoSnapshot = await getDocs(collection(db, 'Users', userDoc.id, 'userInfo'));
+                userInfoSnapshot.forEach((userInfoDoc) => {
+                    const userInfoData = userInfoDoc.data();
+                    console.log("userDoc", userDoc.id);
+                    if (userInfoData.name === userName) {
+                        setUserProfile({
+                            name: userInfoData.name,
+                            desc: userInfoData.profileDesc,
+                            date: userInfoData.datejoined,
+                            img: userInfoData.pic,
+                        })
+                        //set profile post BEFORE we call the popup to open 
+                        //also need to pass in the userDoc id rather than setting it to a prop so it updates in time
+                        getUserProfilePost(userDoc.id);
+                        setUserPopup(true);    
+                    }
+                });
+            }
+        }catch(error) {
             console.error('Error fetching user info:', error);
         }
     };
+
+    //gets all the post that the user has posted
+    const getUserProfilePost = async (userEmail) =>{
+        const post = await getDocs(collection(db, "Users", userEmail, "post"));
+            const postReceived = post.docs.map(doc =>({
+                id: doc.id,
+                title: doc.data().title,
+                desc: doc.data().desc,
+                img: doc.data().img,
+                user: doc.data().user,
+                date: doc.data().date,
+            }))
+            setUserProfilePost(postReceived);
+    }
 
     return (
         <div className="homeContainer">
             <Navbar />
             {userPopup &&(
                 <>
-                    <div className="overLay" onClick={() => setUserPopup(false)}></div>
+                    <div className="overlay" onClick={() => setUserPopup(false)}></div>
                     <Modal show={userPopup} onClose={() => setUserPopup(false)} className="userProfileModal">
                         <Modal.Header className="modalHeader"></Modal.Header>
-                        <div className="userBodyModalCotainer">
+                        <div className="userBodyModalContainer">
                             <Modal.Body>
-                                <img/>
+                            <section className="profileContainer">
+                                <img src={userProfile.img} alt="userPfp"/>
+                                <div className="profileDescContainer">
+                                    <h1> {userProfile.name} </h1>
+                                    <p> {userProfile.desc} </p>
+                                    <p> {userProfile.date} </p>
+                                </div>
+                                
+                            </section>
+                            <section className="userProfilePostContainer">
+                                {userProfilePost.map(post =>(
+                                    <div key={post.id} className="userPostContainer">
+                                        <h1 className="userPostName">{post.user}</h1>
+                                        {post.img && (
+                                        <img src={post.img} alt="user post" />
+                                        )}
+                                        <div className="postHeader">
+                                        <h2>{post.title}</h2>
+                                        <p className="postDate">{post.date}</p>
+                                        </div>
+                                        <p className="postDesc">{post.desc}</p>
+                                    </div>
+                                ))}
+                            </section>
                             </Modal.Body>
                         </div>
                     </Modal>
@@ -250,9 +279,9 @@ export const Home = () =>{
                 </Modal>
             </>
             )}
-            <div className="tempBtnContainer">
-            <FaRegPlusSquare className="postIcon" onClick={() => setPostPopup(true)} />
-            <p>New post</p>
+            <div className="tempBtnContainer"  onClick={() => setPostPopup(true)}>
+                <FaRegPlusSquare className="postIcon"/>
+                <p>New post</p>
             </div>
         
             <section className="feedContainer">
