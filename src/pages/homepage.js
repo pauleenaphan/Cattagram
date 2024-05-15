@@ -31,7 +31,7 @@ export const Home = () =>{
     const [postPopup, setPostPopup] = useState(false); //visbiilty of creating a new post popup
     const [userPopup, setUserPopup] = useState(false); //visbility of seeing a users profile popup
     const {userData, updateUserData} = useContext(UserContext); 
-    const [userComment, setUserComment] = useState(""); //person who logged in comments
+    const [userComment, setUserComment] = useState(""); //comment that user submited
     const [comments, setComments] = useState([]); //comments on the post 
 
     //setting values when you click on a username to see their profile
@@ -248,9 +248,12 @@ export const Home = () =>{
         }
         await addDoc(collection(db, "Homepage Feed", currPostId, "comments"),{
             name: localStorage.getItem("userName"),
-            comment: userComment
+            comment: userComment,
+            date: getDate()
         })
         //load comments after adding a new one
+        // setUserComment("");
+        // console.log("User comment after clearing:", userComment);
         loadComment(currPostId);
     }
 
@@ -259,7 +262,8 @@ export const Home = () =>{
         const postDocs = await getDocs(collection(db, "Homepage Feed", postId, "comments"));
         const docComments = postDocs.docs.map(doc =>({
             userCommentName: doc.data().name,
-            comment: doc.data().comment
+            comment: doc.data().comment,
+            date: doc.data().date
         }))
         setComments(docComments);
     }
@@ -355,13 +359,20 @@ export const Home = () =>{
                                     {comments.map(comment =>(
                                         <div key={comment.id}>
                                             <h2> {comment.userCommentName} </h2>
-                                            <p> {comment.comment} </p>
+                                            <div className="commentDateContainer">
+                                                <p> {comment.comment} </p>
+                                                <p className="commentDate"> {comment.date} </p>
+                                            </div>
+                                            
                                         </div> 
                                     ))}
                                 </p>
                                 <div className="inputContainer">
-                                    <input type="text" placeholder="Comment" onChange={(text)=> setUserComment(text.target.value)}></input>
-                                    <IoIosSend className="icon" onClick={() => addComment()}/> 
+                                    <input type="text" placeholder="Comment" value={userComment} onChange={(text)=> setUserComment(text.target.value)}></input>
+                                    <IoIosSend className="icon" onClick={() => {
+                                        addComment();
+                                        setUserComment("");
+                                        }}/> 
                                 </div>
                             </div>
                         ) : <div />}

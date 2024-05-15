@@ -87,7 +87,7 @@
     flex-direction: column;
     justify-content: center;
     position: relative;
-    max-height: 400px;
+    max-height: 500px;
     /* background: linear-gradient(to bottom, rgb(152, 154, 156), rgb(226, 228, 230)); */
     background-color: #f8a526;
     border-radius: 10px;
@@ -102,14 +102,19 @@
 }
 
 .comments h2{
-    margin-bottom: -3%;
+    margin-bottom: 10px;
 }
 
-.comments p{
+.commentDateContainer{
     background-color: rgba(255, 255, 255, 0.582);
-    padding: 10px;
+    padding: 1px 10px;
     width: 90%;
     border-radius: 5px;
+}
+
+.commentDate{
+    text-align: right;
+    text-decoration: underline;
 }
 
 .userComments .inputContainer{
