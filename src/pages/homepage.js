@@ -11,7 +11,6 @@ import { FaRegPlusSquare, FaRegComment } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
 
-
 //returns date in month/day/year format
 const getDate = () => {
     const currentDate = new Date();
@@ -332,6 +331,7 @@ export const Home = () =>{
             </div>
         
             <section className="feedContainer">
+                <h1>Homepage Feed</h1> 
             {feedPost.map((post, index) => (
                 <div key={post.id} className="postContainer">
                     <div className="postContainer2">

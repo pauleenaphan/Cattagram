@@ -23,7 +23,7 @@ export const Navbar = () => {
                 <CgProfile className="icon"/>
                 <p> Profile </p>
             </div>
-            <div className="iconContainer">
+            <div className="iconContainer" onClick={()=> navigate("/chatpage")}>
                 <IoChatbubbleEllipsesOutline className="icon"/>
                 <p> Chat </p>
             </div>
