@@ -6,9 +6,9 @@ import { RiChatNewLine } from "react-icons/ri";
 
 export const Chat = () =>{
     //creates new chat
-    const addChat = async () =>{
+    // const addChat = async () =>{
 
-    }
+    // }
 
     return(
         <div className="chatContainer">

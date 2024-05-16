@@ -29,7 +29,7 @@ export const Home = () =>{
     const [feedPost, setFeedPost] = useState([]); //feed post on the homepage
     const [postPopup, setPostPopup] = useState(false); //visbiilty of creating a new post popup
     const [userPopup, setUserPopup] = useState(false); //visbility of seeing a users profile popup
-    const {userData, updateUserData} = useContext(UserContext); 
+    // const {userData, updateUserData} = useContext(UserContext); 
     const [userComment, setUserComment] = useState(""); //comment that user submited
     const [comments, setComments] = useState([]); //comments on the post 
 
