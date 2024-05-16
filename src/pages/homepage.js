@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from "flowbite-react";
 import { collection, addDoc, getDocs } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
-import { UserContext } from "./userInfo";
+// import { UserContext } from "./userInfo";
 
 import { FaRegPlusSquare, FaRegComment } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
