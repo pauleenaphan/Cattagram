@@ -1,9 +1,9 @@
 /* the whole page */
 .homeContainer .pageContainer{
-    /* background-color: pink; */
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     background-color: #ffcf88;
+    height: 100vh;
 }
 
 /* feed container */
@@ -16,47 +16,81 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for WebKit-based browsers (Chrome, Safari) */
+.homeContainer .feedContainer::-webkit-scrollbar {
+    display: none;
 }
 
 /* each post */
 .pageContainer .postContainer{
-    width: 90%;
+    width: 95%;
     margin: 15px;
     border-radius: 10px;
-    background-color: #f2f2f2;
+    background-color: rgb(221, 221, 221);
     border-radius: 10px;
-    padding: 0px 20px;
+    /* padding: 0px 20px; */
 }
 
-.pageContainer .postContainer img{
+.pageContainer .postContainer .imgPost{
     width: 100%;
     height: 40%;
 }
 
-/* userpfp and name on post */
+/* userpfp, name, and date on post */
 .pageContainer .userHeaderContainer{
     display: flex;
     align-items: center;
+    gap: 10px;
+    /* margin: 10px 10px 10px 0; */
+    padding: 10px 20px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
-.pageContainer .userHeaderContainer img{
-    width: 20%;
-}
-
-/* title and date of post */
-.pageContainer .postInfoHeader{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.postInfoHeader h2{
+.pageContainer .userHeaderContainer h1{
     font-size: 30px;
+    margin-bottom: -10%;
+    text-decoration: underline;
 }
 
-.postInfoHeader .postDate{
-    font-size: 20px;
+.pageContainer .userHeaderContainer .imgContainer {
+    width: 10%; /* Adjust percentage as needed */
+    position: relative; /* This is necessary for the padding-bottom trick */
+    padding-bottom: 10%; /* This creates a square container */
+}
+
+.pageContainer .userHeaderContainer .imgContainer img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    border-radius: 10px; /* Adjust radius as needed */
+}
+
+/* title of post */
+.postContainer2 h2{
+    font-size: 35px;
+    padding: 5% 20px 0px;
+    margin-top: -3%;
+}
+
+.postBodyContainer {
+    /* Left, right, and bottom inner shadow */
+    box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 0px 0px 10px 10px;
+}
+
+/* description of post */
+.postContainer2 .postDesc{
+    padding: 0px 20px;
 }
 
 /* like and comment btn container */
@@ -64,12 +98,104 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin-bottom: 3%;
+    padding: 10px 20px;
 }
 
 .footerContainer .icons{
-    width: 9%;
-    height: 13%;
+    width: 7%;
+    height: 10%;
     cursor: pointer;
 }
 
+/* modal when the user creates a new post */
+.newPostModal{
+    margin: auto;
+    background-color: white;
+    border-radius: 10px;
+    width: 40vw;
+    height: 90vh;
+    z-index: 1000; /* Ensure the modal appears above the overlay */
+}
+
+.newPostModal h1{
+    text-align: center;
+}
+
+.modalHeader{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f8a526;
+    padding: 10px 0px;
+    font-size: 28px;
+}
+
+.bodyModalContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 70vh;
+}
+
+.modalHeader button{
+    border: none;
+}
+
+.newPost{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.newPost input[type=text]{
+    font-size: 20px;
+    padding: 2%;
+    width: 80%;
+}
+
+.newPost input[type=file]{
+    cursor: pointer;
+    margin: 2% 0;
+}
+
+.newPost textarea{
+    font-size: 20px;
+    padding: 2%;
+    resize: none;
+}
+
+.newPost input[type=text], .newPost textarea{
+    border: 5px solid rgb(226, 228, 230);
+    outline: none;
+    border-radius: 10px;
+}
+
+.newPost button{
+    background-color: #f8a526;
+    border: 3px solid #f8a526;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 10px 50px;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Add darker orange shadow */
+}
+
+.newPost input[type=file]{
+    font-size: 20px;
+}
+
+.newPost button:hover{
+    border: 3px solid #f8a526;
+    background-color: white;
+}
+
+/* third column in grid layout */
+.suggested{
+    background-color: #f8a526;
+    margin: 10px;
+    border-radius: 10px;
+    height: 98vh;
+}

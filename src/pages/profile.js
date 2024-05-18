@@ -120,6 +120,7 @@ export const Profile = () =>{
                 profileDesc: userP.desc,
                 pic: userP.pic 
             });
+            localStorage.setItem("userPfp", userP.pic);
         }catch (error){
             console.log("error ", error);
         }

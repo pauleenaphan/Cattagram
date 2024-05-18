@@ -9,6 +9,7 @@ import logoPass from "../imgs/logo/invalidPassLogo.png";
 import logoEmail from "../imgs/logo/invalidEmailPass.png";
 import shortLogoPass from "../imgs/logo/shortPassLogo.png";
 import emailExistLogo from "../imgs/logo/emailExistLogo.png";
+import defaultPfp from "../imgs/defaultPfp.png";
 
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
@@ -85,7 +86,7 @@ export const CreateAccount = ()=>{
         try{
             await addDoc(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"), {
                 name: userData.userName,
-                pic: "default pic for now",
+                pic: defaultPfp,
                 profileDesc: "I'm new to cattagram!",
                 datejoined: getDate()
             })

@@ -7,7 +7,7 @@ import { db } from '../firebaseConfig.js';
 import '../style/home.css';
 // import { UserContext } from "./userInfo";
 
-import { FaRegComment } from "react-icons/fa";
+import { FaRegComment, FaRegPlusSquare } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
 
@@ -75,6 +75,7 @@ export const Home = () =>{
     useEffect(() => {
         if (isMounted.current) {
             getFeed();
+            getPfp();
             isMounted.current = false;
         }
     }, [feedPost]);
@@ -82,7 +83,25 @@ export const Home = () =>{
     //creates new post 
     const handleSubmit = async (e) =>{
         e.preventDefault();
-        getPfp();
+        // getPfp();
+        console.log(localStorage.getItem("userPfp"));
+
+         // Log each field to check for undefined values
+        console.log("Title:", userPost.title);
+        console.log("Description:", userPost.desc);
+        console.log("Image:", userPost.img);
+        console.log("User:", localStorage.getItem("userName"));
+        console.log("Date:", getDate());
+        console.log("User Pfp:", localStorage.getItem("userPfp"));
+
+        // Check for undefined fields
+        if (!userPost.title || !userPost.desc || !userPost.img || 
+            !localStorage.getItem("userName") || !getDate() || 
+            !localStorage.getItem("userPfp")) {
+            console.log("One or more fields are missing or undefined");
+            return;
+        }
+
         try{
             await addDoc(collection(db, "Homepage Feed"), {
                 title: userPost.title,
@@ -90,7 +109,7 @@ export const Home = () =>{
                 img: userPost.img,
                 user: localStorage.getItem("userName"),
                 date: getDate(),
-                userPfp: userPost.pfp
+                userPfp: localStorage.getItem("userPfp")
             }); 
             getFeed();
             setPostPopup(false);
@@ -106,7 +125,7 @@ export const Home = () =>{
                 img: userPost.img,
                 user: localStorage.getItem("userName"),
                 date: getDate(),
-                userPfp: userPost.pfp
+                userPfp: localStorage.getItem("userPfp")
             })
             console.log("post added to user's firebase feed sucessfully");
         }catch(error){
@@ -121,6 +140,7 @@ export const Home = () =>{
                 const data = doc.data();
                 if (data.name === localStorage.getItem("userName")) {
                     setUserPost("pfp", data.pic);
+                    localStorage.setItem("userPfp", data.pic);
                 }
             });
         } catch (error) {
@@ -198,6 +218,7 @@ export const Home = () =>{
                 img: doc.data().img,
                 user: doc.data().user,
                 date: doc.data().date,
+                pfp: doc.data().userPfp
             }))
             setFeedPost(postReceived);
         }catch(error){
@@ -342,10 +363,10 @@ export const Home = () =>{
                 </Modal>
             </>
             )}
-            {/* <div className="tempBtnContainer"  onClick={() => setPostPopup(true)}>
+            <div className="tempBtnContainer"  onClick={() => setPostPopup(true)}>
                 <FaRegPlusSquare className="postIcon"/>
                 <p>New post</p>
-            </div> */}
+            </div>
             <div className="pageContainer">
                 <Navbar />
                 <section className="feedContainer">
@@ -354,22 +375,26 @@ export const Home = () =>{
                         <div key={post.id} className="postContainer">
                             <div className="postContainer2">
                                 <div className="userHeaderContainer">
-                                    <img src={post.userPfp} alt="userpfp"/>
-                                    <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
+                                    <div className="imgContainer">
+                                        <img src={post.pfp} className="userPfp" alt="userpfp"/>
+                                    </div>
+                                    <div className="nameDateContainer">
+                                        <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
+                                        <p className="postDate">{post.date}</p>
+                                    </div>     
                                 </div>
                                 {post.img && (
-                                    <img src={post.img} alt="user post" />
+                                    <img src={post.img} alt="user post" className="imgPost"/>
                                 )}
-                                <div className="postInfoHeader">
+                                <div className="postBodyContainer">
                                     <h2>{post.title}</h2>
-                                    <p className="postDate">{post.date}</p>
-                                </div>
-                                <p className="postDesc">{post.desc}</p>
-                                <div className="footerContainer">
-                                    <AiOutlineLike className="icons"/>
-                                    <FaRegComment className="icons" id="commentIcon" onClick={() => {
-                                        toggleCommentPopup(index, post.id);
-                                        }}/>
+                                    <p className="postDesc">{post.desc}</p>
+                                    <div className="footerContainer">
+                                        <AiOutlineLike className="icons"/>
+                                        <FaRegComment className="icons" id="commentIcon" onClick={() => {
+                                            toggleCommentPopup(index, post.id);
+                                            }}/>
+                                    </div>
                                 </div>
                             </div>
                             <div className="commentPopupContainer">
