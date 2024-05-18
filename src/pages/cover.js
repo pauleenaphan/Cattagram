@@ -21,7 +21,7 @@ export const Cover = ()=>{
     }, [navigate]);
 
     return(
-        <div className="pageContainer">
+        <div className="loadingContainer">
             <img className="loadingGif" src={loadingGif} alt="cat loading screen"/>
         </div>
         

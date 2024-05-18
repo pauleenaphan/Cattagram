@@ -3,11 +3,14 @@
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
-    position: fixed;
+    height: 98vh;
+    margin: 10px;
 }
 
 .headerNav img{
-    width: 20%;
+    width: 90%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .icon{
@@ -40,7 +43,9 @@
     background-color: #f8a526;
     display: flex;
     flex-direction: column;
-    width: 20%;
+    width: 90%;
     gap: 5px;
     height: 100vh;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
 }

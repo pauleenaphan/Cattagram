@@ -7,7 +7,7 @@ import { db } from '../firebaseConfig.js';
 import '../style/home.css';
 // import { UserContext } from "./userInfo";
 
-import { FaRegPlusSquare, FaRegComment } from "react-icons/fa";
+import { FaRegComment } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
 
@@ -24,7 +24,8 @@ export const Home = () =>{
     const [userPost, setUserPost] = useState({
         "title": "My dumb owner didn't put a title",
         "desc": "My owner didn't have anything to say. I'm not surprised, they have a small brain.",
-        "img": null
+        "img": null,
+        "pfp": null,
     })
     const [feedPost, setFeedPost] = useState([]); //feed post on the homepage
     const [postPopup, setPostPopup] = useState(false); //visbiilty of creating a new post popup
@@ -81,13 +82,15 @@ export const Home = () =>{
     //creates new post 
     const handleSubmit = async (e) =>{
         e.preventDefault();
+        getPfp();
         try{
             await addDoc(collection(db, "Homepage Feed"), {
                 title: userPost.title,
                 desc: userPost.desc,
                 img: userPost.img,
                 user: localStorage.getItem("userName"),
-                date: getDate()
+                date: getDate(),
+                userPfp: userPost.pfp
             }); 
             getFeed();
             setPostPopup(false);
@@ -102,10 +105,25 @@ export const Home = () =>{
                 desc: userPost.desc,
                 img: userPost.img,
                 user: localStorage.getItem("userName"),
-                date: getDate()
+                date: getDate(),
+                userPfp: userPost.pfp
             })
             console.log("post added to user's firebase feed sucessfully");
         }catch(error){
+            console.log("error ", error);
+        }
+    }
+
+    const getPfp = async () =>{
+        try {
+            const profile = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
+            profile.forEach(doc => {
+                const data = doc.data();
+                if (data.name === localStorage.getItem("userName")) {
+                    setUserPost("pfp", data.pic);
+                }
+            });
+        } catch (error) {
             console.log("error ", error);
         }
     }
@@ -269,7 +287,6 @@ export const Home = () =>{
 
     return (
         <div className="homeContainer">
-            <Navbar />
             {userPopup &&(
                 <>
                     <div className="overlay" onClick={() => setUserPopup(false)}></div>
@@ -325,61 +342,69 @@ export const Home = () =>{
                 </Modal>
             </>
             )}
-            <div className="tempBtnContainer"  onClick={() => setPostPopup(true)}>
+            {/* <div className="tempBtnContainer"  onClick={() => setPostPopup(true)}>
                 <FaRegPlusSquare className="postIcon"/>
                 <p>New post</p>
-            </div>
-        
-            <section className="feedContainer">
-                <h1>Homepage Feed</h1> 
-            {feedPost.map((post, index) => (
-                <div key={post.id} className="postContainer">
-                    <div className="postContainer2">
-                        <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
-                        {post.img && (
-                            <img src={post.img} alt="user post" />
-                        )}
-                        <div className="postHeader">
-                            <h2>{post.title}</h2>
-                            <p className="postDate">{post.date}</p>
-                        </div>
-                        <p className="postDesc">{post.desc}</p>
-                        <div className="footerContainer">
-                            <AiOutlineLike className="icons"/>
-                            <FaRegComment className="icons" id="commentIcon" onClick={() => {
-                                toggleCommentPopup(index, post.id);
-                                }}/>
-                        </div>
-                    </div>
-                    <div className="commentPopupContainer">
-                        {commentPopups[index] ? (
-                            <div className="userComments">
-                                <h1> Comments </h1>
-                                <p className="comments">
-                                    {comments.map(comment =>(
-                                        <div key={comment.id}>
-                                            <h2> {comment.userCommentName} </h2>
-                                            <div className="commentDateContainer">
-                                                <p> {comment.comment} </p>
-                                                <p className="commentDate"> {comment.date} </p>
-                                            </div>
-                                            
-                                        </div> 
-                                    ))}
-                                </p>
-                                <div className="inputContainer">
-                                    <input type="text" placeholder="Comment" value={userComment} onChange={(text)=> setUserComment(text.target.value)}></input>
-                                    <IoIosSend className="icon" onClick={() => {
-                                        addComment();
-                                        setUserComment("");
-                                        }}/> 
+            </div> */}
+            <div className="pageContainer">
+                <Navbar />
+                <section className="feedContainer">
+                    {/* <h1>Homepage Feed</h1>  */}
+                    {feedPost.map((post, index) => (
+                        <div key={post.id} className="postContainer">
+                            <div className="postContainer2">
+                                <div className="userHeaderContainer">
+                                    <img src={post.userPfp} alt="userpfp"/>
+                                    <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
+                                </div>
+                                {post.img && (
+                                    <img src={post.img} alt="user post" />
+                                )}
+                                <div className="postInfoHeader">
+                                    <h2>{post.title}</h2>
+                                    <p className="postDate">{post.date}</p>
+                                </div>
+                                <p className="postDesc">{post.desc}</p>
+                                <div className="footerContainer">
+                                    <AiOutlineLike className="icons"/>
+                                    <FaRegComment className="icons" id="commentIcon" onClick={() => {
+                                        toggleCommentPopup(index, post.id);
+                                        }}/>
                                 </div>
                             </div>
-                        ) : <div />}
-                    </div>
-                </div>
-            ))}
-            </section>
+                            <div className="commentPopupContainer">
+                                {commentPopups[index] ? (
+                                    <div className="userComments">
+                                        <h1> Comments </h1>
+                                        <p className="comments">
+                                            {comments.map(comment =>(
+                                                <div key={comment.id}>
+                                                    <h2> {comment.userCommentName} </h2>
+                                                    <div className="commentDateContainer">
+                                                        <p> {comment.comment} </p>
+                                                        <p className="commentDate"> {comment.date} </p>
+                                                    </div>
+                                                    
+                                                </div> 
+                                            ))}
+                                        </p>
+                                        <div className="inputContainer">
+                                            <input type="text" placeholder="Comment" value={userComment} onChange={(text)=> setUserComment(text.target.value)}></input>
+                                            <IoIosSend className="icon" onClick={() => {
+                                                addComment();
+                                                setUserComment("");
+                                                }}/> 
+                                        </div>
+                                    </div>
+                                ) : <div />}
+                            </div>
+                        </div>
+                    ))}
+                </section>
+                <section className="suggested">
+                    <p> this is a suggested section </p>
+                </section>
+            </div>
         </div>
         );
         
