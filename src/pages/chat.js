@@ -12,16 +12,17 @@ export const Chat = () =>{
 
     return(
         <div className="chatContainer">
-            <Navbar/>
             <div className="tempBtnContainer" >
                 <RiChatNewLine className="postIcon"/>
                 <p> New Chat </p>
             </div>
             <section className="loadChatContainer">
-                <h1> Your Chats </h1>
-                <p> Load your chats </p>
+                <Navbar/>
+                <section className="pageContainer">
+                    <h1> Your Chats </h1>
+                    <p> Load your chats </p>
+                </section>
             </section>
-
         </div>
     )
 }

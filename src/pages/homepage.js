@@ -327,15 +327,18 @@ export const Home = () =>{
                             <section className="userProfilePostContainer">
                                 {userProfilePost.map(post =>(
                                     <div key={post.id} className="userPostContainer">
-                                        <h1 className="userPostName">{post.user}</h1>
+                                        <div className="nameDateContainer">
+                                            <h1 className="userPostName">{post.user}</h1>
+                                            <p className="postDate">{post.date}</p>
+                                        </div>
                                         {post.img && (
                                         <img src={post.img} alt="user post" />
                                         )}
-                                        <div className="postHeader">
-                                        <h2>{post.title}</h2>
-                                        <p className="postDate">{post.date}</p>
+                                        <div className="postBodyContainer">
+                                            <h2>{post.title}</h2>
+                                            <p className="postDesc">{post.desc}</p>
                                         </div>
-                                        <p className="postDesc">{post.desc}</p>
+                                        
                                     </div>
                                 ))}
                             </section>

@@ -1,6 +1,16 @@
-.settingsContainer{
-    right: 0;
-    background-color: pink;
-    text-align: center;
-    position: fixed;
+.settingsContainer .pageContainer{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    background-color: #ffcf88;
+    height: 100vh;
+}
+
+.settingsContainer .settingsSection{
+    height: 98vh; /* Adjust as needed */
+    background-color: #f8a526;
+    margin: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

@@ -147,7 +147,6 @@ export const Profile = () =>{
     
     return(
         <div className="profileContainer">
-            <Navbar/>
             {editPopup && (
                 <>
                     <div className="overlay" onClick={() => setEditPopup(false)}></div>
@@ -168,39 +167,42 @@ export const Profile = () =>{
                 </>
             )}
             <div className="tempBtnContainer" onClick={() => setEditPopup(true)}>
-                <GoPencil className="tempBtn"/>
+                <GoPencil className="postIcon"/>
                 <p> Edit Profile </p>
             </div>
             
-            <div className="profileSectionContainer">
-                <section className="headerContainer">
-                    <img src={userP.pic} alt="userPfp" onClick={() =>{ console.log("hi")}}/>
-                    <div className="descContainer">
-                        <div className="captionContainer">
+            <div className="profilePageContainer">
+                <Navbar/>
+                <section className="userProfileContainer">
+                    <section className="headerContainer">
+                        <img src={userP.pic} alt="userPfp" onClick={() =>{ console.log("hi")}}/>
+                        <div className="descContainer">
                             <h1 id="userName"> {userP.name} </h1>
                             <p id="userDesc"> {userP.desc} </p>
-                        </div>
                             <p id="userDate"> {userP.dateJoined} </p>
-                    </div>
-                </section>
-
-                <section className="userFeedContainer">
-                    {feedPost.map(post => (
-                        <div key={post.id} className="userPostContainer">
-                            <h1 className="userPostName">{post.user}</h1>
-                            {post.img && (
-                            <img src={post.img} alt="user post" />
-                            )}
-                            <div className="postHeader">
-                            <h2>{post.title}</h2>
-                            <p className="postDate">{post.date}</p>
-                            </div>
-                            <p className="postDesc">{post.desc}</p>
                         </div>
-                    ))}
+                    </section>
+
+                    <section className="userFeedContainer">
+                        {feedPost.map(post => (
+                            <div key={post.id} className="userPostContainer">
+                                <div className="nameDateContainer">
+                                    <h1 className="userPostName">{post.user}</h1>
+                                    <p className="postDate">{post.date}</p>
+                                </div>
+                                {post.img && (
+                                <img src={post.img} alt="user post" />
+                                )}
+                                <div className="postBodyContainer">
+                                    <h2>{post.title}</h2>
+                                    <p className="postDesc">{post.desc}</p>
+                                </div>
+                                
+                            </div>
+                        ))}
+                    </section>
                 </section>
             </div>
-            
         </div>
     )
 }

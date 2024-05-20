@@ -1,4 +1,4 @@
-.profileContainer .headerContainer{
+/* .profileContainer .headerContainer{
     display: flex;
     justify-content: center;
     margin: 0 auto;
@@ -30,7 +30,7 @@
     background-color: rgb(190, 192, 194);
     border-radius: 10px;
     padding: 10px 40px 10px 10px;
-}
+} */
 
 /* .tempBtnContainer{
     position: fixed;
@@ -57,14 +57,14 @@
     height: 20%;
 } */
 
-.overlay {
+/* .overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value to control the opacity */
-    z-index: 999; /* Ensure the overlay appears above other content */
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 999; 
 }
 
 
@@ -74,7 +74,7 @@
     width: 40vw;
     height: 80vh;
     margin: auto;
-    z-index: 1000; /* Ensure the modal appears above the overlay */
+    z-index: 1000; 
 }
 .editModal .modalHeader{
     background-color: #f8a526;
@@ -142,7 +142,7 @@
     padding: 10px 50px;
     border-radius: 20px;
     cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Add darker orange shadow */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); 
 }
 
 .profileForminput[type=file]{
@@ -173,4 +173,4 @@
 
 .userPostContainer img{
     width: 100%;
-}
+} */
