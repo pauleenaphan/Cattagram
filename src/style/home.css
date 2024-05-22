@@ -266,4 +266,116 @@
     height: 98vh;
 }
 
+/* modal popup for comments */
+.commentModal{
+    margin: auto;
+    background-color: white;
+    border-radius: 10px;
+    width: 80vw;
+    height: 90vh;
+    z-index: 1000; /* Ensure the modal appears above the overlay */
+}
 
+.commentModal h1{
+    text-align: center;
+}
+
+.commentModal .bodyModalContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* user post on the left  */
+.commentModal .currentPostContainer{
+    /* background-color: rgb(233, 233, 233);
+    height: 90vh; */
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.commentModal .postContainer{
+    display: flex;
+    flex-direction: column;
+    background-color: #ffcf88;
+    border-radius: 10px;
+    padding: 30px 30px 9% 30px;
+    margin: 10px;
+}
+
+.commentModal .userHeaderContainer{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.commentModal .userHeaderContainer .imgContainer {
+    width: 10%; /* Adjust percentage as needed */
+    height: 5%;
+    position: relative; /* This is necessary for the padding-bottom trick */
+    padding-bottom: 10%; /* This creates a square container */
+}
+
+.commentModal .userHeaderContainer .imgContainer img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    border-radius: 10px; /* Adjust radius as needed */
+}
+
+.commentModal .nameDateContainer h2{
+    font-size: 20px;
+}
+
+.commentModal .imgPost{
+    height: 40%;
+    width: 50%;
+}
+
+/* comments on the right */
+.commentContainer{
+    padding: 20px;
+}
+
+.commentContainer h1{
+    margin: -5px;
+}
+
+.commentContainer .comments{
+    height: 63vh;
+    overflow-y: auto;
+}
+
+.commentContainer .inputContainer{
+    display: flex;
+    align-items: center;
+}
+
+.commentContainer .inputContainer input[type=text]{
+    border-radius: 10px;
+    background-color: rgb(233, 233, 233);
+    width: 90%;
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-size: 25px;
+}
+
+.commentContainer .inputContainer .icon{
+    width: 50px;
+}
+
+.commentDateContainer{
+    background-color: #ffcf88;
+    margin: -15px 10px 30px 0;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+
+.commentDateContainer .commentDate{
+    text-align: right;
+}

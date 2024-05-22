@@ -30,10 +30,12 @@ export const Home = () =>{
     const [feedPost, setFeedPost] = useState([]); //feed post on the homepage
     const [postPopup, setPostPopup] = useState(false); //visbiilty of creating a new post popup
     const [userPopup, setUserPopup] = useState(false); //visbility of seeing a users profile popup
+    const [commentPopup, setCommentPopup] = useState(false); //visbility of the comment popup
+    const [userProfilePost, setUserProfilePost] = useState([]); //user post popup
     // const {userData, updateUserData} = useContext(UserContext); 
     const [userComment, setUserComment] = useState(""); //comment that user submited
     const [comments, setComments] = useState([]); //comments on the post 
-
+    const [currPostId, setCurrPostId] = useState(""); //stores the id of the post that the user is interacting with
     //setting values when you click on a username to see their profile
     const [userProfile, setUserProfile] = useState({ 
         name: "",
@@ -41,8 +43,7 @@ export const Home = () =>{
         date: "",
         img: null,
     })
-    const [userProfilePost, setUserProfilePost] = useState([]); //user post popup
-
+    
     const setNewPost = (postField, userInput) =>{
         setUserPost(prevDate => ({
             ...prevDate,
@@ -50,26 +51,13 @@ export const Home = () =>{
         }))
     }
 
-    //sets all the 'comments popup' to false
-    const [commentPopups, setCommentPopups] = useState(Array(feedPost.length).fill(false));
-    const [currPostId, setCurrPostId] = useState("");
-        //when we toggle the post, we pass in the index of that post and set its value to true (making the post popup) 
-        const toggleCommentPopup = (index, postId) => {
-        // Check if the clicked popup is already open
-        const isOpen = commentPopups[index];
-        // Close all open comment popups
-        const newPopups = commentPopups.map((popup, i) => (i === index ? !popup : false));
-        
-        // If the clicked popup was not already open, open it
-        if (!isOpen) {
-            // Open the clicked comment popup
-            newPopups[index] = true;
-            setCurrPostId(postId);
-            loadComment(postId);
-        }
-        setCommentPopups(newPopups);
+    const toggleCommentPopup = (postId) => {
+        // Open the clicked comment popup
+        setCurrPostId(postId);
+        loadComment(postId);
+        setCommentPopup(!commentPopup);
     };
-    
+
     //loads the current post on the homepage
     const isMounted = useRef(true);
     useEffect(() => {
@@ -366,6 +354,68 @@ export const Home = () =>{
                 </Modal>
             </>
             )}
+            {commentPopup && (
+                <>
+                    <div className="overlay" onClick={() => setCommentPopup(false)}></div>
+                    {/* change className later */}
+                    <Modal show={commentPopup} onClose={()=> setCommentPopup(false)} className="commentModal">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                            <Modal.Body>
+                            <div className="bodyModalContainer">
+                                <div className="currentPostContainer">
+                                {feedPost.map((post) => {
+                                    if (post.id === currPostId) {
+                                        return (
+                                            <div key={post.id}>
+                                                <div className="postContainer">
+                                                    <div className="userHeaderContainer">
+                                                        <div className="imgContainer">
+                                                            <img src={post.pfp} className="userPfp" alt="userpfp"/>
+                                                        </div>
+                                                        <div className="nameDateContainer">
+                                                            <h2 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h2>
+                                                            <p className="postDate">{post.date}</p>
+                                                        </div>     
+                                                    </div>
+                                                    {post.img && (
+                                                        <img src={post.img} alt="user post" className="imgPost"/>
+                                                    )}
+                                                    <h2>{post.title}</h2>
+                                                    <p className="postDesc">{post.desc}</p>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    // If no matching post is found, return null
+                                    return null;
+                                })}
+                                </div>
+                                <div className="commentContainer">
+                                    <h1> Comments </h1>
+                                    <p className="comments">
+                                        {comments.map(comment =>(
+                                            <div key={comment.id}>
+                                                <h2> {comment.userCommentName} </h2>
+                                                <div className="commentDateContainer">
+                                                    <p> {comment.comment} </p>
+                                                    <p className="commentDate"> {comment.date} </p>
+                                                </div>
+                                            </div> 
+                                        ))}
+                                    </p>
+                                    <div className="inputContainer">
+                                        <input type="text" placeholder="Comment" value={userComment} onChange={(text)=> setUserComment(text.target.value)}></input>
+                                        <IoIosSend className="icon" onClick={() => {
+                                            addComment();
+                                            setUserComment("");
+                                            }}/> 
+                                    </div>
+                                </div> 
+                            </div> 
+                        </Modal.Body>
+                    </Modal>
+                </>
+            )}
             <div className="tempBtnContainer"  onClick={() => setPostPopup(true)}>
                 <FaRegPlusSquare className="postIcon"/>
                 <p>New post</p>
@@ -395,12 +445,12 @@ export const Home = () =>{
                                     <div className="footerContainer">
                                         <AiOutlineLike className="icons"/>
                                         <FaRegComment className="icons" id="commentIcon" onClick={() => {
-                                            toggleCommentPopup(index, post.id);
+                                            toggleCommentPopup(post.id);
                                             }}/>
                                     </div>
                                 </div>
                             </div>
-                            <div className="commentPopupContainer">
+                            {/* <div className="commentPopupContainer">
                                 {commentPopups[index] ? (
                                     <div className="userComments">
                                         <h1> Comments </h1>
@@ -425,7 +475,7 @@ export const Home = () =>{
                                         </div>
                                     </div>
                                 ) : <div />}
-                            </div>
+                            </div> */}
                         </div>
                     ))}
                 </section>
