@@ -263,6 +263,10 @@ export const Home = () =>{
         setUserProfilePost(postReceived);
     }
 
+    const addFriend = async (userName) =>{
+        console.log(userName);
+    }
+
     //adds a comment to the post
     const addComment = async () =>{
         //add comment to the doc comment collection
@@ -277,9 +281,6 @@ export const Home = () =>{
             comment: userComment,
             date: getDate()
         })
-        //load comments after adding a new one
-        // setUserComment("");
-        // console.log("User comment after clearing:", userComment);
         loadComment(currPostId);
     }
 
@@ -305,12 +306,16 @@ export const Home = () =>{
                             <Modal.Body>
                             <section className="profileContainer">
                                 <img src={userProfile.img} alt="userPfp"/>
-                                <div className="profileDescContainer">
-                                    <h1> {userProfile.name} </h1>
-                                    <p> {userProfile.desc} </p>
-                                    <p> {userProfile.date} </p>
+                                <div className="descContainerSide">
+                                    <div className="profileDescContainer">
+                                        <h1> {userProfile.name} </h1>
+                                        <p> {userProfile.desc} </p>
+                                        <p> {userProfile.date} </p>
+                                    </div>
+                                    <div className="userButtons">
+                                        <button onClick={() =>{ addFriend(userProfile.name)}}> + Add Friend </button>
+                                    </div>
                                 </div>
-                                
                             </section>
                             <section className="userProfilePostContainer">
                                 {userProfilePost.map(post =>(
@@ -326,7 +331,6 @@ export const Home = () =>{
                                             <h2>{post.title}</h2>
                                             <p className="postDesc">{post.desc}</p>
                                         </div>
-                                        
                                     </div>
                                 ))}
                             </section>
@@ -346,7 +350,7 @@ export const Home = () =>{
                             <form className="newPost" onSubmit={handleSubmit}>
                                 <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
                                 <textarea placeholder="Description" style={{ width: '80%', height: "200px" }} onChange={(e) => setNewPost("desc", e.target.value)} />
-                                <input type="file" placeholder="show your cat" onChange={ handleImageUpload } />
+                                <input type="file" placeholder="show your cat" onChange={handleImageUpload} />
                                 <button type="submit">Post!</button>
                             </form>
                         </Modal.Body>
@@ -423,16 +427,15 @@ export const Home = () =>{
             <div className="pageContainer">
                 <Navbar />
                 <section className="feedContainer">
-                    {/* <h1>Homepage Feed</h1>  */}
-                    {feedPost.map((post, index) => (
+                    {feedPost.map((post) => (
                         <div key={post.id} className="postContainer">
                             <div className="postContainer2">
-                                <div className="userHeaderContainer">
+                                <div className="userHeaderContainer" onClick={() => fetchUserInfo(post.user)}>
                                     <div className="imgContainer">
                                         <img src={post.pfp} className="userPfp" alt="userpfp"/>
                                     </div>
                                     <div className="nameDateContainer">
-                                        <h1 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h1>
+                                        <h1 className="userPostName">{post.user}</h1>
                                         <p className="postDate">{post.date}</p>
                                     </div>     
                                 </div>
@@ -450,32 +453,6 @@ export const Home = () =>{
                                     </div>
                                 </div>
                             </div>
-                            {/* <div className="commentPopupContainer">
-                                {commentPopups[index] ? (
-                                    <div className="userComments">
-                                        <h1> Comments </h1>
-                                        <p className="comments">
-                                            {comments.map(comment =>(
-                                                <div key={comment.id}>
-                                                    <h2> {comment.userCommentName} </h2>
-                                                    <div className="commentDateContainer">
-                                                        <p> {comment.comment} </p>
-                                                        <p className="commentDate"> {comment.date} </p>
-                                                    </div>
-                                                    
-                                                </div> 
-                                            ))}
-                                        </p>
-                                        <div className="inputContainer">
-                                            <input type="text" placeholder="Comment" value={userComment} onChange={(text)=> setUserComment(text.target.value)}></input>
-                                            <IoIosSend className="icon" onClick={() => {
-                                                addComment();
-                                                setUserComment("");
-                                                }}/> 
-                                        </div>
-                                    </div>
-                                ) : <div />}
-                            </div> */}
                         </div>
                     ))}
                 </section>

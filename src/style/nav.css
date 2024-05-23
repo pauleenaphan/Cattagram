@@ -1,8 +1,7 @@
 .headerNav{
     display: flex;
     flex-direction: column;
-    /* align-items: flex-start; */
-    width: 100%;
+    width: 70%;
     height: 98vh;
     margin: 10px;
 }
@@ -24,7 +23,7 @@
     margin-left: 5%;
     margin-right: 5%;
     padding: 0px 5px;
-    gap: 1%;
+    gap: 5%;
 }
 
 .iconContainer:hover{
@@ -58,25 +57,39 @@
     align-items: center;
     font-size: 20px;
     gap: 3%;
-    width: 17%;
+    width: 13.2%;
     font-weight: bold;
-    margin-left: 1.6%;
+    margin-left: 1.3%;
     bottom: 20px;
-    padding: 0.5% 3.5% 0.5% 0.8%;
+    padding: 0.2% 1% 0.2% 0.8%;
 }
 
-.tempBtnContainer:hover{
+.tempBtnContainer2{
+    position: fixed;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    font-size: 20px;
+    gap: 5%;
+    width: 13.5%;
+    font-weight: bold;
+    margin-left: 1.3%;
+    bottom: 85px;
+    padding: 0.2% 1% 0.2% 0.5%;
+}
+
+.tempBtnContainer:hover, .tempBtnContainer2:hover{
     background-color: #a76400;
     border-radius: 10px;
     color: white;
 }
 
-.tempBtnContainer p{
+.tempBtnContainer p, .tempBtnContainer2 p{
     font-size: 20px;
     font-weight: bold;
 }
 
-.tempBtnContainer .postIcon{
-    height: 60%;
-    width: 17%;
+.postIcon{
+    height: 70%;
+    width: 21%;
 }

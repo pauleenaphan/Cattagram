@@ -10,7 +10,8 @@
     height: 98vh; /* Adjust as needed */
     overflow-y: auto;
     background-color: #f8a526;
-    margin: 10px;
+    width: 105%;
+    margin: 10px -8%;
     border-radius: 10px;
     display: flex;
     flex-direction: column;

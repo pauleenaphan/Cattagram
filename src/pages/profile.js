@@ -197,7 +197,6 @@ export const Profile = () =>{
                                     <h2>{post.title}</h2>
                                     <p className="postDesc">{post.desc}</p>
                                 </div>
-                                
                             </div>
                         ))}
                     </section>

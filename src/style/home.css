@@ -11,12 +11,12 @@
     height: 98vh; /* Adjust as needed */
     overflow-y: auto;
     background-color: #f8a526;
-    margin: 10px;
+    margin: 10px -12%;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    width: 110%;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
@@ -51,6 +51,7 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
 }
 
 .pageContainer .userHeaderContainer h1{
@@ -211,8 +212,17 @@
 .userProfileModal .profileContainer{
     display: flex;
     justify-content: center;
-    background-color: #BEC0C2;
+    background-color: #E9E9E9;
     padding: 20px 0px;
+    gap: 10px;
+}
+
+.userProfileModal .descContainerSide{
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .userProfileModal .profileContainer img{
@@ -221,12 +231,24 @@
 }
 
 .userBodyModalContainer .profileDescContainer{
-    width: 30%;
-    margin: 0 10px;
-    padding: 0 30px;
+    width: 80%;
+    height: 80%;
+    padding: 0 10px;
     border-radius: 10px;
     flex-direction: column;
     border: solid 3px rgb(153, 152, 152);
+    overflow-y: auto;
+}
+
+.userBodyModalContainer .userButtons button{
+    background-color: #f8a526;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.userBodyModalContainer .userButtons button:hover{
+    background-color: #af741c; 
 }
 
 .userBodyModalContainer .userProfilePostContainer{
@@ -235,7 +257,7 @@
 }
 
 .userProfilePostContainer .userPostContainer{
-    background-color: rgb(221, 221, 221);
+    background-color: #E9E9E9;
     border-radius: 10px;
     margin: 30px 0px;
 }
@@ -251,19 +273,15 @@
     justify-content: space-between;
 }
 
+.userHeaderContainer .nameDateContainer h1:hover{
+    color: #b16a00;
+}
+
 /* title and desc of the post */
 .userProfilePostContainer .postBodyContainer{
     box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
     border-radius: 0px 0px 10px 10px;
     padding: 10px 20px;
-}
-
-/* third column in grid layout */
-.suggested{
-    background-color: #f8a526;
-    margin: 10px;
-    border-radius: 10px;
-    height: 98vh;
 }
 
 /* modal popup for comments */
@@ -274,6 +292,7 @@
     width: 80vw;
     height: 90vh;
     z-index: 1000; /* Ensure the modal appears above the overlay */
+    overflow: hidden !important;
 }
 
 .commentModal h1{
@@ -283,16 +302,7 @@
 .commentModal .bodyModalContainer{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-/* user post on the left  */
-.commentModal .currentPostContainer{
-    /* background-color: rgb(233, 233, 233);
-    height: 90vh; */
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
+    height: 100%;
 }
 
 .commentModal .postContainer{
@@ -317,7 +327,7 @@
     padding-bottom: 10%; /* This creates a square container */
 }
 
-.commentModal .userHeaderContainer .imgContainer img {
+.commentModal .userHeaderContainer .imgContainer img{
     position: absolute;
     top: 0;
     left: 0;
@@ -339,6 +349,8 @@
 /* comments on the right */
 .commentContainer{
     padding: 20px;
+    background-color: #E9E9E9;
+    height: 100vh;
 }
 
 .commentContainer h1{
@@ -357,7 +369,7 @@
 
 .commentContainer .inputContainer input[type=text]{
     border-radius: 10px;
-    background-color: rgb(233, 233, 233);
+    background-color: #d6d6d6;
     width: 90%;
     padding: 10px;
     border: none;
@@ -378,4 +390,12 @@
 
 .commentDateContainer .commentDate{
     text-align: right;
+}
+
+/* third column in grid layout */
+.suggested{
+    background-color: #f8a526;
+    margin: 10px;
+    border-radius: 10px;
+    height: 98vh;
 }
