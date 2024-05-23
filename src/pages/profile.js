@@ -71,38 +71,40 @@ export const Profile = () =>{
     const compressImage = (dataUrl) => {
         const imageElement = new Image();
         imageElement.src = dataUrl;
-
+    
         // Set up image onload callback function
         imageElement.onload = () => {
             const canvas = document.createElement('canvas');
-            const maxWidth = 500; // Max width for the compressed image
-            const maxHeight = 500; // Max height for the compressed image
+            const size = 500; // Target size for both width and height
+    
+            // Set canvas dimensions
+            canvas.width = size;
+            canvas.height = size;
+    
+            // Calculate cropping dimensions
+            let cropX = 0;
+            let cropY = 0;
             let width = imageElement.width;
             let height = imageElement.height;
-
-            // Calculate new dimensions while maintaining aspect ratio
+    
+            // Calculate dimensions for square cropping
             if (width > height) {
-                if (width > maxWidth) {
-                    height *= maxWidth / width;
-                    width = maxWidth;
-                }
-            } else {
-                if (height > maxHeight) {
-                    width *= maxHeight / height;
-                    height = maxHeight;
-                }
+                // Landscape orientation
+                cropX = (width - height) / 2;
+                width = height;
+            } else if (height > width) {
+                // Portrait orientation
+                cropY = (height - width) / 2;
+                height = width;
             }
-            // Set canvas dimensions
-            canvas.width = width;
-            canvas.height = height;
-
+    
             // Draw the image on the canvas
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(imageElement, 0, 0, width, height);
-
-            // Convert canvas to data URL with JPEG format and quality 0.7
+            ctx.drawImage(imageElement, cropX, cropY, width, height, 0, 0, size, size);
+    
+            // Convert canvas to data URL with JPEG format and quality 1
             const compressedDataUrl = canvas.toDataURL('image/jpeg', 1);
-
+    
             // Set the compressed image as the new image state
             setUserP(prevState => ({
                 ...prevState,
@@ -110,6 +112,7 @@ export const Profile = () =>{
             }));
         };
     };
+    
     
     //updaate values onto firebase 
     const updateFirebase = async (e) =>{
@@ -182,7 +185,6 @@ export const Profile = () =>{
                             <p id="userDate"> {userP.dateJoined} </p>
                         </div>
                     </section>
-
                     <section className="userFeedContainer">
                         {feedPost.map(post => (
                             <div key={post.id} className="userPostContainer">

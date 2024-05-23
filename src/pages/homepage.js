@@ -71,25 +71,7 @@ export const Home = () =>{
     //creates new post 
     const handleSubmit = async (e) =>{
         e.preventDefault();
-        // getPfp();
-        console.log(localStorage.getItem("userPfp"));
-
-         // Log each field to check for undefined values
-        console.log("Title:", userPost.title);
-        console.log("Description:", userPost.desc);
-        console.log("Image:", userPost.img);
-        console.log("User:", localStorage.getItem("userName"));
-        console.log("Date:", getDate());
-        console.log("User Pfp:", localStorage.getItem("userPfp"));
-
         // Check for undefined fields
-        if (!userPost.title || !userPost.desc || !userPost.img || 
-            !localStorage.getItem("userName") || !getDate() || 
-            !localStorage.getItem("userPfp")) {
-            console.log("One or more fields are missing or undefined");
-            return;
-        }
-
         try{
             await addDoc(collection(db, "Homepage Feed"), {
                 title: userPost.title,
@@ -218,12 +200,6 @@ export const Home = () =>{
     const fetchUserInfo = async (userName) => {
         try {
             const usersSnapshot = await getDocs(collection(db, "Users"));
-            
-            if(usersSnapshot.empty){
-                console.log("empty")
-            }else{
-                console.log("not empty")
-            }
             //loops thru each of the docs to find a matching username 
             for (const userDoc of usersSnapshot.docs) {
                 const userInfoSnapshot = await getDocs(collection(db, 'Users', userDoc.id, 'userInfo'));
@@ -313,7 +289,7 @@ export const Home = () =>{
                                         <p> {userProfile.date} </p>
                                     </div>
                                     <div className="userButtons">
-                                        <button onClick={() =>{ addFriend(userProfile.name)}}> + Add Friend </button>
+                                        <button className="addFriendBtn" onClick={() =>{ addFriend(userProfile.name)}}> + Add Friend </button>
                                     </div>
                                 </div>
                             </section>
@@ -439,9 +415,12 @@ export const Home = () =>{
                                         <p className="postDate">{post.date}</p>
                                     </div>     
                                 </div>
-                                {post.img && (
-                                    <img src={post.img} alt="user post" className="imgPost"/>
-                                )}
+                                <div className="postImgContainer">
+                                    {post.img && (
+                                        <img src={post.img} alt="user post" className="imgPost"/>
+                                    )}
+                                </div>
+                                
                                 <div className="postBodyContainer">
                                     <h2>{post.title}</h2>
                                     <p className="postDesc">{post.desc}</p>
