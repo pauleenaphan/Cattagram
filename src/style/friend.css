@@ -1,0 +1,50 @@
+.friendPageContainer .pageContainer{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    background-color: #ffcf88;
+    height: 100vh;
+}
+
+.friendPageContainer .friendSection{
+    background-color: #f8a526;
+    height: 98vh; /* Adjust as needed */
+    overflow-y: auto;
+    background-color: #f8a526;
+    margin: 10px -8%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 105%;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.addFriendModal{
+    margin: auto;
+    background-color: white;
+    border-radius: 10px;
+    width: 80vw;
+    height: 90vh;
+    z-index: 1000; /* Ensure the modal appears above the overlay */
+    overflow: hidden !important;
+}
+
+.addFriendModal .friendBodyContainer{
+    background-color: pink;
+    height: 100vh;
+}
+
+.addFriendModal .friendHeadContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.friendHeadContainer .searchContainer{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
