@@ -3,8 +3,8 @@ import { FiUserPlus } from "react-icons/fi";
 import { Modal } from "flowbite-react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
-import { collection, getDocs } from "firebase/firestore"; 
-import levenshtein from 'fast-levenshtein';
+import { collection, getDocs, addDoc } from "firebase/firestore"; 
+// import levenshtein from 'fast-levenshtein';
 
 import '../style/friend.css';
 import { db } from '../firebaseConfig.js';
@@ -22,7 +22,9 @@ export const Friend = () =>{
     const [userProfilePost, setUserProfilePost] = useState([]); //user post popup
     const [newFriendInput, setNewFriendInput] = useState("");
     const [friendSearchResult, setFriendSearchResult] = useState([]);
-    const {distance} = require('fastest-levenshtein');
+    const [friendReqPopup, setFriendReqPopup] = useState(false);
+    const [friendReq, setFriendReq] = useState([]);
+    // const {distance} = require('fastest-levenshtein');
     const [userFoundStatus, setUserFoundStatus] = useState("");
 
     //creates a list of users that have the similar name
@@ -38,17 +40,18 @@ export const Friend = () =>{
                 const userInfoSnapshot = await getDocs(collection(db, 'Users', userDoc.id, 'userInfo'));
                 userInfoSnapshot.forEach((userInfoDoc) => {
                     //smaller value = closest string match
-                    if (distance(userInfoDoc.data().name, newFriendInput) <= (newFriendInput.length/2)){
+                    // if (distance(userInfoDoc.data().name, newFriendInput) <= (newFriendInput.length/2)){
                         results.push({
-                            distance: distance(userInfoDoc.data().name, newFriendInput),
+                            // distance: distance(userInfoDoc.data().name, newFriendInput),
                             id: userInfoDoc.id,
+                            email: userDoc.id, //user's email
                             name: userInfoDoc.data().name,
                             pfp: userInfoDoc.data().pic,
                             dateJoined: userInfoDoc.data().datejoined,
                         })
-                    }else{
-                        console.log('not a match')
-                    }
+                    // }else{
+                    //     console.log('not a match')
+                    // }
                 });
             }
         }catch(error) {
@@ -69,6 +72,24 @@ export const Friend = () =>{
         //sorts by lowest distance to highest
         setFriendSearchResult(results.sort((a, b) => a.distance - b.distance)); 
         setNewFriendInput("");
+    }
+    
+    //send friend request to picked user
+    const sendFriendReq = async (userEmail) =>{
+        try{
+            await addDoc(collection(db, "Users", userEmail, "friendRequest"), {
+                requestedUser: localStorage.getItem("userName"),
+                reqUserPfp: localStorage.getItem("userPfp"),
+                reqUserDate: localStorage.getItem("userDateJoined")
+            })
+        }catch(error){
+            console.log("error ", error);
+        }
+    }
+
+    //load user's friend req
+    const loadFriendReq = async () =>{
+
     }
 
     //gets info of the user when pressed on and set its values
@@ -139,7 +160,7 @@ export const Friend = () =>{
                                             <h1 onClick={() => {fetchUserInfo(user.name)}}> {user.name} </h1>
                                             <div className="userDescContainer">
                                                 <p> {user.dateJoined} </p> 
-                                                <button className="addFriendBtn"> + Add Friend </button>
+                                                <button className="addFriendBtn" onClick={()=>{sendFriendReq(user.email)}}> + Add Friend </button>
                                             </div>
                                         </div>
                                     </div>
@@ -187,11 +208,25 @@ export const Friend = () =>{
                     </Modal>
                 </>
             )}
+            {friendReqPopup &&(
+                <>
+                    <div className="overlay" onClick={() => setFriendReqPopup(false)}></div>
+                    <Modal show={friendReqPopup} onClose={() => setFriendReqPopup(false)} className="userProfileModalInFriend">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                        <div className="userBodyModalContainer">
+                            <Modal.Body>
+                                <p> load user request </p>
+                            </Modal.Body>
+                        </div>
+                    </Modal>
+                </>
+            )}
+
             <div className="tempBtnContainer" onClick={() =>{setAddFriendPopup(!addFriendPopup)}}>
                 <FiUserPlus className="postIcon"/>
                 <p> Add Friend </p> 
             </div>
-            <div className="tempBtnContainer2" >
+            <div className="tempBtnContainer2" onClick={() =>{setFriendReqPopup(!friendReqPopup)}}>
                 <IoMdNotificationsOutline  className="postIcon"/>
                 <p> Request </p> 
             </div>

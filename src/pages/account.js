@@ -30,6 +30,7 @@ export const Login = () =>{
         try{
             const doc = await getDoc(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
             updateUserData(doc.data().name);
+            localStorage.setItem("userDateJoined",  doc.data().dateJoined);
         }catch(error){
             console.log("error ", error);
         }
@@ -107,6 +108,7 @@ export const CreateAccount = ()=>{
         localStorage.setItem("isLogged", "true");
         localStorage.setItem("userEmail", userData.userEmail);
         localStorage.setItem("userName", userData.userName);
+        localStorage.setItem("userDateJoined", getDate())
     }
 
     const handleSubmit = (e) => {
