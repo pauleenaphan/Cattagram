@@ -82,6 +82,11 @@
     border-radius: 10px; /* Adjust radius as needed */
 }
 
+.userHeaderContainer .imgContainer img:hover, #friendPfp:hover, .matchedUserOuterContainer img:hover{
+    opacity: 0.5;
+    cursor: pointer;
+}
+
 /* title of post */
 .postContainer2 h2{
     font-size: 35px;
@@ -248,19 +253,21 @@
     overflow-y: auto;
 }
 
-.addFriendBtn{
+.addFriendBtn, #accFriBtn, #decFriBtn, #removeFriBtn{
     background-color: #f8a526;
-    padding: 10px;
+    padding: 10px 20px;
     border-radius: 10px;
     font-weight: bold;
 }
 
-.addFriendBtn:hover{
+.addFriendBtn:hover, #accFriBtn:hover, #decFriBtn:hover, #removeFriBtn:hover{
     background-color: #af741c; 
 }
 
 .userBodyModalContainer .userProfilePostContainer{
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
@@ -268,7 +275,7 @@
     background-color: black;
     border-radius: 10px;
     margin: 30px 0px;
-    width: 50%;
+    width: 70%;
 }
 
 .userProfilePostContainer .userPostContainer img{
@@ -289,8 +296,9 @@
     justify-content: space-between;
 }
 
-.userHeaderContainer .nameDateContainer h1:hover{
+.userHeaderContainer .nameDateContainer h1:hover, .friendListContainer h2:hover{
     color: #b16a00;
+    cursor: pointer;
 }
 
 /* title and desc of the post */
