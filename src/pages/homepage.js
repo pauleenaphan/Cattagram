@@ -5,20 +5,12 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
-// import { UserContext } from "./userInfo";
+import { fetchUserInfo, getUserPost} from "./userInfo.js";
+import { handleImageUpload, getDate } from './helpers.js';
 
 import { FaRegComment, FaRegPlusSquare } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
-
-//returns date in month/day/year format
-const getDate = () => {
-    const currentDate = new Date();
-    const month = currentDate.getMonth() + 1; 
-    const day = currentDate.getDate();
-    const year = currentDate.getFullYear();
-    return `${month}/${day}/${year}`;
-};
 
 export const Home = () =>{
     const [userPost, setUserPost] = useState({
@@ -63,7 +55,7 @@ export const Home = () =>{
     useEffect(() => {
         if (isMounted.current) {
             getFeed();
-            getPfp();
+            // getPfp();
             isMounted.current = false;
         }
     }, [feedPost]);
@@ -103,78 +95,26 @@ export const Home = () =>{
         }
     }
 
-    const getPfp = async () =>{
-        try {
-            const profile = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
-            profile.forEach(doc => {
-                const data = doc.data();
-                if (data.name === localStorage.getItem("userName")) {
-                    setUserPost("pfp", data.pic);
-                    localStorage.setItem("userPfp", data.pic);
-                }
-            });
-        } catch (error) {
-            console.log("error ", error);
-        }
-    }
+    // const getPfp = async () =>{
+    //     try {
+    //         const profile = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
+    //         profile.forEach(doc => {
+    //             const data = doc.data();
+    //             if (data.name === localStorage.getItem("userName")) {
+    //                 setUserPost("pfp", data.pic);
+    //                 localStorage.setItem("userPfp", data.pic);
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.log("error ", error);
+    //     }
+    // }
 
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0]; // Get the selected file
-
-        // Create a new FileReader instance
-        const reader = new FileReader();
-
-        // Set up FileReader onload callback function
-        reader.onload = (event) => {
-            // Compress the image before uploading
-            compressImage(event.target.result);
-        };
-        // Read the selected file as a data URL
-        reader.readAsDataURL(file);
-    };
-
-    const compressImage = (dataUrl) => {
-        const imageElement = new Image();
-        imageElement.src = dataUrl;
-
-        // Set up image onload callback function
-        imageElement.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxWidth = 800; // Max width for the compressed image
-            const maxHeight = 600; // Max height for the compressed image
-            let width = imageElement.width;
-            let height = imageElement.height;
-
-            // Calculate new dimensions while maintaining aspect ratio
-            if (width > height) {
-                if (width > maxWidth) {
-                    height *= maxWidth / width;
-                    width = maxWidth;
-                }
-            } else {
-                if (height > maxHeight) {
-                    width *= maxHeight / height;
-                    height = maxHeight;
-                }
-            }
-
-            // Set canvas dimensions
-            canvas.width = width;
-            canvas.height = height;
-
-            // Draw the image on the canvas
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(imageElement, 0, 0, width, height);
-
-            // Convert canvas to data URL with JPEG format and quality 0.7
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 1);
-
-            // Set the compressed image as the new image state
-            setUserPost(prevData => ({
-                ...prevData,
-                img: compressedDataUrl
-            }));
-        };
+    const handleImageUploadCallback = (compressedDataUrl) => {
+        setUserPost(prevState => ({
+            ...prevState,
+            img: compressedDataUrl // Update only the pic field
+        }));
     };
 
     //gets the post from firebase
@@ -196,47 +136,13 @@ export const Home = () =>{
         }
     }
 
-    //gets info of the user when pressed on and set its values
-    const fetchUserInfo = async (userName) => {
-        try {
-            const usersSnapshot = await getDocs(collection(db, "Users"));
-            //loops thru each of the docs to find a matching username 
-            for (const userDoc of usersSnapshot.docs) {
-                const userInfoSnapshot = await getDocs(collection(db, 'Users', userDoc.id, 'userInfo'));
-                userInfoSnapshot.forEach((userInfoDoc) => {
-                    const userInfoData = userInfoDoc.data();
-                    console.log("userDoc", userDoc.id);
-                    if (userInfoData.name === userName) {
-                        setUserProfile({
-                            name: userInfoData.name,
-                            desc: userInfoData.profileDesc,
-                            date: userInfoData.datejoined,
-                            img: userInfoData.pic,
-                        })
-                        //set profile post BEFORE we call the popup to open 
-                        //also need to pass in the userDoc id rather than setting it to a prop so it updates in time
-                        getUserProfilePost(userDoc.id);
-                        setUserPopup(true);    
-                    }
-                });
-            }
-        }catch(error) {
-            console.error('Error fetching user info:', error);
+    const getProfile = async (userName) =>{
+        const userInfo = await fetchUserInfo(userName);
+        if(userInfo && userInfo.length > 0){
+            setUserProfile(userInfo[0]);
+            setUserProfilePost(await getUserPost(userInfo[0].id));
+            setUserPopup(true);  
         }
-    };
-
-    //gets all the post that the user has posted
-    const getUserProfilePost = async (userEmail) =>{
-        const post = await getDocs(collection(db, "Users", userEmail, "post"));
-        const postReceived = post.docs.map(doc =>({
-            id: doc.id,
-            title: doc.data().title,
-            desc: doc.data().desc,
-            img: doc.data().img,
-            user: doc.data().user,
-            date: doc.data().date,
-        }))
-        setUserProfilePost(postReceived);
     }
 
     const addFriend = async (userName) =>{
@@ -326,7 +232,7 @@ export const Home = () =>{
                             <form className="newPost" onSubmit={handleSubmit}>
                                 <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
                                 <textarea placeholder="Description" style={{ width: '80%', height: "200px" }} onChange={(e) => setNewPost("desc", e.target.value)} />
-                                <input type="file" placeholder="show your cat" onChange={handleImageUpload} />
+                                <input type="file" placeholder="show your cat" onChange={(e) => handleImageUpload(e, handleImageUploadCallback)} />
                                 <button type="submit">Post!</button>
                             </form>
                         </Modal.Body>
@@ -353,7 +259,7 @@ export const Home = () =>{
                                                             <img src={post.pfp} className="userPfp" alt="userpfp"/>
                                                         </div>
                                                         <div className="nameDateContainer">
-                                                            <h2 className="userPostName" onClick={() => fetchUserInfo(post.user)}>{post.user}</h2>
+                                                            <h2 className="userPostName" onClick={() => getProfile(post.user)}>{post.user}</h2>
                                                             <p className="postDate">{post.date}</p>
                                                         </div>     
                                                     </div>
@@ -406,7 +312,7 @@ export const Home = () =>{
                     {feedPost.map((post) => (
                         <div key={post.id} className="postContainer">
                             <div className="postContainer2">
-                                <div className="userHeaderContainer" onClick={() => fetchUserInfo(post.user)}>
+                                <div className="userHeaderContainer" onClick={() => getProfile(post.user)}>
                                     <div className="imgContainer">
                                         <img src={post.pfp} className="userPfp" alt="userpfp"/>
                                     </div>

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc, setDoc, doc, getDoc } from "firebase/firestore"; 
+import { collection, addDoc, setDoc, doc, getDoc ,getDocs } from "firebase/firestore"; 
 
 import '../style/acc.css';
 import logo from "../imgs/logo/logo.png";
@@ -14,24 +14,24 @@ import defaultPfp from "../imgs/defaultPfp.png";
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./userInfo";
+import { getDate } from './helpers.js';
 
 export const Login = () =>{
     const navigate = useNavigate(); // Get the navigate function using useNavigate hook
     const {userData, updateUserData} = useContext(UserContext); 
     const [loginStatusPic, setLoginStatusPic] = useState(logo); //shows errors when user can't login
 
-    const setLocalStorage = () =>{
+    const setLocalStorage = async () => {
         localStorage.setItem("isLogged", "true");
         localStorage.setItem("userEmail", userData.userEmail);
-        localStorage.setItem("userName", userData.userName);
-    }
+        try {
+            const querySnapshot = await getDocs(collection(db, "Users", userData.userEmail, "userInfo"));
+            const docSnap = await getDoc(querySnapshot.docs[0].ref);
 
-    const getFirebase = async () =>{
-        try{
-            const doc = await getDoc(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
-            updateUserData(doc.data().name);
-            localStorage.setItem("userDateJoined",  doc.data().dateJoined);
-        }catch(error){
+            localStorage.setItem("userName", docSnap.data().name);
+            localStorage.setItem("userDateJoined", docSnap.data().dateJoined);
+            localStorage.setItem("userPfp", docSnap.data().pic)
+        } catch (error) {
             console.log("error ", error);
         }
     }
@@ -42,7 +42,6 @@ export const Login = () =>{
             .then(() => {
                 updateUserData('userEmail', userData.userEmail);
                 updateUserData('userPassword', userData.userPassword);
-                getFirebase();
                 setLocalStorage();
                 navigate("/homepage");
             })
@@ -157,11 +156,3 @@ export const CreateAccount = ()=>{
         </div>
     )
 }
-
-const getDate = () => {
-    const currentDate = new Date();
-    const month = currentDate.getMonth() + 1; 
-    const day = currentDate.getDate();
-    const year = currentDate.getFullYear();
-    return `${month}/${day}/${year}`;
-};
