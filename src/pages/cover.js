@@ -15,7 +15,7 @@ export const Cover = ()=>{
             } else {
                 navigate("/createAcc");
             }
-        }, 5000); 
+        }, 3000); 
     
         return () => clearTimeout(timeoutId);
     }, [navigate]);

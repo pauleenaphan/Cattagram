@@ -24,7 +24,6 @@ export const Home = () =>{
     const [userPopup, setUserPopup] = useState(false); //visbility of seeing a users profile popup
     const [commentPopup, setCommentPopup] = useState(false); //visbility of the comment popup
     const [userProfilePost, setUserProfilePost] = useState([]); //user post popup
-    // const {userData, updateUserData} = useContext(UserContext); 
     const [userComment, setUserComment] = useState(""); //comment that user submited
     const [comments, setComments] = useState([]); //comments on the post 
     const [currPostId, setCurrPostId] = useState(""); //stores the id of the post that the user is interacting with
@@ -274,8 +273,11 @@ export const Home = () =>{
                                                     {post.img && (
                                                         <img src={post.img} alt="user post" className="imgPost"/>
                                                     )}
-                                                    <h2>{post.title}</h2>
-                                                    <p className="postDesc">{post.desc}</p>
+                                                    <div className="captionContainer">
+                                                        <h2>{post.title}</h2>
+                                                        <p className="postDesc">{post.desc}</p>
+                                                    </div>
+                                                    
                                                 </div>
                                             </div>
                                         );

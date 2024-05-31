@@ -6,7 +6,7 @@ import { PiMailbox } from "react-icons/pi";
 import { FaSearch } from "react-icons/fa";
 
 import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore"; 
-import levenshtein from 'fast-levenshtein';
+// import levenshtein from 'fast-levenshtein';
 
 import { getDate } from './helpers.js';
 import '../style/friend.css';
@@ -60,8 +60,9 @@ export const Friend = () =>{
                 userInfoSnapshot.forEach((userInfoDoc) => {
                     //smaller value = closest string match
                     if (distance(userInfoDoc.data().name, newFriendInput) <= (newFriendInput.length/2)){
-                        //prevents user from seeing their name in the search
-                        if(userInfoDoc.data().name !== localStorage.getItem("userName")){
+                        //prevents user from seeing their name in the search and current friends
+                        console.log(userInfoDoc.data().name)
+                        if(userInfoDoc.data().name !== localStorage.getItem("userName") && !friendList.some(friend => friend.friendName === userInfoDoc.data().name)){
                             results.push({
                                 distance: distance(userInfoDoc.data().name, newFriendInput),
                                 id: userInfoDoc.id,
@@ -260,8 +261,8 @@ export const Friend = () =>{
                                 <img src={userProfile.img} alt="userPfp"/>
                                     <div className="profileFriendDescContainer">
                                         <h1> {userProfile.name} </h1>
-                                        <p> {userProfile.desc} </p>
-                                        <p> {userProfile.date} </p>
+                                        <p id="userDesc"> {userProfile.desc} </p>
+                                        <p id="userDate"> Member Since: {userProfile.date} </p>
                                     </div>
                             </section>
                             <section className="userProfilePostContainer">

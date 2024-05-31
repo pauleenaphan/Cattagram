@@ -5,11 +5,6 @@ import '../style/chat.css';
 import { RiChatNewLine } from "react-icons/ri";
 
 export const Chat = () =>{
-    //creates new chat
-    // const addChat = async () =>{
-
-    // }
-
     return(
         <div className="chatContainer">
             <div className="tempBtnContainer" >

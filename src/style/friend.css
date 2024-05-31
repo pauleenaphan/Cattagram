@@ -9,7 +9,6 @@
     background-color: #f8a526;
     height: 98vh; /* Adjust as needed */
     overflow-y: auto;
-    background-color: #f8a526;
     margin: 10px -8%;
     border-radius: 10px;
     display: flex;
@@ -75,6 +74,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+    overflow-y: auto;
 }
 
 .matchUserContainer{
@@ -86,7 +86,6 @@
     padding: 10px 20px;
     width: 40%;
     height: 100%;
-    
 }
 
 .matchedUserOuterContainer img{
@@ -128,13 +127,29 @@
     border-radius: 10px;
 }
 
+.profileFriendDescContainer h1, .profileFriendDescContainer p {
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+}
+
+.profileFriendDescContainer h1{
+    font-size: 35px;
+}
+
 .profileFriendDescContainer{
-    width: 30%;
-    padding: 0 10px;
-    border-radius: 10px;
-    flex-direction: column;
-    border: solid 3px rgb(153, 152, 152);
+    border-left: 2px solid black;
+    padding: 10px;
+}
+
+.profileFriendDescContainer #userDesc{
     overflow-y: auto;
+    overflow-x: hidden;
+    height: 60%;
+    margin: 10px 0px;
+}
+
+.profileFriendDescContainer #userDate{
+    font-weight: bold;
 }
 
 /* friend req popup */
@@ -150,7 +165,6 @@
 .friendReqModal h1, .friendReqModal h2{
     text-align: center;
 }
-
 
 /* accept/decline friend req buttons */
 .accDelBtns{
