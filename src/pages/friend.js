@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiUserPlus } from "react-icons/fi";
 import { Modal } from "flowbite-react";
-import { IoMdNotificationsOutline } from "react-icons/io";
+
+import { GoPersonAdd } from "react-icons/go";
+import { PiMailbox } from "react-icons/pi";
 import { FaSearch } from "react-icons/fa";
+
 import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore"; 
 import levenshtein from 'fast-levenshtein';
 
@@ -28,6 +30,9 @@ export const Friend = () =>{
     const [friendReq, setFriendReq] = useState([]);
     const [friendReqStatus, setFriendReqStatus] = useState("");
     const [friendList, setFriendList] = useState([]);
+    const [confirmPopup, setConfirmPopup] = useState(false);
+    const [currRemove, setCurrRemove] = useState(""); //current user to be remove from friend list
+    const [currRevDoc, setCurrRevDoc] = useState(""); //current doc to removevfrom other user in the friend list
     const {distance} = require('fastest-levenshtein');
     const [userFoundStatus, setUserFoundStatus] = useState("");
 
@@ -110,6 +115,7 @@ export const Friend = () =>{
     //send friend request to picked user
     const sendFriendReq = async (userEmail) =>{
         try{
+            //takes in userEmail that the request is being sent to
             const reqs = await getDocs(collection(db, "Users", userEmail, "friendRequest"))
             reqs.forEach((req) =>{
                 if(req.data().requestedUser === localStorage.getItem("userName")){
@@ -158,8 +164,31 @@ export const Friend = () =>{
         }
         loadFriendReq();
         loadFriends();
+        setFriendReqPopup(false);
     }
 
+    const removeFriend = async () => {
+        try{
+            //removes friend from the current user's doc
+            await deleteDoc(doc(db, "Users", localStorage.getItem("userEmail"), "friendList", currRevDoc));
+
+            //removes current user from the other user's friend list
+            const userInfo = await fetchUserInfo(currRemove);
+            if(userInfo && userInfo.length > 0){
+                const querySnapshot = await getDocs(collection(db, "Users", userInfo[0].id, "friendList"));
+                for (const val of querySnapshot.docs) {
+                    if (val.data().name === localStorage.getItem("userName")) {
+                        await deleteDoc(doc(db, "Users", userInfo[0].id, "friendList", val.id));
+                    }
+                }
+            }
+        }catch(error){
+            console.log("error ", error);
+        }
+        setConfirmPopup(false);
+        loadFriends();
+    };
+    
     const loadFriends = async () =>{
         try{
             const list = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "friendList"))
@@ -260,17 +289,18 @@ export const Friend = () =>{
             {friendReqPopup &&(
                 <>
                     <div className="overlay" onClick={() => setFriendReqPopup(false)}></div>
-                    <Modal show={friendReqPopup} onClose={() => setFriendReqPopup(false)} className="userProfileModalInFriend">
+                    <Modal show={friendReqPopup} onClose={() => setFriendReqPopup(false)} className="friendReqModal">
                         <Modal.Header className="modalHeader"></Modal.Header>
                         <div className="userBodyModalContainer">
                             <Modal.Body>
-                                <p> {friendReqStatus} </p>
+                                <h1> Friend Request </h1>
+                                <h2> {friendReqStatus} </h2>
                                 <div className="matchedUserOuterContainer">
                                     {friendReq.map(req =>(
                                         <div key={req.id} className="matchUserContainer">
                                         <img src={req.reqPfp} onClick={() => {getProfile(req.reqUser)}} alt="userpfp"/>
                                             <div className="userDescOuterContainer">
-                                                <h1 onClick={() => {getProfile(req.reqUser)}}> {req.reqUser} </h1>
+                                                <h3 onClick={() => {getProfile(req.reqUser)}}> {req.reqUser} </h3>
                                                 <div className="userDescContainer">
                                                     <p> {req.reqDate} </p> 
                                                 </div>
@@ -287,16 +317,37 @@ export const Friend = () =>{
                     </Modal>
                 </>
             )}
+            {confirmPopup &&(
+                <>
+                    <div className="overlay" onClick={() => setConfirmPopup(false)}></div>
+                    <Modal show={confirmPopup} onClose={() => setConfirmPopup(false)} className="confirmRemoveModal">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                        <div className="userBodyModalContainer">
+                            <Modal.Body>
+                                <div className="modalBodyContainer">
+                                    <h1> Are you sure you want to remove {currRemove} as a friend? :O</h1> 
+                                    <div className="userBtns">
+                                        <button id="removeBtn" onClick={() => {removeFriend()}}> Remove them :( </button>
+                                        <button id="nvmBtn" onClick={() =>{setConfirmPopup(false)}}> Nevermind! :D </button>
+                                    </div>
+                                    
+                                </div> 
+                            </Modal.Body>
+                        </div>
+                    </Modal>
+                </>
+            )}
+
 
             <div className="tempBtnContainer" onClick={() =>{setAddFriendPopup(!addFriendPopup)}}>
-                <FiUserPlus className="postIcon"/>
+                <GoPersonAdd className="postIcon"/>
                 <p> Add Friend </p> 
             </div>
             <div className="tempBtnContainer2" onClick={() =>{
                 setFriendReqPopup(!friendReqPopup);
                 loadFriendReq();
             }}>
-                <IoMdNotificationsOutline  className="postIcon"/>
+                <PiMailbox className="postIcon"/>
                 <p> Request </p> 
             </div>
             <section className="pageContainer">
@@ -313,7 +364,12 @@ export const Friend = () =>{
                                         <p> Added on: {friend.friendDate} </p> 
                                     </div>
                                     <div className="userBtns">
-                                        <button id="removeFriBtn"> Remove friend </button>
+                                        <button id="removeFriBtn" onClick={() =>{
+                                            setCurrRemove(friend.friendName);
+                                            setCurrRevDoc(friend.id);
+                                            console.log(friend.id);
+                                            setConfirmPopup(!confirmPopup);
+                                        }}> Remove friend </button>
                                     </div>
                                 </div>
                             </div>
