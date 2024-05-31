@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Modal } from "flowbite-react";
 import { collection, getDocs, updateDoc } from "firebase/firestore"; 
-import { GoPencil } from "react-icons/go";
+import { LiaUserEditSolid } from "react-icons/lia";
 import { handleImageUpload } from './helpers.js';
 import { fetchUserInfo, getUserPost } from "./userInfo.js";
 
@@ -88,7 +88,7 @@ export const Profile = () =>{
                 </>
             )}
             <div className="tempBtnContainer" onClick={() => setEditPopup(true)}>
-                <GoPencil className="postIcon"/>
+                <LiaUserEditSolid className="postIcon"/>
                 <p> Edit Profile </p>
             </div>
             
@@ -100,7 +100,7 @@ export const Profile = () =>{
                         <div className="descContainer">
                             <h1 id="userName"> {userProfile.name} </h1>
                             <p id="userDesc"> {userProfile.desc} </p>
-                            <p id="userDate"> {userProfile.date} </p>
+                            <p id="userDate"> Member Since: {userProfile.date} </p>
                         </div>
                     </section>
                     <section className="userFeedContainer">

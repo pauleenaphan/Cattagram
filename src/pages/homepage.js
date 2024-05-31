@@ -5,11 +5,11 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
-import { fetchUserInfo, getUserPost} from "./userInfo.js";
+import { fetchUserInfo, getUserPost } from "./userInfo.js";
 import { handleImageUpload, getDate } from './helpers.js';
 
-import { FaRegComment, FaRegPlusSquare } from "react-icons/fa";
-import { IoIosSend } from "react-icons/io";
+import { FaRegComment } from "react-icons/fa";
+import { IoIosSend, IoIosAddCircleOutline } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
 
 export const Home = () =>{
@@ -95,21 +95,6 @@ export const Home = () =>{
         }
     }
 
-    // const getPfp = async () =>{
-    //     try {
-    //         const profile = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"));
-    //         profile.forEach(doc => {
-    //             const data = doc.data();
-    //             if (data.name === localStorage.getItem("userName")) {
-    //                 setUserPost("pfp", data.pic);
-    //                 localStorage.setItem("userPfp", data.pic);
-    //             }
-    //         });
-    //     } catch (error) {
-    //         console.log("error ", error);
-    //     }
-    // }
-
     const handleImageUploadCallback = (compressedDataUrl) => {
         setUserPost(prevState => ({
             ...prevState,
@@ -145,10 +130,6 @@ export const Home = () =>{
         }
     }
 
-    const addFriend = async (userName) =>{
-        console.log(userName);
-    }
-
     //adds a comment to the post
     const addComment = async () =>{
         //add comment to the doc comment collection
@@ -177,6 +158,30 @@ export const Home = () =>{
         setComments(docComments);
     }
 
+    const sendFriendReq = async (userName) =>{
+        try{
+            const userInfo = await fetchUserInfo(userName);
+            if(userInfo && userInfo.length > 0){
+                var userEmail = userInfo[0].id;
+            }
+
+            const reqs = await getDocs(collection(db, "Users", userEmail, "friendRequest"))
+            reqs.forEach((req) =>{
+                if(req.data().requestedUser === localStorage.getItem("userName")){
+                    console.log("you already sent a friend req");
+                    return;
+                }
+            })
+            await addDoc(collection(db, "Users", userEmail, "friendRequest"), {
+                requestedUser: localStorage.getItem("userName"),
+                reqUserPfp: localStorage.getItem("userPfp"),
+                reqUserDate: getDate()
+            })
+        }catch(error){
+            console.log("error ", error);
+        }
+    }
+
     return (
         <div className="homeContainer">
             {userPopup &&(
@@ -191,11 +196,14 @@ export const Home = () =>{
                                 <div className="descContainerSide">
                                     <div className="profileDescContainer">
                                         <h1> {userProfile.name} </h1>
-                                        <p> {userProfile.desc} </p>
-                                        <p> {userProfile.date} </p>
-                                    </div>
-                                    <div className="userButtons">
-                                        <button className="addFriendBtn" onClick={() =>{ addFriend(userProfile.name)}}> + Add Friend </button>
+                                        <p id="userDesc"> {userProfile.desc} </p>
+                                        <p id="userDate"> Member since: {userProfile.date} </p>
+                                        <div className="userButtons">
+                                        {/* makes sure that you cannot add yourself to the friend's list */}
+                                        {userProfile.name !== localStorage.getItem("userName") && ( 
+                                            <button className="addFriendBtn" onClick={() => sendFriendReq(userProfile.name)}>+ Add Friend</button>
+                                        )}
+                                        </div>
                                     </div>
                                 </div>
                             </section>
@@ -303,7 +311,7 @@ export const Home = () =>{
                 </>
             )}
             <div className="tempBtnContainer"  onClick={() => setPostPopup(true)}>
-                <FaRegPlusSquare className="postIcon"/>
+                <IoIosAddCircleOutline className="postIcon"/>
                 <p>New post</p>
             </div>
             <div className="pageContainer">
@@ -311,31 +319,28 @@ export const Home = () =>{
                 <section className="feedContainer">
                     {feedPost.map((post) => (
                         <div key={post.id} className="postContainer">
-                            <div className="postContainer2">
-                                <div className="userHeaderContainer" onClick={() => getProfile(post.user)}>
-                                    <div className="imgContainer">
-                                        <img src={post.pfp} className="userPfp" alt="userpfp"/>
-                                    </div>
-                                    <div className="nameDateContainer">
-                                        <h1 className="userPostName">{post.user}</h1>
-                                        <p className="postDate">{post.date}</p>
-                                    </div>     
+                            <div className="userHeaderContainer" onClick={() => getProfile(post.user)}>
+                                <div className="imgContainer">
+                                    <img src={post.pfp} className="userPfp" alt="userpfp"/>
                                 </div>
-                                <div className="postImgContainer">
-                                    {post.img && (
-                                        <img src={post.img} alt="user post" className="imgPost"/>
-                                    )}
-                                </div>
-                                
-                                <div className="postBodyContainer">
-                                    <h2>{post.title}</h2>
-                                    <p className="postDesc">{post.desc}</p>
-                                    <div className="footerContainer">
-                                        <AiOutlineLike className="icons"/>
-                                        <FaRegComment className="icons" id="commentIcon" onClick={() => {
-                                            toggleCommentPopup(post.id);
-                                            }}/>
-                                    </div>
+                                <div className="nameDateContainer">
+                                    <h1 className="userPostName">{post.user}</h1>
+                                    <p className="postDate">{post.date}</p>
+                                </div>     
+                            </div>
+                            <div className="postImgContainer">
+                                {post.img && (
+                                    <img src={post.img} alt="user post" className="imgPost"/>
+                                )}
+                            </div>
+                            <div className="postBodyContainer">
+                                <h2>{post.title}</h2>
+                                <p className="postDesc">{post.desc}</p>
+                                <div className="footerContainer">
+                                    <AiOutlineLike className="icons"/>
+                                    <FaRegComment className="icons" id="commentIcon" onClick={() => {
+                                        toggleCommentPopup(post.id);
+                                        }}/>
                                 </div>
                             </div>
                         </div>

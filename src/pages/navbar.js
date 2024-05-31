@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { CgProfile } from "react-icons/cg";
-import { FiUsers } from "react-icons/fi";
+import { GoPeople,  GoPerson  } from "react-icons/go";
 import { IoHomeOutline, IoSettingsOutline, IoChatbubbleEllipsesOutline  } from "react-icons/io5";
 
 import '../style/nav.css';
@@ -21,11 +20,11 @@ export const Navbar = () => {
                 <p> Home </p>
             </div>
             <div className="iconContainer" onClick={()=> navigate("/profilepage")}>
-                <CgProfile className="icon"/>
+                <GoPerson className="icon"/>
                 <p> Profile </p>
             </div>
             <div className="iconContainer" onClick={() => navigate("/friendpage")}>
-                <FiUsers className="icon"/>
+                <GoPeople className="icon"/>
                 <p> Friends </p>
             </div>
             <div className="iconContainer" onClick={()=> navigate("/chatpage")}>

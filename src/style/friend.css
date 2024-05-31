@@ -83,17 +83,19 @@
     display: flex;
     align-items: center;
     border-radius: 20px;
-    padding: 10px;
-    width: 45%;
+    padding: 10px 20px;
+    width: 40%;
     height: 100%;
+    
 }
 
 .matchedUserOuterContainer img{
-    margin: 20px;
-    border-radius: 10px;
-    height: 30%;
-    width: 20%;
+    margin-right: 10px;
+    border-radius: 500px;
+    height: 10%;
+    width: 35%;
     cursor: pointer;
+    border: solid 3px rgb(153, 152, 152);
 }
 
 .matchUserContainer h1{
@@ -107,7 +109,6 @@
 }
 
 .matchUserContainer .userDescOuterContainer, .friendListContainer .userDescOuterContainer{
-    display: flex;
     flex-direction: column;
     overflow: hidden; /* Hide any content that exceeds the container's dimensions */
     text-overflow: ellipsis; /* Add ellipsis for text overflow */
@@ -135,6 +136,21 @@
     border: solid 3px rgb(153, 152, 152);
     overflow-y: auto;
 }
+
+/* friend req popup */
+.friendReqModal{
+    background-color: white;
+    margin: auto;
+    width: 100vh;
+    height: 80vh;
+    z-index: 1000;
+    border-radius: 10px;
+}
+
+.friendReqModal h1, .friendReqModal h2{
+    text-align: center;
+}
+
 
 /* accept/decline friend req buttons */
 .accDelBtns{
@@ -171,13 +187,38 @@
     gap: 20px;
     width: 40%;
     border: 3px rgb(173, 173, 173) solid;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s, box-shadow 0.3s; 
 }
 
 .friendListContainer img{
-    border-radius: 15px;
+    border-radius: 500px;
+    border: 3px rgb(173, 173, 173) solid;
 }
 
+/* confirm popup to remove friend */
+.confirmRemoveModal{
+    background-color: white;
+    margin: auto;
+    width: 60vh;
+    height: 40vh;
+    z-index: 1000;
+    border-radius: 10px;
+    display: flex;
+}
+
+.confirmRemoveModal .modalBodyContainer{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 30vh;
+    padding: 0px 3%;
+}
+
+.confirmRemoveModal .modalBodyContainer .userBtns{
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
 
 
