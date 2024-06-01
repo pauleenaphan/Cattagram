@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { GoPeople,  GoPerson  } from "react-icons/go";
-import { IoHomeOutline, IoSettingsOutline, IoChatbubbleEllipsesOutline  } from "react-icons/io5";
+import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
+//IoChatbubbleEllipsesOutline
 
 import '../style/nav.css';
 import cattagramLogo from "../imgs/logo/cattagramLogo.png"

@@ -45,7 +45,7 @@ export const Friend = () =>{
             // getPfp();
             isMounted.current = false;
         }
-    }, []);
+    }, [loadFriends]);
 
     //creates a list of users that have the similar name
     //uses fast-levenshtein to find matching names
