@@ -16,10 +16,13 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "./userInfo";
 import { getDate } from './helpers.js';
 
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+
 export const Login = () =>{
     const navigate = useNavigate(); // Get the navigate function using useNavigate hook
     const {userData, updateUserData} = useContext(UserContext); 
     const [loginStatusPic, setLoginStatusPic] = useState(logo); //shows errors when user can't login
+    const [showPassword, setShowPassword] = useState(false); //state to toggle password visibility
 
     const setLocalStorage = async () => {
         localStorage.setItem("isLogged", "true");
@@ -62,7 +65,11 @@ export const Login = () =>{
             </section>
             <form className="loginForm" onSubmit={handleSubmit}>
                 <input type="text" placeholder="Email" id="userEmail" onChange={(e) => updateUserData('userEmail', e.target.value)}></input>
-                <input type="text" placeholder="Password" id="userPassword" onChange={(e) => updateUserData('userPassword', e.target.value)}></input>
+                <div className="passContainer">
+                    <input type={showPassword ? "text" : "password"} placeholder="Password" id="userPassword" onChange={(e) => updateUserData('userPassword', e.target.value)}></input>
+                    {showPassword ? <IoEyeOffOutline class="eyeIcon" onClick={() => setShowPassword(false)} /> : <IoEyeOutline class="eyeIcon" onClick={() => setShowPassword(true)} />}
+                </div>
+                
                 <button type="submit"> Login </button>
             </form>
             <section className="newUser">
@@ -75,66 +82,59 @@ export const Login = () =>{
     )
 }
 
-export const CreateAccount = ()=>{
-    // const auth = getAuth();
+export const CreateAccount = () => {
     const navigate = useNavigate();
     const {userData, updateUserData} = useContext(UserContext); 
     const [confirmPass, setConfirmPass] = useState("");
-    const [loginStatusPic, setLoginStatusPic] = useState(logo); //shows create acc error to user
+    const [loginStatusPic, setLoginStatusPic] = useState(logo);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPass, setShowConfirmPass] = useState(false);
 
     const setFirebase = async () => {
-        try{
+        try {
             await addDoc(collection(db, "Users", localStorage.getItem("userEmail"), "userInfo"), {
                 name: userData.userName,
                 pic: defaultPfp,
                 profileDesc: "I'm new to cattagram!",
                 datejoined: getDate()
-            })
-        }catch(error){
-            console.log("error ", error);
-        }
-
-        try{
+            });
             await setDoc(doc(db, "Users", localStorage.getItem("userEmail")), {
                 placeholder: ""
-            })
-        }catch(error){
+            });
+        } catch(error) {
             console.log("error ", error);
         }
-    }
+    };
 
-    const setLocalStorage = () =>{
+    const setLocalStorage = () => {
         localStorage.setItem("isLogged", "true");
         localStorage.setItem("userEmail", userData.userEmail);
         localStorage.setItem("userName", userData.userName);
         localStorage.setItem("userPfp", defaultPfp);
-        localStorage.setItem("userDateJoined", getDate())
-    }
+        localStorage.setItem("userDateJoined", getDate());
+    };
 
     const handleSubmit = (e) => {
-        //prevent form from submitting
         e.preventDefault(); 
-        console.log(userData.userEmail, userData.userName, userData.userPassword);
 
-        if(userData.userPassword !== confirmPass){
+        if (userData.userPassword !== confirmPass) {
             setLoginStatusPic(logoPass);
-        }else{
+        } else {
             createUserWithEmailAndPassword(auth, userData.userEmail, userData.userPassword)
                 .then(() =>{
-                    // setLoginStatus("Account created successfully");
                     setLocalStorage();
                     setFirebase();
                     navigate("/homepage");
-                }).catch((error) =>{ //displays error when the user is creating an account
+                }).catch((error) => {
                     console.log("error ", error.code);
                     if(error.code === "auth/invalid-email"){
                         setLoginStatusPic(logoEmail);
-                    }else if(error.code === "auth/weak-password"){
+                    } else if(error.code === "auth/weak-password"){
                         setLoginStatusPic(shortLogoPass);
-                    }else if(error.code === "auth/email-already-in-use"){
+                    } else if(error.code === "auth/email-already-in-use"){
                         setLoginStatusPic(emailExistLogo);
                     }
-                })
+                });
         }
     };
 
@@ -146,14 +146,31 @@ export const CreateAccount = ()=>{
             <form className="createForm" onSubmit={handleSubmit}>
                 <input type="text" placeholder="Email" id="userEmail" onChange={(e) => updateUserData('userEmail', e.target.value)}></input>
                 <input type="text" placeholder="Name" id="userName" onChange={(e) => updateUserData('userName', e.target.value)}></input>
-                <input type="text" placeholder="Password" id="userPass" onChange={(e) => updateUserData('userPassword', e.target.value)}></input>
-                <input type="text" placeholder="Confirm Password" id="userConfirmPass" onChange={(e) => setConfirmPass(e.target.value)}></input>
+                <div className="passContainer">
+                    <input 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="Password" 
+                        id="userPass" 
+                        onChange={(e) => updateUserData('userPassword', e.target.value)}
+                    ></input>
+                    {showPassword ? <IoEyeOffOutline class="eyeIcon" onClick={() => setShowPassword(false)} /> : <IoEyeOutline class="eyeIcon" onClick={() => setShowPassword(true)} />}
+                </div>
+                <div className="passContainer">
+                    <input 
+                        type={showConfirmPass ? "text" : "password"} 
+                        placeholder="Confirm Password" 
+                        id="userConfirmPass" 
+                        onChange={(e) => setConfirmPass(e.target.value)}
+                    ></input>
+                    {showConfirmPass ? <IoEyeOffOutline class="eyeIcon" onClick={() => setShowConfirmPass(false)} /> : <IoEyeOutline class="eyeIcon" onClick={() => setShowConfirmPass(true)} />}
+                </div>
+                
                 <button type="submit"> Sign Up</button>
             </form>
             <section className="oldUser">
                 <p> Already have an account? </p>
-                <button className="signUpBtn" onClick={()=> navigate("/login")}> Sign In </button>
+                <button className="signUpBtn" onClick={() => navigate("/login")}> Sign In </button>
             </section>
         </div>
     )
-}
+};

@@ -20,14 +20,30 @@
     width: auto;
 }
 
-.createForm input[type=text], .loginForm input[type=text]{
+.createForm input[type=text], .loginForm input[type=text], .loginForm input[type=password], .createForm input[type=password]{
     font-size: 20px;
-    padding: 10%;
-    width: 200%;
+    padding: 20px; /* Adjust padding as needed */
+    width: 500px;
     border-radius: 15px;
     border: none;
     background-color: rgb(226, 228, 230);
     outline: none;
+}
+
+.passContainer{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.eyeIcon{
+    position: absolute;
+    right: 10px; /* Adjust the distance from the right side */
+    top: 50%; /* Adjust the vertical alignment */
+    transform: translateY(-50%); /* Center vertically */
+    width: 30px; /* Adjust icon size as needed */
+    height: auto;
+    cursor: pointer;
 }
 
 .createForm button, .loginForm button {
