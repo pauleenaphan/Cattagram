@@ -27,10 +27,10 @@ export const Navbar = () => {
                 <GoPeople className="icon"/>
                 <p> Friends </p>
             </div>
-            <div className="iconContainer" onClick={()=> navigate("/chatpage")}>
+            {/* <div className="iconContainer" onClick={()=> navigate("/chatpage")}>
                 <IoChatbubbleEllipsesOutline className="icon"/>
                 <p> Chat </p>
-            </div>
+            </div> */}
             <div className="iconContainer" onClick={() => navigate("/settings")}>
                 <IoSettingsOutline className="icon"/>
                 <p> Settings </p>

@@ -18,8 +18,14 @@ export const Settings = () =>{
             <section className="pageContainer">
                 <Navbar/>
                 <section className="settingsSection">
-                    <h1> WE IN SETTINGS </h1>
-                    <button onClick={()=>{ logout() }}> Log Out </button>
+                    <section className="userInfo">
+                        <img src={localStorage.getItem("userPfp")} alt="userpfpf"/>
+                        <div className="userDesc">
+                            <h1> {localStorage.getItem("userName")} </h1>
+                            <p> Member Since: {localStorage.getItem("userDateJoined")} </p>
+                        </div>
+                    </section>
+                    <button id="logoutBtn" onClick={()=>{ logout() }}> Log Out </button>
                 </section>
                 
             </section>

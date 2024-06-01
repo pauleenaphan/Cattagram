@@ -107,6 +107,7 @@ export const CreateAccount = ()=>{
         localStorage.setItem("isLogged", "true");
         localStorage.setItem("userEmail", userData.userEmail);
         localStorage.setItem("userName", userData.userName);
+        localStorage.setItem("userPfp", defaultPfp);
         localStorage.setItem("userDateJoined", getDate())
     }
 

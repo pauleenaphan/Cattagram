@@ -240,7 +240,7 @@ export const Home = () =>{
                                 <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
                                 <textarea placeholder="Description" style={{ width: '80%', height: "200px" }} onChange={(e) => setNewPost("desc", e.target.value)} />
                                 <input type="file" placeholder="show your cat" onChange={(e) => handleImageUpload(e, handleImageUploadCallback)} />
-                                <button type="submit">Post!</button>
+                                <button id="subBtn" type="submit">Post!</button>
                             </form>
                         </Modal.Body>
                     </div>  

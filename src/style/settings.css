@@ -8,9 +8,48 @@
 .settingsContainer .settingsSection{
     height: 98vh; /* Adjust as needed */
     background-color: #f8a526;
-    margin: 10px;
+    margin: 10px -8%;
     border-radius: 10px;
+    width: 105%;
     display: flex;
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
 }
+
+.settingsSection .userInfo{
+    background-color: rgb(221, 221, 221);
+    border-radius: 10px 10px 0 0;
+    width: 100%;
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.settingsSection .userInfo img{
+    border-radius: 500px;
+    border: solid 3px rgb(153, 152, 152);
+    height: 70%;
+}
+
+.settingsSection .userInfo h1, .settingsSection .userInfo p{
+    margin: 0; 
+    padding: 0; 
+}
+
+.settingsSection .userInfo h1{
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.settingsSection .userInfo p{
+    font-weight: bold;
+}
+
+#logoutBtn{
+    font-size: 30px;
+    margin: 30px;
+}
+

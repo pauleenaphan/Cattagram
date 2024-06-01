@@ -61,7 +61,7 @@
 
 .pageContainer .userHeaderContainer h1{
     font-size: 30px;
-    margin-bottom: -10%;
+    margin-bottom: -5px;
     text-decoration: underline;
 }
 
@@ -279,14 +279,14 @@
     padding: 0; /* Reset padding */
 }
 
-.addFriendBtn, #accFriBtn, #decFriBtn, #removeFriBtn, #removeBtn, #nvmBtn{
+.addFriendBtn, #accFriBtn, #decFriBtn, #removeFriBtn, #removeBtn, #nvmBtn, #logoutBtn{
     background-color: #f8a526;
     padding: 10px 20px;
     border-radius: 10px;
     font-weight: bold;
 }
 
-.addFriendBtn:hover, #accFriBtn:hover, #decFriBtn:hover, #removeFriBtn:hover, #removeBtn:hover, #nvmBtn:hover{
+.addFriendBtn:hover, #accFriBtn:hover, #decFriBtn:hover, #removeFriBtn:hover, #removeBtn:hover, #nvmBtn:hover, #logoutBtn:hover{
     background-color: #af741c; 
 }
 

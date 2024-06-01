@@ -121,7 +121,6 @@
     z-index: 999; /* Ensure the overlay appears above other content */
 }
 
-
 .editModal:not(.modalHeader){
     background-color: white;
     border-radius: 10px;
@@ -130,6 +129,7 @@
     margin: auto;
     z-index: 1000; /* Ensure the modal appears above the overlay */
 }
+
 .editModal .modalHeader{
     background-color: #f8a526;
     font-size: 30px;
@@ -138,6 +138,7 @@
 
 .editModal h1{
     text-align: center;
+    padding: 0px 100px;
     margin-bottom: 10%;
 }
 

@@ -29,6 +29,7 @@ export const Friend = () =>{
     const [friendReqPopup, setFriendReqPopup] = useState(false);
     const [friendReq, setFriendReq] = useState([]);
     const [friendReqStatus, setFriendReqStatus] = useState("");
+    const [friendListStatus, setFriendListStatus] = useState("");
     const [friendList, setFriendList] = useState([]);
     const [confirmPopup, setConfirmPopup] = useState(false);
     const [currRemove, setCurrRemove] = useState(""); //current user to be remove from friend list
@@ -89,7 +90,6 @@ export const Friend = () =>{
             }else{
                 setUserFoundStatus(results.length + " Users were found!");
             }
-            
         }
         //sorts by lowest distance to highest
         setFriendSearchResult(results.sort((a, b) => a.distance - b.distance)); 
@@ -149,7 +149,6 @@ export const Friend = () =>{
                     pfp: reqPfp,
                     date: reqDate
                 })
-                
                 //add friend to requested user's doc
                 const userInfo = await fetchUserInfo(reqUser);
                 if(userInfo && userInfo.length > 0){
@@ -200,6 +199,13 @@ export const Friend = () =>{
                 friendDate: doc.data().date
             }))
             setFriendList(listRec);
+            if(friendList.length === 0){
+                setFriendListStatus("You currently have no friends! :O");
+            }else if(friendList.length === 1){
+                setFriendListStatus("You currently have 1 friend!");
+            }else{
+                setFriendListStatus(`You currently have ${friendList.length} friends!`);
+            }
         }catch(error){
             console.log("error ", error);
         }
@@ -355,6 +361,7 @@ export const Friend = () =>{
                 <Navbar/>
                 <section className="friendSection">
                     <h1> Your Pawtastic Friends! </h1>
+                    <p id="friendListStatus"> {friendListStatus} </p>
                     <div className="friendsList">
                         {friendList.map(friend =>(
                             <div key={friend.id} className="friendListContainer">

@@ -164,6 +164,17 @@
 
 .friendReqModal h1, .friendReqModal h2{
     text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.friendReqModal h1{
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.friendReqModal h2{
+    font-weight: normal;
 }
 
 /* accept/decline friend req buttons */
@@ -182,9 +193,19 @@
     overflow-y: auto;
 }
 
+.friendSection h1, #friendListStatus{
+    margin: 0;
+    padding: 0;
+}
+
 .friendSection h1{
     font-size: 30px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+}
+
+#friendListStatus{
+    margin-top: 10px;
+    font-size: 20px;
 }
 
 .friendSection h2{
