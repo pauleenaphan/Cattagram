@@ -337,7 +337,6 @@ export const Friend = () =>{
                                         <button id="removeBtn" onClick={() => {removeFriend()}}> Remove them :( </button>
                                         <button id="nvmBtn" onClick={() =>{setConfirmPopup(false)}}> Nevermind! :D </button>
                                     </div>
-                                    
                                 </div> 
                             </Modal.Body>
                         </div>
