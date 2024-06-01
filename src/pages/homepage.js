@@ -10,7 +10,7 @@ import { handleImageUpload, getDate } from './helpers.js';
 
 import { FaRegComment } from "react-icons/fa";
 import { IoIosSend, IoIosAddCircleOutline } from "react-icons/io";
-import { AiOutlineLike } from "react-icons/ai";
+// import { AiOutlineLike } from "react-icons/ai";
 
 export const Home = () =>{
     const [userPost, setUserPost] = useState({
@@ -339,7 +339,7 @@ export const Home = () =>{
                                 <h2>{post.title}</h2>
                                 <p className="postDesc">{post.desc}</p>
                                 <div className="footerContainer">
-                                    <AiOutlineLike className="icons"/>
+                                    {/* <AiOutlineLike className="icons"/> */}
                                     <FaRegComment className="icons" id="commentIcon" onClick={() => {
                                         toggleCommentPopup(post.id);
                                         }}/>

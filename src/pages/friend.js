@@ -37,16 +37,6 @@ export const Friend = () =>{
     const {distance} = require('fastest-levenshtein');
     const [userFoundStatus, setUserFoundStatus] = useState("");
 
-    //loads the current post on the homepage
-    const isMounted = useRef(true);
-    useEffect(() => {
-        if (isMounted.current) {
-            loadFriends();
-            // getPfp();
-            isMounted.current = false;
-        }
-    }, [loadFriends]);
-
     //creates a list of users that have the similar name
     //uses fast-levenshtein to find matching names
     const findUser = async () =>{
@@ -219,6 +209,16 @@ export const Friend = () =>{
             setUserPopup(true);  
         }
     }
+
+    //loads the current post on the homepage
+    const isMounted = useRef(true);
+    useEffect(() => {
+        if (isMounted.current) {
+            loadFriends();
+            // getPfp();
+            isMounted.current = false;
+        }
+    }, );
 
     return(
         <div className="friendPageContainer">
