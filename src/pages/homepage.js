@@ -5,6 +5,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
+import loadingSpinner from "../imgs/loadingSpinner.gif";
 import { fetchUserInfo, getUserPost } from "./userInfo.js";
 import { handleImageUpload, getDate } from './helpers.js';
 
@@ -13,6 +14,7 @@ import { IoIosSend, IoIosAddCircleOutline } from "react-icons/io";
 // import { AiOutlineLike } from "react-icons/ai";
 
 export const Home = () =>{
+    const [isLoading, setIsLoading] = useState(true);
     const [userPost, setUserPost] = useState({
         "title": "My dumb owner didn't put a title",
         "desc": "My owner didn't have anything to say. I'm not surprised, they have a small brain.",
@@ -54,7 +56,6 @@ export const Home = () =>{
     useEffect(() => {
         if (isMounted.current) {
             getFeed();
-            // getPfp();
             isMounted.current = false;
         }
     }, [feedPost]);
@@ -103,6 +104,7 @@ export const Home = () =>{
 
     //gets the post from firebase
     const getFeed = async () =>{
+        setIsLoading(true);
         try{
             const post = await getDocs(collection(db, "Homepage Feed"));
             const postReceived = post.docs.map(doc =>({
@@ -118,22 +120,24 @@ export const Home = () =>{
         }catch(error){
             console.log("error ", error);
         }
+        setIsLoading(false);
     }
 
     const getProfile = async (userName) =>{
+        setIsLoading(true);
+
         const userInfo = await fetchUserInfo(userName);
         if(userInfo && userInfo.length > 0){
             setUserProfile(userInfo[0]);
             setUserProfilePost(await getUserPost(userInfo[0].id));
             setUserPopup(true);  
         }
+        setIsLoading(false);
     }
 
     //adds a comment to the post
     const addComment = async () =>{
         //add comment to the doc comment collection
-        console.log(userComment);
-        console.log(localStorage.getItem("userName"));
         if(userComment === ""){
             alert("comment cannot be empty");
             return;
@@ -148,6 +152,8 @@ export const Home = () =>{
 
     //loads all comments on the specific post
     const loadComment = async (postId) =>{
+        setIsLoading(true);
+
         const postDocs = await getDocs(collection(db, "Homepage Feed", postId, "comments"));
         const docComments = postDocs.docs.map(doc =>({
             userCommentName: doc.data().name,
@@ -155,9 +161,13 @@ export const Home = () =>{
             date: doc.data().date
         }))
         setComments(docComments);
+
+        setIsLoading(false);
     }
 
     const sendFriendReq = async (userName) =>{
+        setIsLoading(true);
+
         try{
             const userInfo = await fetchUserInfo(userName);
             if(userInfo && userInfo.length > 0){
@@ -179,10 +189,27 @@ export const Home = () =>{
         }catch(error){
             console.log("error ", error);
         }
+
+        setIsLoading(false);
     }
 
     return (
         <div className="homeContainer">
+            <button id="hiddenButton" style={{display:'none'}} onClick={() =>{console.log("btn being clicked")}}></button>
+            {isLoading &&(
+                <>
+                    <div className="overlay" id="loadingOverlay"></div>
+                    <Modal show={isLoading} className="loadingModal">
+                        {/* <Modal.Header></Modal.Header> */}
+                        <div className="modalBody">
+                            <Modal.Body>
+                                <img src={loadingSpinner} alt="loadingSpin"></img>
+                            </Modal.Body> 
+                        </div>
+                        
+                    </Modal>
+                </>
+            )}
             {userPopup &&(
                 <>
                     <div className="overlay" onClick={() => setUserPopup(false)}></div>
@@ -194,14 +221,16 @@ export const Home = () =>{
                                 <img src={userProfile.img} alt="userPfp"/>
                                 <div className="descContainerSide">
                                     <div className="profileDescContainer">
-                                        <h1> {userProfile.name} </h1>
-                                        <p id="userDesc"> {userProfile.desc} </p>
-                                        <p id="userDate"> Member since: {userProfile.date} </p>
+                                        <div className="profileNameDescContainer">
+                                            <h1> {userProfile.name} </h1>
+                                            <p id="userDesc"> {userProfile.desc} </p>
+                                        </div>
                                         <div className="userButtons">
-                                        {/* makes sure that you cannot add yourself to the friend's list */}
-                                        {userProfile.name !== localStorage.getItem("userName") && ( 
-                                            <button className="addFriendBtn" onClick={() => sendFriendReq(userProfile.name)}>+ Add Friend</button>
-                                        )}
+                                            <p id="userDate"> Member since: {userProfile.date} </p>
+                                            {/* makes sure that you cannot add yourself to the friend's list */}
+                                            {userProfile.name !== localStorage.getItem("userName") && ( 
+                                                <button className="addFriendBtn" onClick={() => sendFriendReq(userProfile.name)}>+ Add Friend</button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

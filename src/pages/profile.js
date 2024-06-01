@@ -4,6 +4,7 @@ import { collection, getDocs, updateDoc } from "firebase/firestore";
 import { LiaUserEditSolid } from "react-icons/lia";
 import { handleImageUpload } from './helpers.js';
 import { fetchUserInfo, getUserPost } from "./userInfo.js";
+import loadingSpinner from "../imgs/loadingSpinner.gif";
 
 import { Navbar } from "./navbar";
 import { db } from "../firebaseConfig";
@@ -11,6 +12,7 @@ import '../style/profile.css';
 
 
 export const Profile = () =>{
+    const [isLoading, setIsLoading] = useState(true);
     const [editPopup, setEditPopup] = useState(false);
     const [feedPost, setFeedPost] = useState([]);
     const [userProfile, setUserProfile] = useState({ 
@@ -36,11 +38,14 @@ export const Profile = () =>{
     }, [userProfile]);
 
     const getProfile = async () =>{
+        setIsLoading(true);
+        document.querySelector('.overlay').focus(); // Focus the overlay element
         const userInfo = await fetchUserInfo(localStorage.getItem("userName"));
         if (userInfo && userInfo.length > 0) {
             setUserProfile(userInfo[0]);
             setFeedPost(await getUserPost(userInfo[0].id))
         }
+        setIsLoading(false);
     }
 
     const handleImageUploadCallback = (compressedDataUrl) => {
@@ -68,17 +73,34 @@ export const Profile = () =>{
 
     return(
         <div className="profileContainer">
+            {/* used to get rid of the black outline in the modal */}
+            <button id="hiddenButton" style={{display:'none'}} onClick={() =>{console.log("btn being clicked")}}></button>
+            {isLoading &&(
+                <>
+                    <div className="overlay"></div>
+                    <Modal show={isLoading} className="loadingModal">
+                        {/* <Modal.Header></Modal.Header> */}
+                        <div className="modalBody">
+                            <Modal.Body>
+                                <img src={loadingSpinner} alt="loadingSpin"></img>
+                            </Modal.Body> 
+                        </div>
+                        
+                    </Modal>
+                    
+                </>
+            )}
             {editPopup && (
                 <>
                     <div className="overlay" onClick={() => setEditPopup(false)}></div>
                     <Modal show={editPopup} onClose={() => setEditPopup(false)} className="editModal">
                         <Modal.Header className="modalHeader"></Modal.Header>
                         <div className="bodyModalContainer">
-                            <h1> Edit your profile to look meowtastic! </h1>
+                            <h1> Edit your profile to look meowtastic! 😺 </h1>
                             <Modal.Body> 
                                 <form className="profileForm" onSubmit={updateFirebase}>
                                     <input type="file" placeholder="Change profile picture" onChange={(e) => handleImageUpload(e, handleImageUploadCallback)}/>
-                                    <input type="text" placeholder="Update profile description" value={userProfile.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
+                                    <textarea type="text" placeholder="Update profile description" value={userProfile.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
                                     <button type="submit">Update!</button>
                                 </form>
                             </Modal.Body>
@@ -98,9 +120,13 @@ export const Profile = () =>{
                     <section className="headerContainer">
                         <img src={userProfile.img} alt="userPfp"/>
                         <div className="descContainer">
-                            <h1 id="userName"> {userProfile.name} </h1>
-                            <p id="userDesc"> {userProfile.desc} </p>
-                            <p id="userDate"> Member Since: {userProfile.date} </p>
+                            <div className="nameDescContainer">
+                                <h1 id="userName"> {userProfile.name} </h1>
+                                <p id="userDesc"> {userProfile.desc} </p>
+                            </div>
+                            <div className="dateJoinedContainer">
+                                <p id="userDate"> Member Since: {userProfile.date} </p>
+                            </div>
                         </div>
                     </section>
                     <section className="userFeedContainer">

@@ -32,7 +32,7 @@ export const Login = () =>{
             const docSnap = await getDoc(querySnapshot.docs[0].ref);
 
             localStorage.setItem("userName", docSnap.data().name);
-            localStorage.setItem("userDateJoined", docSnap.data().dateJoined);
+            localStorage.setItem("userDateJoined", docSnap.data().datejoined);
             localStorage.setItem("userPfp", docSnap.data().pic)
         } catch (error) {
             console.log("error ", error);

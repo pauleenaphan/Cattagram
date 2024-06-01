@@ -13,8 +13,10 @@ import '../style/friend.css';
 import { db } from '../firebaseConfig.js';
 import { Navbar } from './navbar';
 import { fetchUserInfo, getUserPost } from "./userInfo.js";
+import loadingSpinner from "../imgs/loadingSpinner.gif";
 
 export const Friend = () =>{
+    const [isLoading, setIsLoading] = useState(true);
     const [addFriendPopup, setAddFriendPopup] = useState(false); //visbility for addfriend modal
     const [userPopup, setUserPopup] = useState(false);
     const [userProfile, setUserProfile] = useState({ 
@@ -43,6 +45,7 @@ export const Friend = () =>{
         const results = [];
         setFriendSearchResult([]); //clear field everytime we search
         setUserFoundStatus("");
+        setIsLoading(true);
         try {
             const usersSnapshot = await getDocs(collection(db, "Users"));
             //loops thru each of the docs to find a matching username 
@@ -72,23 +75,30 @@ export const Friend = () =>{
             console.error('Error finding users:', error);
         }
         if(results.length === 0){
-            setUserFoundStatus("0 Users were found! Try again :(");
-            return
+            setUserFoundStatus("0 Users were found! Try again! 😿");
         }else{
             if(results.length === 1){
-                setUserFoundStatus(results.length + " User was found!");
+                setUserFoundStatus(results.length + " User was found! 🙀");
             }else{
-                setUserFoundStatus(results.length + " Users were found!");
+                setUserFoundStatus(results.length + " Users were found! 🙀");
             }
         }
         //sorts by lowest distance to highest
         setFriendSearchResult(results.sort((a, b) => a.distance - b.distance)); 
         setNewFriendInput("");
+        setIsLoading(false);
     }
 
     //load user's friend req
     const loadFriendReq = async () =>{
+        const startTime = Date.now();
         const friendReqs = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "friendRequest"))
+        const elapsedTime = Date.now() - startTime;
+
+        //loading screen will start only if the user is wating 3 seconds or longer
+        if (elapsedTime > 3000) {
+            setIsLoading(true);
+        }
         const friendReqDocs = friendReqs.docs.map(doc =>({
             id: doc.id,
             reqDate: doc.data().reqUserDate,
@@ -97,35 +107,47 @@ export const Friend = () =>{
         }))
         setFriendReq(friendReqDocs);
         if(friendReqDocs.length === 0){
-            setFriendReqStatus("You have 0 friend request! :(");
+            setFriendReqStatus("You currently have 0 friend request! 😿");
         }else{
-            setFriendReqStatus(`You have ${friendReqDocs.length} friend request!`);
+            setFriendReqStatus(`You have ${friendReqDocs.length} friend request! 😸`);
         }
+
+        setIsLoading(false);
     }
 
     //send friend request to picked user
     const sendFriendReq = async (userEmail) =>{
+        setIsLoading(true);
+
+        //var for when a user has sent a request already
+        let sentAlready = false;
         try{
             //takes in userEmail that the request is being sent to
             const reqs = await getDocs(collection(db, "Users", userEmail, "friendRequest"))
             reqs.forEach((req) =>{
                 if(req.data().requestedUser === localStorage.getItem("userName")){
                     console.log("you already sent a friend req");
-                    return;
+                    sentAlready = true;
                 }
             })
-            await addDoc(collection(db, "Users", userEmail, "friendRequest"), {
-                requestedUser: localStorage.getItem("userName"),
-                reqUserPfp: localStorage.getItem("userPfp"),
-                reqUserDate: getDate()
-            })
+            if(!sentAlready){
+                await addDoc(collection(db, "Users", userEmail, "friendRequest"), {
+                    requestedUser: localStorage.getItem("userName"),
+                    reqUserPfp: localStorage.getItem("userPfp"),
+                    reqUserDate: getDate()
+                })
+            }
         }catch(error){
             console.log("error ", error);
         }
+
+        setIsLoading(false);
     }
 
     //pick whether to accept or decline friend request
     const friendReqRespond = async (status, docId, reqUser, reqPfp, reqDate) =>{
+        setIsLoading(true);
+
         //remove request from doc
         await deleteDoc(doc(db, "Users", localStorage.getItem("userEmail"), "friendRequest", docId));
         if(status === false){
@@ -155,9 +177,12 @@ export const Friend = () =>{
         loadFriendReq();
         loadFriends();
         setFriendReqPopup(false);
+        setIsLoading(false);
     }
 
     const removeFriend = async () => {
+        setIsLoading(true);
+
         try{
             //removes friend from the current user's doc
             await deleteDoc(doc(db, "Users", localStorage.getItem("userEmail"), "friendList", currRevDoc));
@@ -177,9 +202,12 @@ export const Friend = () =>{
         }
         setConfirmPopup(false);
         loadFriends();
+        setIsLoading(false);
     };
     
     const loadFriends = async () =>{
+        setIsLoading(true);
+
         try{
             const list = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "friendList"))
             const listRec = list.docs.map(doc =>({
@@ -189,25 +217,25 @@ export const Friend = () =>{
                 friendDate: doc.data().date
             }))
             setFriendList(listRec);
-            if(friendList.length === 0){
-                setFriendListStatus("You currently have no friends! :O");
-            }else if(friendList.length === 1){
-                setFriendListStatus("You currently have 1 friend!");
-            }else{
-                setFriendListStatus(`You currently have ${friendList.length} friends!`);
-            }
+            console.log("friendlist lenght", listRec.length)
+            setFriendListStatus(`${listRec.length}  😸`);
         }catch(error){
             console.log("error ", error);
         }
+
+        setIsLoading(false);
     }
 
     const getProfile = async (userName) =>{
+        setIsLoading(true);
+
         const userInfo = await fetchUserInfo(userName);
         if(userInfo && userInfo.length > 0){
             setUserProfile(userInfo[0]);
             setUserProfilePost(await getUserPost(userInfo[0].id));
             setUserPopup(true);  
         }
+        setIsLoading(false);
     }
 
     //loads the current post on the homepage
@@ -222,6 +250,21 @@ export const Friend = () =>{
 
     return(
         <div className="friendPageContainer">
+            <button id="hiddenButton" style={{display:'none'}} onClick={() =>{console.log("btn being clicked")}}></button>
+            {isLoading &&(
+                <>
+                    <div className="overlay" id="loadingOverlay"></div>
+                    <Modal show={isLoading} className="loadingModal">
+                        {/* <Modal.Header></Modal.Header> */}
+                        <div className="modalBody">
+                            <Modal.Body>
+                                <img src={loadingSpinner} alt="loadingSpin"></img>
+                            </Modal.Body> 
+                        </div>
+                        
+                    </Modal>
+                </>
+            )}
             {addFriendPopup && (
             <>
                 <div className="overlay" onClick={() => setAddFriendPopup(false)}></div>
@@ -231,7 +274,14 @@ export const Friend = () =>{
                         <div className="friendHeadContainer">
                             <h1> Find a cool cat </h1>
                             <div className="searchContainer">
-                                <input type="text" value = {newFriendInput} placeholder="Enter username" className="searchInput" onChange={(e) => {setNewFriendInput(e.target.value)}}></input>
+                                <input 
+                                    type="text" 
+                                    value = {newFriendInput} 
+                                    placeholder="Enter username" 
+                                    className="searchInput" 
+                                    onChange={(e) => {setNewFriendInput(e.target.value)}}
+                                    onKeyDown={(e) =>{if(e.key === "Enter"){findUser()}}} 
+                                ></input>
                                 <FaSearch class="icon" onClick={findUser}/>
                             </div>
                             <p id="userFoundStatus"> {userFoundStatus} </p>
@@ -332,10 +382,10 @@ export const Friend = () =>{
                         <div className="userBodyModalContainer">
                             <Modal.Body>
                                 <div className="modalBodyContainer">
-                                    <h1> Are you sure you want to remove {currRemove} as a friend? :O</h1> 
+                                    <h1> Are you sure you want to remove {currRemove} as a friend? 😿</h1> 
                                     <div className="userBtns">
-                                        <button id="removeBtn" onClick={() => {removeFriend()}}> Remove them :( </button>
-                                        <button id="nvmBtn" onClick={() =>{setConfirmPopup(false)}}> Nevermind! :D </button>
+                                        <button id="removeBtn" onClick={() => {removeFriend()}}> Confirm </button>
+                                        <button id="nvmBtn" onClick={() =>{setConfirmPopup(false)}}> Nevermind! </button>
                                     </div>
                                 </div> 
                             </Modal.Body>
@@ -359,8 +409,10 @@ export const Friend = () =>{
             <section className="pageContainer">
                 <Navbar/>
                 <section className="friendSection">
-                    <h1> Your Pawtastic Friends! </h1>
-                    <p id="friendListStatus"> {friendListStatus} </p>
+                    <div className="pageHeader">
+                        <h1> Your Pawtastic Friends! </h1>
+                        <p id="friendListStatus"> {friendListStatus} </p>
+                    </div>
                     <div className="friendsList">
                         {friendList.map(friend =>(
                             <div key={friend.id} className="friendListContainer">

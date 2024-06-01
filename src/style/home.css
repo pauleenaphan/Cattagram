@@ -1,24 +1,24 @@
 /* the whole page */
 .homeContainer .pageContainer{
+    background-color: #ffcf88;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
-    background-color: #ffcf88;
     height: 100vh;
 }
 
 /* feed container */
 .homeContainer .feedContainer{
-    height: 98vh; /* Adjust as needed */
-    overflow-y: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    align-items: center;
     background-color: #f8a526;
-    margin: 10px -12%;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 110%;
-    -ms-overflow-style: none;  /* IE and Edge */
+    height: 98vh; /* Adjust as needed */
+    margin: 10px -12%;
+    overflow-y: auto;
     scrollbar-width: none;  /* Firefox */
+    width: 110%;
 }
 
 /* Hide scrollbar for WebKit-based browsers (Chrome, Safari) */
@@ -28,11 +28,11 @@
 
 /* each post */
 .pageContainer .postContainer{
-    width: 95%;
-    margin: 15px;
-    border-radius: 10px;
-    border-radius: 10px;
     /* padding: 0px 20px; */
+    border-radius: 10px;
+    border-radius: 10px;
+    margin: 15px;
+    width: 95%;
 }
 
 .postContainer .postImgContainer{
@@ -40,23 +40,23 @@
 }
 
 .pageContainer .postContainer .imgPost{
-    width: 50%;
+    background-color: black ;
     display: block; /* Remove any potential whitespace */
     margin: auto; /* Center horizontally */
-    background-color: black ;
+    width: 50%;
 }
 
 /* userpfp, name, and date on post */
 .pageContainer .userHeaderContainer{
-    display: flex;
     align-items: center;
-    gap: 20px;
-    padding: 10px 20px;
+    background-color: rgb(221, 221, 221);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.5);
     cursor: pointer;
-    background-color: rgb(221, 221, 221);
+    display: flex;
+    gap: 20px;
+    padding: 10px 20px;
 }
 
 .pageContainer .userHeaderContainer h1{
@@ -66,40 +66,39 @@
 }
 
 .pageContainer .userHeaderContainer .imgContainer {
-    width: 10%; /* Adjust percentage as needed */
-    position: relative; /* This is necessary for the padding-bottom trick */
     padding-bottom: 10%; /* This creates a square container */
+    position: relative; /* This is necessary for the padding-bottom trick */
+    width: 10%; /* Adjust percentage as needed */
 }
 
 .pageContainer .userHeaderContainer .imgContainer img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image covers the container without distortion */
     border-radius: 500px; 
     border: 3px rgb(173, 173, 173) solid;
-
+    height: 100%;
+    left: 0;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
 
 .userHeaderContainer .imgContainer img:hover, #friendPfp:hover, .matchedUserOuterContainer img:hover{
-    opacity: 0.5;
     cursor: pointer;
+    opacity: 0.5;
 }
 
 /* title of post */
 .postContainer2 h2{
     font-size: 35px;
-    padding: 3% 20px 0px;
     margin-bottom: -0.5%;
+    padding: 3% 20px 0px;
 }
 
 .postBodyContainer{
     /* Left, right, and bottom inner shadow */
-    box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
-    border-radius: 0px 0px 10px 10px;
     background-color: rgb(221, 221, 221);
+    border-radius: 0px 0px 10px 10px;
+    box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
     padding-left: 20px;
     padding-top: 10px;
 }
@@ -115,25 +114,25 @@
 
 /* like and comment btn container */
 .footerContainer{
+    align-items: center;
     display: flex;
     justify-content: flex-end;
-    align-items: center;
     padding: 10px 20px;
 }
 
 .footerContainer .icons{
-    width: 6%;
-    height: 10%;
     cursor: pointer;
+    height: 10%;
+    width: 6%;
 }
 
 /* modal when the user creates a new post */
 .newPostModal{
-    margin: auto;
     background-color: white;
     border-radius: 10px;
-    width: 40vw;
     height: 90vh;
+    margin: auto;
+    width: 40vw;
     z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
@@ -143,19 +142,19 @@
 
 /* x button header */
 .modalHeader{
-    display: flex;
     align-items: center;
-    justify-content: space-between;
     background-color: #f8a526;
-    padding: 10px 0px;
+    display: flex;
     font-size: 20px;
+    justify-content: space-between;
+    padding: 10px 0px;
 }
 
 .bodyModalContainer{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     height: 70vh;
+    justify-content: center;
 }
 
 .modalHeader button{
@@ -168,11 +167,11 @@
 }
 
 .newPost{
+    align-items: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 20px;
+    justify-content: center;
 }
 
 .newPost input[type=text]{
@@ -193,20 +192,20 @@
 }
 
 .newPost input[type=text], .newPost textarea{
+    border-radius: 10px;
     border: 5px solid rgb(226, 228, 230);
     outline: none;
-    border-radius: 10px;
 }
 
 .newPost button{
     background-color: #f8a526;
+    border-radius: 20px;
     border: 3px solid #f8a526;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Add darker orange shadow */
+    cursor: pointer;
     font-size: 25px;
     font-weight: bold;
     padding: 10px 50px;
-    border-radius: 20px;
-    cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Add darker orange shadow */
 }
 
 .newPost input[type=file]{
@@ -214,55 +213,58 @@
 }
 
 .newPost button:hover{
-    border: 3px solid #f8a526;
     background-color: white;
+    border: 3px solid #f8a526;
 }
 
 /* modal when user presses on another user's name */
 .userProfileModal{
     background-color: white;
+    border-radius: 10px;
+    height: 90vh;
     margin: auto;
     width: 100vh;
-    height: 90vh;
     z-index: 1000;
-    border-radius: 10px;
 }
 
 .userProfileModal .profileContainer, .userProfileModalInFriend .profileContainer{
-    display: flex;
-    justify-content: center;
     background-color: #E9E9E9;
-    padding: 20px 0px;
+    display: flex;
     gap: 10px;
+    justify-content: center;
+    padding: 20px 0px;
 }
 
 .userProfileModal .descContainerSide, .userProfileModalInFriend .descContainerSide{
-    width: 30%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     gap: 10px;
+    justify-content: space-between;
+    width: 30%;
 }
 
 .userProfileModal .profileContainer img, .userProfileModalInFriend img{
-    width: 20%;
     border-radius: 500px;
     border: 3px rgb(173, 173, 173) solid;
+    width: 20%;
 }
 
 /* username, description, and date joined on the profiles */
 .userBodyModalContainer .profileDescContainer{
-    height: 100%;
-    width: 100%;
     border-left: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
     padding-left: 10px;
+    width: 100%;
 }
 
 .profileDescContainer #userDesc{
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 40%;
+    /* height: 40%; */
     margin: 10px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .profileDescContainer h1{
@@ -281,9 +283,9 @@
 
 .addFriendBtn, #accFriBtn, #decFriBtn, #removeFriBtn, #removeBtn, #nvmBtn, #logoutBtn{
     background-color: #f8a526;
-    padding: 10px 20px;
     border-radius: 10px;
     font-weight: bold;
+    padding: 10px 20px;
 }
 
 .addFriendBtn:hover, #accFriBtn:hover, #decFriBtn:hover, #removeFriBtn:hover, #removeBtn:hover, #nvmBtn:hover, #logoutBtn:hover{
@@ -291,9 +293,9 @@
 }
 
 .userBodyModalContainer .userProfilePostContainer{
+    align-items: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
 }
 
@@ -305,21 +307,21 @@
 }
 
 .userProfilePostContainer .userPostContainer img{
-    width: 70%;
+    border-radius: 0px !important;
     display: block;
     margin: auto;
-    border-radius: 0px !important;
+    width: 70%;
 }
 
 .userProfilePostContainer .nameDateContainer{
-    display: flex;
     align-items: center;
-    padding: 0px 20px;
     background-color: rgb(221, 221, 221);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.5);
+    display: flex;
     justify-content: space-between;
+    padding: 0px 20px;
 }
 
 .userHeaderContainer .nameDateContainer h1:hover, .friendListContainer h2:hover{
@@ -329,8 +331,8 @@
 
 /* title and desc of the post */
 .userProfilePostContainer .postBodyContainer{
-    box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
     border-radius: 0px 0px 10px 10px;
+    box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
     padding: 10px 20px;
 }
 
@@ -341,13 +343,13 @@
 
 /* modal popup for comments */
 .commentModal{
-    margin: auto;
     background-color: white;
     border-radius: 10px;
-    width: 80vw;
     height: 90vh;
-    z-index: 1000; /* Ensure the modal appears above the overlay */
+    margin: auto;
     overflow: hidden !important;
+    width: 80vw;
+    z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
 .commentModal h1{
@@ -366,50 +368,45 @@
 }
 
 .commentModal .postContainer{
+    background-color: #ffcf88;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: #ffcf88;
+    margin: 10px;
     padding: 20px;
     width: 90%;
-    border-radius: 10px;
-    margin: 10px;
 }
 
 .commentModal .userHeaderContainer{
-    display: flex;
     align-items: center;
+    display: flex;
     gap: 15px;
     margin-bottom: 20px;
 }
 
 .commentModal .userHeaderContainer .imgContainer {
-    width: 20%; /* Adjust percentage as needed */
-    position: relative; /* This is necessary for the padding-bottom trick */
     padding-bottom: 20%; /* This creates a square container */
+    position: relative; /* This is necessary for the padding-bottom trick */
+    width: 20%; /* Adjust percentage as needed */
 }
 
 .commentModal .userHeaderContainer .imgContainer img{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image covers the container without distortion */
     border-radius: 500px; /* Adjust radius as needed */
     border: 3px rgb(173, 173, 173) solid;
+    height: 100%;
+    left: 0;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
 
 .commentModal .nameDateContainer h2{
     font-size: 30px;
 }
 
-.commentModal .nameDateContainer h2, .commentModal .nameDateContainer p{
-    margin: 0; /* Reset margin */
-    padding: 0; /* Reset padding */
-}
-
-.captionContainer h2, .captionContainer p{
+.commentModal .nameDateContainer h2, .commentModal .nameDateContainer p, .captionContainer h2, .captionContainer p{
     margin: 0; /* Reset margin */
     padding: 0; /* Reset padding */
 }
@@ -418,7 +415,6 @@
     margin-top: 20px;
 }
 
-
 .commentModal .imgPost{
     height: 80%;
     width: 100%;
@@ -426,9 +422,9 @@
 
 /* comments on the right */
 .commentContainer{
-    padding: 20px;
     background-color: #E9E9E9;
     height: 100vh;
+    padding: 20px;
 }
 
 .commentContainer h1{
@@ -446,13 +442,13 @@
 }
 
 .commentContainer .inputContainer input[type=text]{
-    border-radius: 10px;
     background-color: #d6d6d6;
-    width: 90%;
-    padding: 10px;
+    border-radius: 10px;
     border: none;
-    outline: none;
     font-size: 25px;
+    outline: none;
+    padding: 10px;
+    width: 90%;
 }
 
 .commentContainer .inputContainer .icon{
@@ -461,8 +457,8 @@
 
 .commentDateContainer{
     background-color: #ffcf88;
-    margin: -15px 10px 30px 0;
     border-radius: 0 10px 10px;
+    margin: -15px 10px 30px 0;
     padding: 5px 10px;
 }
 

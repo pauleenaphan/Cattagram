@@ -1,54 +1,54 @@
 .profileContainer .profilePageContainer{
+    background-color: #ffcf88;
     display: grid;
     grid-template-columns: 1fr 3fr;
-    background-color: #ffcf88;
     height: 100vh;
 }
 
 /* profile section of the page */
 .profileContainer .userProfileContainer{
-    height: 98vh; /* Adjust as needed */
-    overflow-y: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    align-items: center;
     background-color: #f8a526;
-    width: 105%;
-    margin: 10px -8%;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-
-    -ms-overflow-style: none;  /* IE and Edge */
+    height: 98vh; /* Adjust as needed */
+    margin: 10px -8%;
+    overflow-y: auto;
     scrollbar-width: none;  /* Firefox */
+    width: 105%;
 }
 
 /* profile header with pfp and description */
 .profileContainer .headerContainer{
-    background-color: #BEC0C2;
-    width: 100%;
-    display: flex;
-    justify-content: center;
     align-items: center;
+    background-color: #d6d6d6;
+    display: flex;
     gap: 20px;
+    justify-content: center;
     padding: 20px 0px;
+    width: 100%;
 }
 
 .profileContainer .headerContainer img{
-    width: 20vh;
     border-radius: 500px;
     border: 3px rgb(173, 173, 173) solid;
+    width: 20vh;
 }
 
 .profileContainer .descContainer{
-    /* background-color: rgb(153, 152, 152); */
-    height: 100%;
-    width: 30%;
     border-left: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
     padding-left: 10px;
+    width: 30%;
 } 
 
 .descContainer #userName{
     font-size: 35px;
-    height: 20%;
 }
 
 .descContainer h1, .descContainer p {
@@ -58,9 +58,9 @@
 
 .descContainer #userDesc{
     height: 60%;
-    overflow-y: auto;
-    overflow-x: hidden;
     margin: 10px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .descContainer #userDate{
@@ -69,34 +69,33 @@
 
 /* user's post section */
 .userFeedContainer{
+    align-items: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
 
 .userFeedContainer .userPostContainer{
-    background-color: rgb(221, 221, 221);
+    background-color: black;
     border-radius: 10px;
     margin: 30px 0px;
-    width: 100%;
-    background-color: black;
+    width: 80%;
 }
 
 .userFeedContainer .userPostContainer img{
-    width: 80%;
     display: block;
     margin: auto;
+    width: 80%;
 }
 
 .userFeedContainer .nameDateContainer{
-    display: flex;
     align-items: center;
-    padding: 0px 20px;
     background-color: rgb(221, 221, 221);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.5);
+    display: flex;
     justify-content: space-between;
+    padding: 0px 20px;
 }
 
 .userFeedContainer h1{
@@ -104,29 +103,29 @@
 }
 
 .userFeedContainer .postBodyContainer{
-    box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
     border-radius: 0px 0px 10px 10px;
-    padding: 10px 20px;
+    box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.5);
     margin-top: 0%;
+    padding: 10px 20px;
 }
 
 /* edit profile popup */
 .overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value to control the opacity */
+    height: 100%;
+    left: 0;
     position: fixed;
     top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value to control the opacity */
     z-index: 999; /* Ensure the overlay appears above other content */
 }
 
 .editModal:not(.modalHeader){
     background-color: white;
     border-radius: 10px;
-    width: 40vw;
     height: 80vh;
     margin: auto;
+    width: 40vw;
     z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
@@ -137,41 +136,49 @@
 }
 
 .editModal h1{
+    margin-bottom: 5%;
+    padding: 0px 20%;
     text-align: center;
-    padding: 0px 100px;
-    margin-bottom: 10%;
 }
 
 .modalHeader button{
+    background-color: rgb(226, 228, 230);
     border-radius: 10px;
     font-size: 30px;
-    padding: 10px;
     margin-right: 2%;
-    background-color: rgb(226, 228, 230);
+    padding: 10px;
 }
 
 .profileSectionContainer{
+    align-items: center;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    align-items: center;
-    width: 80%;
     margin-left: 20%;
+    width: 80%;
 }
 
 .profileForm{
+    align-items: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 50px;
+    justify-content: center;
 }
 
-.profileForm input[type=text]{
+.profileForm input[type=text], .profileForm textarea{
     font-size: 20px;
     padding: 2%;
     width: 80%;
 }
+
+.profileForm textarea{
+    font-size: 20px;
+    padding: 2%;
+    resize: none;
+    height: 150px;
+}
+
 
 .profileForm input[type=file]{
     cursor: pointer;
@@ -183,21 +190,21 @@
     resize: none;
 }
 
-.profileForm input[type=text], .newPost textarea{
+.profileForm input[type=text], .profileForm textarea{
+    border-radius: 10px;
     border: 5px solid rgb(226, 228, 230);
     outline: none;
-    border-radius: 10px;
 }
 
 .profileForm button{
     background-color: #f8a526;
+    border-radius: 20px;
     border: 3px solid #f8a526;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Add darker orange shadow */
+    cursor: pointer;
     font-size: 25px;
     font-weight: bold;
     padding: 10px 50px;
-    border-radius: 20px;
-    cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Add darker orange shadow */
 }
 
 .profileForminput[type=file]{
@@ -205,6 +212,6 @@
 }
 
 .profileForm button:hover{
-    border: 3px solid #f8a526;
     background-color: white;
+    border: 3px solid #f8a526;
 }

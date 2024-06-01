@@ -1,34 +1,34 @@
 .friendPageContainer .pageContainer{
+    background-color: #ffcf88;
     display: grid;
     grid-template-columns: 1fr 3fr;
-    background-color: #ffcf88;
     height: 100vh;
 }
 
 .friendPageContainer .friendSection{
+    -ms-overflow-style: none;  /* IE and Edge */
+    align-items: center;
     background-color: #f8a526;
-    height: 98vh; /* Adjust as needed */
-    overflow-y: auto;
-    margin: 10px -8%;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 105%;
-    -ms-overflow-style: none;  /* IE and Edge */
+    height: 98vh; /* Adjust as needed */
+    margin: 10px -8%;
+    overflow-y: auto;
     scrollbar-width: none;  /* Firefox */
+    width: 105%;
 }
 
 /* add friend modal */
 .addFriendModal{
-    margin: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
     background-color: white;
     border-radius: 10px;
-    width: 80vw;
     height: 90vh;
-    z-index: 1000; /* Ensure the modal appears above the overlay */
-    -ms-overflow-style: none;  /* IE and Edge */
+    margin: auto;
     scrollbar-width: none;  /* Firefox */
+    width: 80vw;
+    z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
 .addFriendModal .friendHeadContainer{
@@ -39,19 +39,19 @@
 }
 
 .friendHeadContainer .searchContainer{
-    display: flex;
     align-items: center;
+    display: flex;
     gap: 10px;
 }
 
 .friendHeadContainer .searchContainer input[type=text]{
-    padding: 10px 20px;
-    border-radius: 10px;
-    outline: none;
-    border: none;
     background-color: #d6d6d6;
-    border: 3px rgb(173, 173, 173) solid;
+    border-radius: 10px;
+    border: 3px rgb(173, 173, 173) solid !important;
+    border: none;
     font-size: 20px;
+    outline: none;
+    padding: 10px 20px;
 }
 
 .searchContainer .icon{
@@ -69,38 +69,38 @@
 
 /* friend search */
 .matchedUserOuterContainer{
-    margin-top: 5%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 20px;
+    justify-content: center;
+    margin-top: 5%;
     overflow-y: auto;
 }
 
 .matchUserContainer{
+    align-items: center;
     background-color: #d6d6d6;
+    border-radius: 20px;
     border: 3px rgb(173, 173, 173) solid;
     display: flex;
-    align-items: center;
-    border-radius: 20px;
+    height: 100%;
     padding: 10px 20px;
     width: 40%;
-    height: 100%;
 }
 
 .matchedUserOuterContainer img{
-    margin-right: 10px;
     border-radius: 500px;
-    height: 10%;
-    width: 35%;
-    cursor: pointer;
     border: solid 3px rgb(153, 152, 152);
+    cursor: pointer;
+    height: 10%;
+    margin-right: 10px;
+    width: 35%;
 }
 
 .matchUserContainer h1{
-    margin-top: -3%;
-    margin-bottom: -3%;
     cursor: pointer;
+    margin-bottom: -3%;
+    margin-top: -3%;
 }
 
 .matchUserContainer h1:hover{
@@ -120,11 +120,11 @@
 /* user profile modal */
 .userProfileModalInFriend{
     background-color: white;
+    border-radius: 10px;
+    height: 90vh;
     margin: auto;
     width: 150vh;
-    height: 90vh;
     z-index: 1000;
-    border-radius: 10px;
 }
 
 .profileFriendDescContainer h1, .profileFriendDescContainer p {
@@ -139,13 +139,14 @@
 .profileFriendDescContainer{
     border-left: 2px solid black;
     padding: 10px;
+    width: 30%;
 }
 
 .profileFriendDescContainer #userDesc{
-    overflow-y: auto;
-    overflow-x: hidden;
     height: 60%;
     margin: 10px 0px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .profileFriendDescContainer #userDate{
@@ -155,17 +156,17 @@
 /* friend req popup */
 .friendReqModal{
     background-color: white;
+    border-radius: 10px;
+    height: 80vh;
     margin: auto;
     width: 100vh;
-    height: 80vh;
     z-index: 1000;
-    border-radius: 10px;
 }
 
 .friendReqModal h1, .friendReqModal h2{
-    text-align: center;
     margin: 0;
     padding: 0;
+    text-align: center;
 }
 
 .friendReqModal h1{
@@ -185,12 +186,19 @@
 
 /* friend list */
 .friendsList{
-    width: 100%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 20px;
+    justify-content: center;
     overflow-y: auto;
+    width: 100%;
+}
+
+.friendSection .pageHeader{
+    background-color: #d6d6d6;
+    margin-bottom: 2%;
+    text-align: center;
+    width: 100%;
 }
 
 .friendSection h1, #friendListStatus{
@@ -204,8 +212,8 @@
 }
 
 #friendListStatus{
+    font-size: 25px;
     margin: 5px 0px 30px;
-    font-size: 20px;
 }
 
 .friendSection h2{
@@ -214,14 +222,14 @@
 }
 
 .friendListContainer{
-    background-color: #d6d6d6;
-    display: flex;
     align-items: center;
+    background-color: #d6d6d6;
     border-radius: 20px;
-    padding: 10px;
-    gap: 20px;
-    width: 40%;
     border: 3px rgb(173, 173, 173) solid;
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    width: 30%;
 }
 
 .friendListContainer img{
@@ -232,28 +240,28 @@
 /* confirm popup to remove friend */
 .confirmRemoveModal{
     background-color: white;
-    margin: auto;
-    width: 60vh;
-    height: 40vh;
-    z-index: 1000;
     border-radius: 10px;
     display: flex;
+    height: 40vh;
+    margin: auto;
+    width: 60vh;
+    z-index: 1000;
 }
 
 .confirmRemoveModal .modalBodyContainer{
-    text-align: center;
+    align-items: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
     height: 30vh;
+    justify-content: space-evenly;
     padding: 0px 3%;
+    text-align: center;
 }
 
 .confirmRemoveModal .modalBodyContainer .userBtns{
     display: flex;
-    justify-content: center;
     gap: 30px;
+    justify-content: center;
 }
 
 

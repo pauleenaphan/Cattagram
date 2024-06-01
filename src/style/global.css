@@ -5,3 +5,29 @@
 button{
     cursor: pointer;
 }
+
+/* styling for the loading modals */
+.loadingModal{
+    align-items: center;
+    display: flex;
+    height: 50vh;
+    justify-content: center;
+    margin: auto;
+    overflow: none;
+    width: 50vh;
+    z-index: 1000; /* Ensure the modal appears above the overlay */
+    outline: none;
+    border: none;
+}
+
+.loadingModal img{
+    margin-left: 10%;
+    width: 80%;
+    outline: none;
+    border: none;
+}
+
+
+
+
+
