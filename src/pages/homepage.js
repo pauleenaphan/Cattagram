@@ -263,12 +263,19 @@ export const Home = () =>{
                 <Modal show={postPopup} onClose={() => setPostPopup(false)} className="newPostModal">
                     <Modal.Header className="modalHeader"></Modal.Header>
                     <div className="bodyModalContainer">
-                        <h1> Create a meowtastic post! </h1>
+                        <h1> Create a meowtastic post! 😻</h1>
                         <Modal.Body>
                             <form className="newPost" onSubmit={handleSubmit}>
-                                <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
-                                <textarea placeholder="Description" style={{ width: '80%', height: "200px" }} onChange={(e) => setNewPost("desc", e.target.value)} />
-                                <input type="file" placeholder="show your cat" onChange={(e) => handleImageUpload(e, handleImageUploadCallback)} />
+                                <div className="newPostContainer">
+                                    <div className="userTextInput">
+                                        <input type="text" placeholder="Title" onChange={(e) => setNewPost("title", e.target.value)} />
+                                        <textarea placeholder="Description" onChange={(e) => setNewPost("desc", e.target.value)} />
+                                    </div>
+                                    <div className="userImgInput">
+                                        <input type="file" placeholder="show your cat" onChange={(e) => handleImageUpload(e, handleImageUploadCallback)} />
+                                        <img src={userPost.img} alt="chosen img"/>
+                                    </div>
+                                </div>
                                 <button id="subBtn" type="submit">Post!</button>
                             </form>
                         </Modal.Body>

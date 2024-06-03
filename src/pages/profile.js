@@ -99,8 +99,15 @@ export const Profile = () =>{
                             <h1> Edit your profile to look meowtastic! 😺 </h1>
                             <Modal.Body> 
                                 <form className="profileForm" onSubmit={updateFirebase}>
-                                    <input type="file" placeholder="Change profile picture" onChange={(e) => handleImageUpload(e, handleImageUploadCallback)}/>
-                                    <textarea type="text" placeholder="Update profile description" value={userProfile.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
+                                    <div className="editProfileContainer">
+                                        <div className="userTextInput">
+                                            <textarea type="text" placeholder="Update profile description" value={userProfile.desc} onChange={(e) => setProfile("desc", e.target.value)}/>
+                                        </div>
+                                        <div class="userImgInput">
+                                            <input type="file" placeholder="Change profile picture" onChange={(e) => handleImageUpload(e, handleImageUploadCallback)}/>
+                                            <img src={userProfile.img} alt="updated img"/>
+                                        </div>
+                                    </div>
                                     <button type="submit">Update!</button>
                                 </form>
                             </Modal.Body>

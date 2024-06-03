@@ -120,23 +120,16 @@
     z-index: 999; /* Ensure the overlay appears above other content */
 }
 
-.editModal:not(.modalHeader){
+.editModal{
     background-color: white;
     border-radius: 10px;
-    height: 80vh;
+    height: 90vh;
     margin: auto;
-    width: 40vw;
+    width: 100vh;
     z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
-.editModal .modalHeader{
-    background-color: #f8a526;
-    font-size: 30px;
-    margin-bottom: -5%;
-}
-
 .editModal h1{
-    margin-bottom: 5%;
     padding: 0px 20%;
     text-align: center;
 }
@@ -149,51 +142,56 @@
     padding: 10px;
 }
 
-.profileSectionContainer{
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    margin-left: 20%;
-    width: 80%;
-}
-
 .profileForm{
     align-items: center;
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    justify-content: center;
+
+}
+
+.editProfileContainer{
+    display: flex;
+    flex-direction: row;
+    height: 450px;
+    padding-bottom: 30px;
+    width: 90%;
+}
+
+.profileForm .userTextInput{
+    display: flex;
     justify-content: center;
 }
 
-.profileForm input[type=text], .profileForm textarea{
-    font-size: 20px;
-    padding: 2%;
-    width: 80%;
+.profileForm .userImgInput{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.profileForm .userTextInput, .profileForm .userImgInput{
+    width: 50%;
 }
 
 .profileForm textarea{
+    border-radius: 10px;
+    border: 5px solid rgb(226, 228, 230);
     font-size: 20px;
+    height: 90%;
+    outline: none;
     padding: 2%;
     resize: none;
-    height: 150px;
+    width: 90%;
 }
-
 
 .profileForm input[type=file]{
     cursor: pointer;
+    width: 90%;
 }
 
-.profileForm textarea{
-    font-size: 20px;
-    padding: 2%;
-    resize: none;
-}
-
-.profileForm input[type=text], .profileForm textarea{
-    border-radius: 10px;
-    border: 5px solid rgb(226, 228, 230);
-    outline: none;
+.profileForm img{
+    width: 90%;
 }
 
 .profileForm button{
@@ -207,9 +205,6 @@
     padding: 10px 50px;
 }
 
-.profileForminput[type=file]{
-    font-size: 20px;
-}
 
 .profileForm button:hover{
     background-color: white;

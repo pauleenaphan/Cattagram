@@ -130,9 +130,9 @@
 .newPostModal{
     background-color: white;
     border-radius: 10px;
-    height: 90vh;
+    height: 85vh;
     margin: auto;
-    width: 40vw;
+    width: 60vw;
     z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
@@ -154,7 +154,7 @@
     display: flex;
     flex-direction: column;
     height: 70vh;
-    justify-content: center;
+    /* justify-content: center; */
 }
 
 .modalHeader button{
@@ -182,13 +182,14 @@
 
 .newPost input[type=file]{
     cursor: pointer;
-    margin: 2% 0;
 }
 
 .newPost textarea{
     font-size: 20px;
     padding: 2%;
     resize: none;
+    height: 100%;
+    width: 80%;
 }
 
 .newPost input[type=text], .newPost textarea{
@@ -208,13 +209,37 @@
     padding: 10px 50px;
 }
 
-.newPost input[type=file]{
-    font-size: 20px;
-}
-
 .newPost button:hover{
     background-color: white;
     border: 3px solid #f8a526;
+}
+
+.newPost img{
+    width: 95%;
+}
+
+.newPostContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    height: 450px;
+    padding: 3% 0;
+    width: 90%;
+}
+
+.newPostContainer .userTextInput{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 50%;
+}
+
+.newPostContainer .userImgInput{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 50%;
 }
 
 /* modal when user presses on another user's name */
