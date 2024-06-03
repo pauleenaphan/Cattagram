@@ -8,7 +8,7 @@ import { FaSearch } from "react-icons/fa";
 import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore"; 
 // import levenshtein from 'fast-levenshtein';
 
-import { getDate } from './helpers.js';
+import { getDate, setAlert } from './helpers.js';
 import '../style/friend.css';
 import { db } from '../firebaseConfig.js';
 import { Navbar } from './navbar';
@@ -38,6 +38,8 @@ export const Friend = () =>{
     const [currRevDoc, setCurrRevDoc] = useState(""); //current doc to removevfrom other user in the friend list
     const {distance} = require('fastest-levenshtein');
     const [userFoundStatus, setUserFoundStatus] = useState("");
+    const [alertPopup, setAlertPopup] = useState(true);
+    const [alertMsg, setAlertMsg] = useState("");
 
     //creates a list of users that have the similar name
     //uses fast-levenshtein to find matching names
@@ -116,7 +118,7 @@ export const Friend = () =>{
     }
 
     //send friend request to picked user
-    const sendFriendReq = async (userEmail) =>{
+    const sendFriendReq = async (userEmail, userName) =>{
         setIsLoading(true);
 
         //var for when a user has sent a request already
@@ -126,7 +128,6 @@ export const Friend = () =>{
             const reqs = await getDocs(collection(db, "Users", userEmail, "friendRequest"))
             reqs.forEach((req) =>{
                 if(req.data().requestedUser === localStorage.getItem("userName")){
-                    console.log("you already sent a friend req");
                     sentAlready = true;
                 }
             })
@@ -142,6 +143,11 @@ export const Friend = () =>{
         }
 
         setIsLoading(false);
+        if(sentAlready){
+            setAlert(`You have already sent ${userName} a friend request 🙀`, setAlertMsg, setAlertPopup);
+        }else{
+            setAlert(`You have sent ${userName} a friend request 😸`, setAlertMsg, setAlertPopup);
+        }
     }
 
     //pick whether to accept or decline friend request
@@ -174,12 +180,18 @@ export const Friend = () =>{
                 console.log("error ", error);
             }
         }
+        setIsLoading(false);
         loadFriendReq();
         loadFriends();
         setFriendReqPopup(false);
-        setIsLoading(false);
+        if(status === false){
+            setAlert(`You have rejected ${reqUser} as a friend 😿`, setAlertMsg, setAlertPopup);
+        }else{
+            setAlert(`You and ${reqUser} are now friends! 😸`, setAlertMsg, setAlertPopup);
+        }
     }
 
+    //removes friend from list
     const removeFriend = async () => {
         setIsLoading(true);
 
@@ -203,8 +215,10 @@ export const Friend = () =>{
         setConfirmPopup(false);
         loadFriends();
         setIsLoading(false);
+        setAlert(`You and ${currRemove} are no longer friends 😿`, setAlertMsg, setAlertPopup);
     };
     
+    //loads user's friend on their friend's list
     const loadFriends = async () =>{
         setIsLoading(true);
 
@@ -243,7 +257,6 @@ export const Friend = () =>{
     useEffect(() => {
         if (isMounted.current) {
             loadFriends();
-            // getPfp();
             isMounted.current = false;
         }
     }, );
@@ -265,46 +278,59 @@ export const Friend = () =>{
                     </Modal>
                 </>
             )}
-            {addFriendPopup && (
-            <>
-                <div className="overlay" onClick={() => setAddFriendPopup(false)}></div>
-                <Modal show={addFriendPopup} onClose={() => setAddFriendPopup(false)} className="addFriendModal">
-                    <Modal.Header className="modalHeader"></Modal.Header>
-                    <div className="friendBodyContainer">
-                        <div className="friendHeadContainer">
-                            <h1> Find a cool cat </h1>
-                            <div className="searchContainer">
-                                <input 
-                                    type="text" 
-                                    value = {newFriendInput} 
-                                    placeholder="Enter username" 
-                                    className="searchInput" 
-                                    onChange={(e) => {setNewFriendInput(e.target.value)}}
-                                    onKeyDown={(e) =>{if(e.key === "Enter"){findUser()}}} 
-                                ></input>
-                                <FaSearch class="icon" onClick={findUser}/>
-                            </div>
-                            <p id="userFoundStatus"> {userFoundStatus} </p>
+            {alertPopup && (
+                <>
+                    <Modal show={alertPopup} onClose={() => setAlertPopup(false)} className="alertModal">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                            <div className="alertModalContainer">
+                            <Modal.Body>
+                                <p> {alertMsg} </p>
+                            </Modal.Body>
                         </div>
-                        <Modal.Body>
-                            <div className="matchedUserOuterContainer">
-                                {friendSearchResult.map(user =>(
-                                    <div key={user.id} className="matchUserContainer">
-                                        <img src={user.pfp} onClick={() => {getProfile(user.name)}} alt="userpfp"/>
-                                        <div className="userDescOuterContainer">
-                                            <h1 onClick={() => {getProfile(user.name)}}> {user.name} </h1>
-                                            <div className="userDescContainer">
-                                                <p> {user.dateJoined} </p> 
-                                                <button className="addFriendBtn" onClick={()=>{sendFriendReq(user.email)}}> + Add Friend </button>
+                        
+                    </Modal>
+                </>
+            )}
+            {addFriendPopup && (
+                <>
+                    <div className="overlay" onClick={() => setAddFriendPopup(false)}></div>
+                    <Modal show={addFriendPopup} onClose={() => setAddFriendPopup(false)} className="addFriendModal">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                        <div className="friendBodyContainer">
+                            <div className="friendHeadContainer">
+                                <h1> Find a cool cat </h1>
+                                <div className="searchContainer">
+                                    <input 
+                                        type="text" 
+                                        value = {newFriendInput} 
+                                        placeholder="Enter username" 
+                                        className="searchInput" 
+                                        onChange={(e) => {setNewFriendInput(e.target.value)}}
+                                        onKeyDown={(e) =>{if(e.key === "Enter"){findUser()}}} 
+                                    ></input>
+                                    <FaSearch class="icon" onClick={findUser}/>
+                                </div>
+                                <p id="userFoundStatus"> {userFoundStatus} </p>
+                            </div>
+                            <Modal.Body>
+                                <div className="matchedUserOuterContainer">
+                                    {friendSearchResult.map(user =>(
+                                        <div key={user.id} className="matchUserContainer">
+                                            <img src={user.pfp} onClick={() => {getProfile(user.name)}} alt="userpfp"/>
+                                            <div className="userDescOuterContainer">
+                                                <h1 onClick={() => {getProfile(user.name)}}> {user.name} </h1>
+                                                <div className="userDescContainer">
+                                                    <p> {user.dateJoined} </p> 
+                                                    <button className="addFriendBtn" onClick={()=>{sendFriendReq(user.email, user.name)}}> + Add Friend </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </Modal.Body>
-                    </div>  
-                </Modal>
-            </>
+                                    ))}
+                                </div>
+                            </Modal.Body>
+                        </div>  
+                    </Modal>
+                </>
             )}
             {userPopup &&(
                 <>
@@ -393,8 +419,6 @@ export const Friend = () =>{
                     </Modal>
                 </>
             )}
-
-
             <div className="tempBtnContainer" onClick={() =>{setAddFriendPopup(!addFriendPopup)}}>
                 <GoPersonAdd className="postIcon"/>
                 <p> Add Friend </p> 

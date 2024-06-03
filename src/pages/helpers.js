@@ -1,3 +1,4 @@
+//handles input imgs
 export const handleImageUpload = (e, callback) => {
     const file = e.target.files[0]; // Get the selected file
 
@@ -13,6 +14,7 @@ export const handleImageUpload = (e, callback) => {
     reader.readAsDataURL(file);
 };
 
+//resize the imgs
 const compressImage = (dataUrl, callback) => {
     const imageElement = new Image();
     imageElement.src = dataUrl;
@@ -55,6 +57,7 @@ const compressImage = (dataUrl, callback) => {
     };
 };
 
+//returns date in format
 export const getDate = () => {
     const currentDate = new Date();
     const month = currentDate.getMonth() + 1; 
@@ -62,3 +65,13 @@ export const getDate = () => {
     const year = currentDate.getFullYear();
     return `${month}/${day}/${year}`;
 };
+
+//notification popups
+export const setAlert = (msg, setAlertMsg, setAlertPopup) =>{
+    setAlertMsg(msg);
+    setAlertPopup(true);
+
+    setTimeout(() => {
+        setAlertPopup(false);
+    }, 5000); 
+}

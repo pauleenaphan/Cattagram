@@ -299,7 +299,7 @@ export const Home = () =>{
                                                 <div className="postContainer">
                                                     <div className="userHeaderContainer">
                                                         <div className="imgContainer">
-                                                            <img src={post.pfp} className="userPfp" alt="userpfp"/>
+                                                            <img src={post.pfp} className="userPfp" onClick={() => getProfile(post.user)} alt="userpfp"/>
                                                         </div>
                                                         <div className="nameDateContainer">
                                                             <h2 className="userPostName" onClick={() => getProfile(post.user)}>{post.user}</h2>
