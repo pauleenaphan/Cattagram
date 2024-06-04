@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from "flowbite-react";
-import { collection, addDoc, getDocs } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, updateDoc, doc, getDoc, deleteDoc } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
@@ -11,7 +11,7 @@ import { handleImageUpload, getDate, setAlert } from './helpers.js';
 
 import { FaRegComment } from "react-icons/fa";
 import { IoIosSend, IoIosAddCircleOutline } from "react-icons/io";
-// import { AiOutlineLike } from "react-icons/ai";
+import { AiOutlineLike } from "react-icons/ai";
 
 export const Home = () =>{
     const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +47,7 @@ export const Home = () =>{
     }
 
     const toggleCommentPopup = (postId) => {
+        console.log(postId);
         // Open the clicked comment popup
         setCurrPostId(postId);
         loadComment(postId);
@@ -73,7 +74,8 @@ export const Home = () =>{
                 img: userPost.img,
                 user: localStorage.getItem("userName"),
                 date: getDate(),
-                userPfp: localStorage.getItem("userPfp")
+                userPfp: localStorage.getItem("userPfp"),
+                likes: 0
             }); 
             getFeed();
             setPostPopup(false);
@@ -89,7 +91,8 @@ export const Home = () =>{
                 img: userPost.img,
                 user: localStorage.getItem("userName"),
                 date: getDate(),
-                userPfp: localStorage.getItem("userPfp")
+                userPfp: localStorage.getItem("userPfp"),
+                likes: 0
             })
             console.log("post added to user's firebase feed sucessfully");
         }catch(error){
@@ -106,7 +109,8 @@ export const Home = () =>{
 
     //gets the post from firebase
     const getFeed = async () =>{
-        setIsLoading(true);
+        const startTime = Date.now();
+        
         try{
             const post = await getDocs(collection(db, "Homepage Feed"));
             const postReceived = post.docs.map(doc =>({
@@ -116,11 +120,17 @@ export const Home = () =>{
                 img: doc.data().img,
                 user: doc.data().user,
                 date: doc.data().date,
-                pfp: doc.data().userPfp
+                pfp: doc.data().userPfp,
+                likes: doc.data().likes
             }))
             setFeedPost(postReceived);
         }catch(error){
             console.log("error ", error);
+        }
+        const elapsedTime = Date.now() - startTime;
+        if (elapsedTime > 5000) {
+            console.log(elapsedTime)
+            setIsLoading(true);
         }
         setIsLoading(false);
     }
@@ -167,6 +177,7 @@ export const Home = () =>{
         setIsLoading(false);
     }
 
+    //sends friend req to the current user popup
     const sendFriendReq = async (userName) =>{
         setIsLoading(true);
         let sentAlready = false;
@@ -193,13 +204,59 @@ export const Home = () =>{
         }catch(error){
             console.log("error ", error);
         }
-        
+
         setIsLoading(false);
         if(sentAlready){
             setAlert(`You have already sent ${userName} a friend request 🙀`, setAlertMsg, setAlertPopup);
         }else{
             setAlert(`You have sent ${userName} a friend request 😸`, setAlertMsg, setAlertPopup);
         }
+    }
+
+    //when users presses thumbs up on the post
+    const likePost = async (postDoc) =>{
+        /*PROBLEM
+            SINCE WE HAVE THE HOMEFEED POST AND THE FEED POST ON THE USER PROFILE
+            BOTH OF THE DOC IDS ARE DIFFERENT, SO YOU HAVE TO UPDATE IT IN THE USER
+            AND HOMEFEED COLLECTION! 
+         */
+        console.log("likepost: ", postDoc)
+        let likedPost = false;
+        let userLikedDoc = "";
+        try{
+            //check if user has liked the post already 
+            const docs = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "postLiked"))
+            docs.forEach((doc) =>{
+                if(doc.data().docId === postDoc){
+                    console.log("user has liked this post already!");
+                    userLikedDoc = doc.id;
+                }
+                likedPost = true;
+            })
+
+            const docData = await getDoc(doc(db, "Homepage Feed", postDoc));
+            //if user has not liked the post
+            if(!likedPost){
+                //update the like on the post +1
+                await updateDoc(doc(db, "Homepage Feed", postDoc), {
+                    likes: docData.data().likes + 1
+                })
+                //add that liked post to the user's post like list
+                await addDoc(collection(db, "Users", localStorage.getItem("userEmail"), "postLiked"),{
+                    docId: postDoc
+                })
+            }else{
+                //remove + 1 from the current liked post
+                await updateDoc(doc(db, "Homepage Feed", postDoc), {
+                    likes: docData.data().likes - 1
+                })
+                //delete the liked post from the user's liked post
+                await deleteDoc(doc(db, "Users", localStorage.getItem("userEmail"), "postLiked", userLikedDoc));
+            }
+        }catch(error){
+            console.log("error ", error);
+        }
+        getFeed();
     }
 
     return (
@@ -358,7 +415,15 @@ export const Home = () =>{
                                         ))}
                                     </p>
                                     <div className="inputContainer">
-                                        <input type="text" placeholder="Comment" value={userComment} onChange={(text)=> setUserComment(text.target.value)}></input>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Comment" 
+                                            value={userComment} 
+                                            onChange={(text)=> setUserComment(text.target.value)}
+                                            onKeyDown={(e) =>{if(e.key === "Enter"){
+                                                addComment();
+                                                setUserComment("");}}}
+                                            ></input>
                                         <IoIosSend className="icon" onClick={() => {
                                             addComment();
                                             setUserComment("");
@@ -397,10 +462,11 @@ export const Home = () =>{
                                 <h2>{post.title}</h2>
                                 <p className="postDesc">{post.desc}</p>
                                 <div className="footerContainer">
-                                    {/* <AiOutlineLike className="icons"/> */}
+                                    <p id="postLikes">{post.likes}</p>
+                                    <AiOutlineLike className="icons" onClick={() =>{likePost(post.id)}}/>
                                     <FaRegComment className="icons" id="commentIcon" onClick={() => {
                                         toggleCommentPopup(post.id);
-                                        }}/>
+                                    }}/>
                                 </div>
                             </div>
                         </div>

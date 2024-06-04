@@ -108,8 +108,12 @@
     padding: 0;
 }
 
-.postBodyContainer p{
-    padding-bottom: 30px;
+.postBodyContainer #postDesc{
+    padding: 0 100px 30px 0;
+}
+
+.postBodyContainer #postLikes{
+    font-size: 30px;
 }
 
 /* like and comment btn container */
@@ -384,12 +388,14 @@
 .commentModal .bodyModalContainer{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 100%;
 }
 
 .commentModal .currentPostContainer{
+    align-items: center;
     display: flex;
+    height: 75%;
     justify-content: center;
+    width: 100%;
 }
 
 .commentModal .postContainer{
@@ -398,9 +404,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin: 10px;
     padding: 20px;
-    width: 90%;
+    margin: 10px;
 }
 
 .commentModal .userHeaderContainer{
@@ -442,8 +447,8 @@
 }
 
 .commentModal .imgPost{
-    height: 80%;
-    width: 100%;
+    height: 70%;
+    width: 70%;
 }
 
 /* comments on the right */
@@ -469,9 +474,10 @@
 
 .commentContainer .inputContainer input[type=text]{
     background-color: #d6d6d6;
+    border: 3px rgb(173, 173, 173) solid !important;
     border-radius: 10px;
     border: none;
-    font-size: 25px;
+    font-size: 20px;
     outline: none;
     padding: 10px;
     width: 90%;
@@ -479,6 +485,7 @@
 
 .commentContainer .inputContainer .icon{
     width: 50px;
+    cursor: pointer;
 }
 
 .commentDateContainer{
