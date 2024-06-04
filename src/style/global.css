@@ -31,21 +31,50 @@ button{
 /* notification alert modal */
 .alertModal{
     background-color: white;
-    width: 40vh;
+    border-radius: 10px;
+    
+    box-shadow: 9px 9px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    font-size: 25px;
     height: 25vh;
+    
+    margin: 0 0 3% 3%;
     position: absolute !important;
+    text-align: center;
+    width: 45vh;
+    z-index: 1000;
+
+    /* 
+        these bottom and left needs to be after since modal already sets 
+        inset value so we need it make it 0  then set the values we want
+     */
     inset: unset !important;
     bottom: 0 !important;
     left: 0 !important;
-    margin: 0 0 3% 3%;
-    border-radius: 10px;
-    z-index: 1000;
 }
 
 .alertModal .modalHeader{
-    background-color: pink;
-    border-radius: 10px 10px 0 0 ;
+    background-color: rgb(226, 228, 230);
+    border-radius: 10px 10px 0 0;
+    font-size: 10px;
+    margin: 0;
+    padding: 5px 0px !important;
+    width: 100%;
 }
+
+.alertModal .modalHeader button{
+    font-size: 25px;
+}
+
+.alertModal .modalBody{
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    height: 15vh;
+    padding: 0 15px;
+}
+
+
 
 
 

@@ -7,7 +7,7 @@ import { db } from '../firebaseConfig.js';
 import '../style/home.css';
 import loadingSpinner from "../imgs/loadingSpinner.gif";
 import { fetchUserInfo, getUserPost } from "./userInfo.js";
-import { handleImageUpload, getDate } from './helpers.js';
+import { handleImageUpload, getDate, setAlert } from './helpers.js';
 
 import { FaRegComment } from "react-icons/fa";
 import { IoIosSend, IoIosAddCircleOutline } from "react-icons/io";
@@ -29,6 +29,8 @@ export const Home = () =>{
     const [userComment, setUserComment] = useState(""); //comment that user submited
     const [comments, setComments] = useState([]); //comments on the post 
     const [currPostId, setCurrPostId] = useState(""); //stores the id of the post that the user is interacting with
+    const [alertPopup, setAlertPopup] = useState(false); //notification popups
+    const [alertMsg, setAlertMsg] = useState("");
     //setting values when you click on a username to see their profile
     const [userProfile, setUserProfile] = useState({ 
         name: "",
@@ -167,7 +169,7 @@ export const Home = () =>{
 
     const sendFriendReq = async (userName) =>{
         setIsLoading(true);
-
+        let sentAlready = false;
         try{
             const userInfo = await fetchUserInfo(userName);
             if(userInfo && userInfo.length > 0){
@@ -177,20 +179,27 @@ export const Home = () =>{
             const reqs = await getDocs(collection(db, "Users", userEmail, "friendRequest"))
             reqs.forEach((req) =>{
                 if(req.data().requestedUser === localStorage.getItem("userName")){
-                    console.log("you already sent a friend req");
-                    return;
+                    sentAlready = true;
                 }
             })
-            await addDoc(collection(db, "Users", userEmail, "friendRequest"), {
-                requestedUser: localStorage.getItem("userName"),
-                reqUserPfp: localStorage.getItem("userPfp"),
-                reqUserDate: getDate()
-            })
+
+            if(!sentAlready){
+                await addDoc(collection(db, "Users", userEmail, "friendRequest"), {
+                    requestedUser: localStorage.getItem("userName"),
+                    reqUserPfp: localStorage.getItem("userPfp"),
+                    reqUserDate: getDate()
+                })
+            }
         }catch(error){
             console.log("error ", error);
         }
-
+        
         setIsLoading(false);
+        if(sentAlready){
+            setAlert(`You have already sent ${userName} a friend request 🙀`, setAlertMsg, setAlertPopup);
+        }else{
+            setAlert(`You have sent ${userName} a friend request 😸`, setAlertMsg, setAlertPopup);
+        }
     }
 
     return (
@@ -205,6 +214,19 @@ export const Home = () =>{
                             <Modal.Body>
                                 <img src={loadingSpinner} alt="loadingSpin"></img>
                             </Modal.Body> 
+                        </div>
+                        
+                    </Modal>
+                </>
+            )}
+            {alertPopup && (
+                <>
+                    <Modal show={alertPopup} onClose={() => setAlertPopup(false)} className="alertModal">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                            <div className="alertModalContainer">
+                            <Modal.Body className="modalBody">
+                                <p> {alertMsg} </p>
+                            </Modal.Body>
                         </div>
                         
                     </Modal>

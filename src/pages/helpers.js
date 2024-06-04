@@ -73,5 +73,5 @@ export const setAlert = (msg, setAlertMsg, setAlertPopup) =>{
 
     setTimeout(() => {
         setAlertPopup(false);
-    }, 5000); 
+    }, 3000); 
 }

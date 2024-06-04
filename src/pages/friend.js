@@ -38,8 +38,8 @@ export const Friend = () =>{
     const [currRevDoc, setCurrRevDoc] = useState(""); //current doc to removevfrom other user in the friend list
     const {distance} = require('fastest-levenshtein');
     const [userFoundStatus, setUserFoundStatus] = useState("");
-    const [alertPopup, setAlertPopup] = useState(true);
-    const [alertMsg, setAlertMsg] = useState("");
+    const [alertPopup, setAlertPopup] = useState(false); //notification popups
+    const [alertMsg, setAlertMsg] = useState(""); //msg for the notification popup
 
     //creates a list of users that have the similar name
     //uses fast-levenshtein to find matching names
@@ -193,8 +193,8 @@ export const Friend = () =>{
 
     //removes friend from list
     const removeFriend = async () => {
+        setConfirmPopup(false);
         setIsLoading(true);
-
         try{
             //removes friend from the current user's doc
             await deleteDoc(doc(db, "Users", localStorage.getItem("userEmail"), "friendList", currRevDoc));
@@ -212,7 +212,6 @@ export const Friend = () =>{
         }catch(error){
             console.log("error ", error);
         }
-        setConfirmPopup(false);
         loadFriends();
         setIsLoading(false);
         setAlert(`You and ${currRemove} are no longer friends 😿`, setAlertMsg, setAlertPopup);
@@ -274,7 +273,6 @@ export const Friend = () =>{
                                 <img src={loadingSpinner} alt="loadingSpin"></img>
                             </Modal.Body> 
                         </div>
-                        
                     </Modal>
                 </>
             )}
@@ -283,7 +281,7 @@ export const Friend = () =>{
                     <Modal show={alertPopup} onClose={() => setAlertPopup(false)} className="alertModal">
                         <Modal.Header className="modalHeader"></Modal.Header>
                             <div className="alertModalContainer">
-                            <Modal.Body>
+                            <Modal.Body className="modalBody">
                                 <p> {alertMsg} </p>
                             </Modal.Body>
                         </div>
