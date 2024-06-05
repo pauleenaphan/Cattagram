@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from "flowbite-react";
-import { collection, addDoc, getDocs, updateDoc, doc, getDoc, deleteDoc } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, updateDoc, doc, getDoc, deleteDoc, setDoc } from "firebase/firestore"; 
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
 import '../style/home.css';
 import loadingSpinner from "../imgs/loadingSpinner.gif";
-import { fetchUserInfo, getUserPost } from "./userInfo.js";
+import { fetchUserInfo, getUserPost, likePost, addComment, loadComment } from "./userHelper.js";
 import { handleImageUpload, getDate, setAlert } from './helpers.js';
 
 import { FaRegComment } from "react-icons/fa";
@@ -29,6 +29,7 @@ export const Home = () =>{
     const [userComment, setUserComment] = useState(""); //comment that user submited
     const [comments, setComments] = useState([]); //comments on the post 
     const [currPostId, setCurrPostId] = useState(""); //stores the id of the post that the user is interacting with
+
     const [alertPopup, setAlertPopup] = useState(false); //notification popups
     const [alertMsg, setAlertMsg] = useState("");
     //setting values when you click on a username to see their profile
@@ -46,11 +47,11 @@ export const Home = () =>{
         }))
     }
 
-    const toggleCommentPopup = (postId) => {
+    const toggleCommentPopup = async (postId) => {
         console.log(postId);
         // Open the clicked comment popup
         setCurrPostId(postId);
-        loadComment(postId);
+        setComments(await loadComment(postId));
         setCommentPopup(!commentPopup);
     };
 
@@ -64,41 +65,40 @@ export const Home = () =>{
     }, [feedPost]);
 
     //creates new post 
-    const handleSubmit = async (e) =>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Check for undefined fields
-        try{
-            await addDoc(collection(db, "Homepage Feed"), {
-                title: userPost.title,
-                desc: userPost.desc,
-                img: userPost.img,
-                user: localStorage.getItem("userName"),
-                date: getDate(),
-                userPfp: localStorage.getItem("userPfp"),
-                likes: 0
-            }); 
-            getFeed();
-            setPostPopup(false);
-            console.log("post added to feed sucessfully");
-        }catch(error){
-            console.log("error ", error);
+    
+        //generate new doc id to give both of our docs in the homepage feed and user's post
+        const newDocRef = doc(collection(db, "Homepage Feed"));
+        const newDocId = newDocRef.id;
+    
+        //doc data
+        const newPostData = {
+            title: userPost.title,
+            desc: userPost.desc,
+            img: userPost.img,
+            user: localStorage.getItem("userName"),
+            date: getDate(),
+            userPfp: localStorage.getItem("userPfp"),
+            likeCount: 0,
+            commentCount: 0,
+        };
+    
+        try {
+            //creates new doc in the homepage feed
+            await setDoc(newDocRef, newPostData);
+            console.log("Post added to feed successfully");
+    
+            //creates new doc in the user's post collection
+            await setDoc(doc(db, "Users", localStorage.getItem("userEmail"), "post", newDocId), newPostData);
+            console.log("Post added to user's feed successfully");
+        } catch (error) {
+            console.log("Error adding document: ", error);
         }
-
-        try{
-            await addDoc(collection(db, "Users", localStorage.getItem("userEmail"), "post"), {
-                title: userPost.title,
-                desc: userPost.desc,
-                img: userPost.img,
-                user: localStorage.getItem("userName"),
-                date: getDate(),
-                userPfp: localStorage.getItem("userPfp"),
-                likes: 0
-            })
-            console.log("post added to user's firebase feed sucessfully");
-        }catch(error){
-            console.log("error ", error);
-        }
-    }
+        getFeed();
+        setPostPopup(false);
+        setUserPost(userPost.img, "");
+    };
 
     const handleImageUploadCallback = (compressedDataUrl) => {
         setUserPost(prevState => ({
@@ -109,8 +109,7 @@ export const Home = () =>{
 
     //gets the post from firebase
     const getFeed = async () =>{
-        const startTime = Date.now();
-        
+        setIsLoading(true);
         try{
             const post = await getDocs(collection(db, "Homepage Feed"));
             const postReceived = post.docs.map(doc =>({
@@ -121,17 +120,14 @@ export const Home = () =>{
                 user: doc.data().user,
                 date: doc.data().date,
                 pfp: doc.data().userPfp,
-                likes: doc.data().likes
+                likeCount: doc.data().likeCount,
+                commentCount: doc.data().commentCount
             }))
             setFeedPost(postReceived);
         }catch(error){
             console.log("error ", error);
         }
-        const elapsedTime = Date.now() - startTime;
-        if (elapsedTime > 5000) {
-            console.log(elapsedTime)
-            setIsLoading(true);
-        }
+
         setIsLoading(false);
     }
 
@@ -147,35 +143,26 @@ export const Home = () =>{
         setIsLoading(false);
     }
 
-    //adds a comment to the post
-    const addComment = async () =>{
-        //add comment to the doc comment collection
-        if(userComment === ""){
-            alert("comment cannot be empty");
-            return;
-        }
-        await addDoc(collection(db, "Homepage Feed", currPostId, "comments"),{
-            name: localStorage.getItem("userName"),
-            comment: userComment,
-            date: getDate()
-        })
-        loadComment(currPostId);
+    const addUserComment = async () =>{
+        addComment(userComment, currPostId);
+        setComments(await loadComment(currPostId));
+        getFeed();
     }
 
     //loads all comments on the specific post
-    const loadComment = async (postId) =>{
-        setIsLoading(true);
+    // const loadComment = async (postId) =>{
+    //     setIsLoading(true);
 
-        const postDocs = await getDocs(collection(db, "Homepage Feed", postId, "comments"));
-        const docComments = postDocs.docs.map(doc =>({
-            userCommentName: doc.data().name,
-            comment: doc.data().comment,
-            date: doc.data().date
-        }))
-        setComments(docComments);
+    //     const postDocs = await getDocs(collection(db, "Homepage Feed", postId, "comments"));
+    //     const docComments = postDocs.docs.map(doc =>({
+    //         userCommentName: doc.data().name,
+    //         comment: doc.data().comment,
+    //         date: doc.data().date
+    //     }))
+    //     setComments(docComments);
 
-        setIsLoading(false);
-    }
+    //     setIsLoading(false);
+    // }
 
     //sends friend req to the current user popup
     const sendFriendReq = async (userName) =>{
@@ -213,50 +200,11 @@ export const Home = () =>{
         }
     }
 
-    //when users presses thumbs up on the post
-    const likePost = async (postDoc) =>{
-        /*PROBLEM
-            SINCE WE HAVE THE HOMEFEED POST AND THE FEED POST ON THE USER PROFILE
-            BOTH OF THE DOC IDS ARE DIFFERENT, SO YOU HAVE TO UPDATE IT IN THE USER
-            AND HOMEFEED COLLECTION! 
-         */
-        console.log("likepost: ", postDoc)
-        let likedPost = false;
-        let userLikedDoc = "";
-        try{
-            //check if user has liked the post already 
-            const docs = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "postLiked"))
-            docs.forEach((doc) =>{
-                if(doc.data().docId === postDoc){
-                    console.log("user has liked this post already!");
-                    userLikedDoc = doc.id;
-                }
-                likedPost = true;
-            })
-
-            const docData = await getDoc(doc(db, "Homepage Feed", postDoc));
-            //if user has not liked the post
-            if(!likedPost){
-                //update the like on the post +1
-                await updateDoc(doc(db, "Homepage Feed", postDoc), {
-                    likes: docData.data().likes + 1
-                })
-                //add that liked post to the user's post like list
-                await addDoc(collection(db, "Users", localStorage.getItem("userEmail"), "postLiked"),{
-                    docId: postDoc
-                })
-            }else{
-                //remove + 1 from the current liked post
-                await updateDoc(doc(db, "Homepage Feed", postDoc), {
-                    likes: docData.data().likes - 1
-                })
-                //delete the liked post from the user's liked post
-                await deleteDoc(doc(db, "Users", localStorage.getItem("userEmail"), "postLiked", userLikedDoc));
-            }
-        }catch(error){
-            console.log("error ", error);
-        }
-        getFeed();
+    const likeUserPost = (postDoc, postUserName) =>{
+        //ensures getFeed is called
+        likePost(postDoc, postUserName).then(() =>{
+            getFeed();
+        })    
     }
 
     return (
@@ -297,8 +245,8 @@ export const Home = () =>{
                         <div className="userBodyModalContainer">
                             <Modal.Body>
                             <section className="profileContainer">
-                                <img src={userProfile.img} alt="userPfp"/>
-                                <div className="descContainerSide">
+                                <img src={userProfile.img} className="userPfp" alt="userPfp"/>
+                                {/* <div className="descContainerSide"> */}
                                     <div className="profileDescContainer">
                                         <div className="profileNameDescContainer">
                                             <h1> {userProfile.name} </h1>
@@ -312,7 +260,7 @@ export const Home = () =>{
                                             )}
                                         </div>
                                     </div>
-                                </div>
+                                {/* </div> */}
                             </section>
                             <section className="userProfilePostContainer">
                                 {userProfilePost.map(post =>(
@@ -321,12 +269,24 @@ export const Home = () =>{
                                             <h1 className="userPostName">{post.user}</h1>
                                             <p className="postDate">{post.date}</p>
                                         </div>
-                                        {post.img && (
-                                        <img src={post.img} alt="user post" />
-                                        )}
+                                        <div className="postImgContainer">
+                                            {post.img && (
+                                                <img src={post.img} alt="user post" className="imgPost"/>
+                                            )}
+                                        </div>
                                         <div className="postBodyContainer">
                                             <h2>{post.title}</h2>
                                             <p className="postDesc">{post.desc}</p>
+                                            <div className="footerContainer">
+                                                <div className="likeComContainer" onClick={() =>{likeUserPost(post.id, post.user)}}>
+                                                    <AiOutlineLike className="icons"/>
+                                                    <p>{post.likeCount}</p>
+                                                </div>
+                                                <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}>
+                                                    <FaRegComment className="icons" id="commentIcon"/>
+                                                    <p> {post.commentCount} </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -421,11 +381,11 @@ export const Home = () =>{
                                             value={userComment} 
                                             onChange={(text)=> setUserComment(text.target.value)}
                                             onKeyDown={(e) =>{if(e.key === "Enter"){
-                                                addComment();
+                                                addUserComment();
                                                 setUserComment("");}}}
                                             ></input>
                                         <IoIosSend className="icon" onClick={() => {
-                                            addComment();
+                                            addUserComment();
                                             setUserComment("");
                                             }}/> 
                                     </div>
@@ -441,10 +401,10 @@ export const Home = () =>{
             </div>
             <div className="pageContainer">
                 <Navbar />
-                <section className="feedContainer">
+                <section className="postOuterContainer">
                     {feedPost.map((post) => (
                         <div key={post.id} className="postContainer">
-                            <div className="userHeaderContainer" onClick={() => getProfile(post.user)}>
+                            <div className="postHeaderContainer" onClick={() => getProfile(post.user)}>
                                 <div className="imgContainer">
                                     <img src={post.pfp} className="userPfp" alt="userpfp"/>
                                 </div>
@@ -462,11 +422,14 @@ export const Home = () =>{
                                 <h2>{post.title}</h2>
                                 <p className="postDesc">{post.desc}</p>
                                 <div className="footerContainer">
-                                    <p id="postLikes">{post.likes}</p>
-                                    <AiOutlineLike className="icons" onClick={() =>{likePost(post.id)}}/>
-                                    <FaRegComment className="icons" id="commentIcon" onClick={() => {
-                                        toggleCommentPopup(post.id);
-                                    }}/>
+                                    <div className="likeComContainer" onClick={() =>{likeUserPost(post.id, post.user)}}>
+                                        <AiOutlineLike className="icons"/>
+                                        <p>{post.likeCount}</p>
+                                    </div>
+                                    <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}>
+                                        <FaRegComment className="icons" id="commentIcon"/>
+                                        <p> {post.commentCount} </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

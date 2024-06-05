@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, {  useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { collection, addDoc, setDoc, doc, getDoc ,getDocs } from "firebase/firestore"; 
 
@@ -13,14 +13,24 @@ import defaultPfp from "../imgs/defaultPfp.png";
 
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "./userInfo";
 import { getDate } from './helpers.js';
 
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 export const Login = () =>{
     const navigate = useNavigate(); // Get the navigate function using useNavigate hook
-    const {userData, updateUserData} = useContext(UserContext); 
+    const [userData, setUserData] = useState({
+        userEmail: "",
+        userName: "",
+        userPassword: "",
+    })
+
+    const updateUserData = (postField, userInput) =>{
+        setUserData(prevData => ({
+            ...prevData,
+            [postField]: userInput
+        }))
+    }
     const [loginStatusPic, setLoginStatusPic] = useState(logo); //shows errors when user can't login
     const [showPassword, setShowPassword] = useState(false); //state to toggle password visibility
 
@@ -84,7 +94,18 @@ export const Login = () =>{
 
 export const CreateAccount = () => {
     const navigate = useNavigate();
-    const {userData, updateUserData} = useContext(UserContext); 
+    const [userData, setUserData] = useState({
+        userEmail: "",
+        userName: "",
+        userPassword: "",
+    })
+
+    const updateUserData = (postField, userInput) =>{
+        setUserData(prevData => ({
+            ...prevData,
+            [postField]: userInput
+        }))
+    }
     const [confirmPass, setConfirmPass] = useState("");
     const [loginStatusPic, setLoginStatusPic] = useState(logo);
     const [showPassword, setShowPassword] = useState(false);

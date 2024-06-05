@@ -3,12 +3,16 @@ import { Modal } from "flowbite-react";
 import { collection, getDocs, updateDoc } from "firebase/firestore"; 
 import { LiaUserEditSolid } from "react-icons/lia";
 import { handleImageUpload } from './helpers.js';
-import { fetchUserInfo, getUserPost } from "./userInfo.js";
+import { fetchUserInfo, getUserPost, likePost } from "./userHelper.js";
 import loadingSpinner from "../imgs/loadingSpinner.gif";
 
 import { Navbar } from "./navbar";
 import { db } from "../firebaseConfig";
 import '../style/profile.css';
+
+
+import { FaRegComment } from "react-icons/fa";
+import { AiOutlineLike } from "react-icons/ai";
 
 
 export const Profile = () =>{
@@ -28,7 +32,7 @@ export const Profile = () =>{
             [field]: value
         }))
     }
-
+    
     const isMounted = useRef(true);
     useEffect(() => {
         if (isMounted.current) {
@@ -69,6 +73,13 @@ export const Profile = () =>{
             console.log("error ", error);
         }
         setEditPopup(false);
+    }
+
+    const likeUserPost = (postDoc, postUserName) =>{
+        //ensures getFeed is called
+        likePost(postDoc, postUserName).then(() =>{
+            getProfile();
+        })    
     }
 
     return(
@@ -143,12 +154,25 @@ export const Profile = () =>{
                                     <h1 className="userPostName">{post.user}</h1>
                                     <p className="postDate">{post.date}</p>
                                 </div>
-                                {post.img && (
-                                <img src={post.img} alt="user post" />
-                                )}
+                                <div className="postImgContainer">
+                                    {post.img && (
+                                        <img src={post.img} alt="user post" className="imgPost"/>
+                                    )}
+                                </div>
                                 <div className="postBodyContainer">
                                     <h2>{post.title}</h2>
                                     <p className="postDesc">{post.desc}</p>
+                                    <div className="footerContainer">
+                                        <div className="likeComContainer" onClick={() =>{likeUserPost(post.id, post.user)}}>
+                                            <AiOutlineLike className="icons"/>
+                                            <p>{post.likeCount}</p>
+                                        </div>
+                                        {/* need to add comment function here with the popup */}
+                                        <div className="likeComContainer">
+                                            <FaRegComment className="icons" id="commentIcon"/>
+                                            <p> {post.commentCount} </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}

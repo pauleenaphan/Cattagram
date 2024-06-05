@@ -3,16 +3,17 @@ import { Modal } from "flowbite-react";
 
 import { GoPersonAdd } from "react-icons/go";
 import { PiMailbox } from "react-icons/pi";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaRegComment } from "react-icons/fa";
+import { AiOutlineLike } from "react-icons/ai";
 
 import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore"; 
 // import levenshtein from 'fast-levenshtein';
 
-import { getDate, setAlert } from './helpers.js';
 import '../style/friend.css';
 import { db } from '../firebaseConfig.js';
 import { Navbar } from './navbar';
-import { fetchUserInfo, getUserPost } from "./userInfo.js";
+import { getDate, setAlert } from './helpers.js';
+import { fetchUserInfo, getUserPost, likePost } from "./userHelper.js";
 import loadingSpinner from "../imgs/loadingSpinner.gif";
 
 export const Friend = () =>{
@@ -251,6 +252,14 @@ export const Friend = () =>{
         setIsLoading(false);
     }
 
+    const likeUserPost = (postDoc, postUserName) =>{
+        //ensures getFeed is called
+        likePost(postDoc, postUserName).then(() =>{
+            setUserPopup(false);
+            getProfile(postUserName);
+        })    
+    }
+
     //loads the current post on the homepage
     const isMounted = useRef(true);
     useEffect(() => {
@@ -316,11 +325,11 @@ export const Friend = () =>{
                                         <div key={user.id} className="matchUserContainer">
                                             <img src={user.pfp} onClick={() => {getProfile(user.name)}} alt="userpfp"/>
                                             <div className="userDescOuterContainer">
-                                                <h1 onClick={() => {getProfile(user.name)}}> {user.name} </h1>
                                                 <div className="userDescContainer">
-                                                    <p> {user.dateJoined} </p> 
-                                                    <button className="addFriendBtn" onClick={()=>{sendFriendReq(user.email, user.name)}}> + Add Friend </button>
+                                                    <h1 onClick={() => {getProfile(user.name)}}> {user.name} </h1>
+                                                    <p> Member Since: {user.dateJoined} </p> 
                                                 </div>
+                                                <button className="addFriendBtn" onClick={()=>{sendFriendReq(user.email, user.name)}}> + Add Friend </button>
                                             </div>
                                         </div>
                                     ))}
@@ -338,7 +347,7 @@ export const Friend = () =>{
                         <div className="userBodyModalContainer">
                             <Modal.Body>
                             <section className="profileContainer">
-                                <img src={userProfile.img} alt="userPfp"/>
+                                <img className="userPfp" src={userProfile.img} alt="userPfp"/>
                                     <div className="profileFriendDescContainer">
                                         <h1> {userProfile.name} </h1>
                                         <p id="userDesc"> {userProfile.desc} </p>
@@ -352,13 +361,27 @@ export const Friend = () =>{
                                             <h1 className="userPostName">{post.user}</h1>
                                             <p className="postDate">{post.date}</p>
                                         </div>
-                                        {post.img && (
-                                        <img src={post.img} alt="user post" />
-                                        )}
+                                        <div className="postImgContainer">
+                                            {post.img && (
+                                                <img src={post.img} alt="user post" className="imgPost"/>
+                                            )}
+                                        </div>
                                         <div className="postBodyContainer">
                                             <h2>{post.title}</h2>
                                             <p className="postDesc">{post.desc}</p>
+                                            <div className="footerContainer">
+                                                <div className="likeComContainer" onClick={() =>{likeUserPost(post.id, post.user)}}>
+                                                    <AiOutlineLike className="icons"/>
+                                                    <p>{post.likeCount}</p>
+                                                </div>
+                                                <div className="likeComContainer">
+                                                {/* <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}> */}
+                                                    <FaRegComment className="icons" id="commentIcon"/>
+                                                    <p> {post.commentCount} </p>
+                                                </div>
+                                            </div>
                                         </div>
+                                        
                                     </div>
                                 ))}
                             </section>
@@ -440,8 +463,8 @@ export const Friend = () =>{
                             <div key={friend.id} className="friendListContainer">
                                 <img id="friendPfp" src={friend.friendPfp} onClick={() => {getProfile(friend.friendName)}} alt="userpfp"/>
                                 <div className="userDescOuterContainer">
-                                    <h2 onClick={() => {getProfile(friend.friendName)}}> {friend.friendName} </h2>
                                     <div className="userDescContainer">
+                                        <h2 onClick={() => {getProfile(friend.friendName)}}> {friend.friendName} </h2>
                                         <p> Added on: {friend.friendDate} </p> 
                                     </div>
                                     <div className="userBtns">

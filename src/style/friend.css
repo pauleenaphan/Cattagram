@@ -67,6 +67,11 @@
     font-weight: bold;
 }
 
+.addFriendBtn{
+    width: 69%;
+
+}
+
 /* friend search */
 .matchedUserOuterContainer{
     display: flex;
@@ -83,7 +88,6 @@
     border-radius: 20px;
     border: 3px rgb(173, 173, 173) solid;
     display: flex;
-    height: 100%;
     padding: 10px 20px;
     width: 40%;
 }
@@ -92,7 +96,6 @@
     border-radius: 500px;
     border: solid 3px rgb(153, 152, 152);
     cursor: pointer;
-    height: 10%;
     margin-right: 10px;
     width: 35%;
 }
@@ -108,9 +111,16 @@
 }
 
 .matchUserContainer .userDescOuterContainer, .friendListContainer .userDescOuterContainer{
+    display: flex;
     flex-direction: column;
-    overflow: hidden; /* Hide any content that exceeds the container's dimensions */
-    text-overflow: ellipsis; /* Add ellipsis for text overflow */
+    height: 80%;
+    justify-content: space-around;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
+.matchUserContainer .userDescOuterContainer p, .friendListContainer .userDescOuterContainer p{
+    margin: 5px 0 0;
 }
 
 #friendPfp{
@@ -219,6 +229,8 @@
 .friendSection h2{
     font-size: 30px;
     text-decoration: underline;
+    margin: 0;
+    padding: 0;
 }
 
 .friendListContainer{
