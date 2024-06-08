@@ -50,8 +50,6 @@ export const getUserPost = async (userEmail) => {
     return userPost;
 }
 
-
-
 //takes in the id of the posted doc and the name of the user who posted
 export const likePost = async (postDocId, postUserName) =>{
     const userInfo = await fetchUserInfo(postUserName);
@@ -116,7 +114,8 @@ export const addComment = async (userComment, currPostId) =>{
     await addDoc(collection(db, "Homepage Feed", currPostId, "comments"),{
         name: localStorage.getItem("userName"),
         comment: userComment,
-        date: getDate()
+        date: getDate(),
+        pfp: localStorage.getItem("userPfp")
     })
 
     //updates the comment count in the homepagefeed and the user's post document
@@ -136,7 +135,8 @@ export const loadComment = async (postId) =>{
     const docComments = postDocs.docs.map(doc =>({
         userCommentName: doc.data().name,
         comment: doc.data().comment,
-        date: doc.data().date
+        date: doc.data().date,
+        pfp: doc.data().pfp
     }))
     
     return docComments;

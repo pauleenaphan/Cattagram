@@ -368,7 +368,10 @@ export const Home = () =>{
                                         <p className="comments">
                                             {comments.map(comment =>(
                                                 <div key={comment.id}>
-                                                    <h2> {comment.userCommentName} </h2>
+                                                    <div className="pfpNameContainer">
+                                                        <img src={comment.pfp} alt="userPfp"/>
+                                                        <h2> {comment.userCommentName} </h2>
+                                                    </div>
                                                     <div className="commentDateContainer">
                                                         <p> {comment.comment} </p>
                                                         <p className="commentDate"> {comment.date} </p>
