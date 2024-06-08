@@ -388,12 +388,12 @@
 
 /* modal popup for comments */
 .commentModal{
-    background-color: white;
+    /* background-color: white; */
     border-radius: 10px;
     height: 90vh;
     margin: auto;
     overflow: hidden !important;
-    width: 80vw;
+    width: 70vw;
     z-index: 1000; /* Ensure the modal appears above the overlay */
 }
 
@@ -409,18 +409,19 @@
 .commentModal .currentPostContainer{
     align-items: center;
     display: flex;
-    height: 75%;
+    height: auto;
     justify-content: center;
     width: 100%;
+    background-color: #f7f7f7;
 }
 
 .commentModal .postContainer{
-    background-color: #ffcf88;
+    background-color: rgb(221, 221, 221);
+    border: rgb(173, 173, 173) solid 5px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 20px;
     margin: 10px;
 }
 
@@ -429,6 +430,7 @@
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
+    padding: 20px 20px 0 20px;
 }
 
 .commentModal .userHeaderContainer .imgContainer {
@@ -458,19 +460,20 @@
     padding: 0; /* Reset padding */
 }
 
+.captionContainer{
+    padding: 0 20px 20px 20px;
+}
+
 .captionContainer h2{
     margin-top: 20px;
 }
 
-.commentModal .imgPost{
-    height: 70%;
-    width: 70%;
-}
-
 /* comments on the right */
 .commentContainer{
-    background-color: #E9E9E9;
-    height: 100vh;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 20px;
 }
 

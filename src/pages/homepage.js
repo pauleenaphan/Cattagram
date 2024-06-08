@@ -345,14 +345,15 @@ export const Home = () =>{
                                                             <p className="postDate">{post.date}</p>
                                                         </div>     
                                                     </div>
-                                                    {post.img && (
-                                                        <img src={post.img} alt="user post" className="imgPost"/>
-                                                    )}
+                                                    <div className="imgContainer2">
+                                                        {post.img && (
+                                                            <img src={post.img} alt="user post" className="imgPost"/>
+                                                        )}
+                                                    </div>
                                                     <div className="captionContainer">
                                                         <h2>{post.title}</h2>
                                                         <p className="postDesc">{post.desc}</p>
                                                     </div>
-                                                    
                                                 </div>
                                             </div>
                                         );
@@ -362,18 +363,20 @@ export const Home = () =>{
                                 })}
                                 </div>
                                 <div className="commentContainer">
-                                    <h1> Comments </h1>
-                                    <p className="comments">
-                                        {comments.map(comment =>(
-                                            <div key={comment.id}>
-                                                <h2> {comment.userCommentName} </h2>
-                                                <div className="commentDateContainer">
-                                                    <p> {comment.comment} </p>
-                                                    <p className="commentDate"> {comment.date} </p>
-                                                </div>
-                                            </div> 
-                                        ))}
-                                    </p>
+                                    <div className="commentHeaderContainer">
+                                        <h1> Comments </h1>
+                                        <p className="comments">
+                                            {comments.map(comment =>(
+                                                <div key={comment.id}>
+                                                    <h2> {comment.userCommentName} </h2>
+                                                    <div className="commentDateContainer">
+                                                        <p> {comment.comment} </p>
+                                                        <p className="commentDate"> {comment.date} </p>
+                                                    </div>
+                                                </div> 
+                                            ))}
+                                        </p>
+                                    </div>
                                     <div className="inputContainer">
                                         <input 
                                             type="text" 
