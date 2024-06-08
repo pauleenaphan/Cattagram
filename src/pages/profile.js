@@ -43,7 +43,6 @@ export const Profile = () =>{
 
     const getProfile = async () =>{
         setIsLoading(true);
-        document.querySelector('.overlay').focus(); // Focus the overlay element
         const userInfo = await fetchUserInfo(localStorage.getItem("userName"));
         if (userInfo && userInfo.length > 0) {
             setUserProfile(userInfo[0]);

@@ -79,7 +79,7 @@
     width: 100%;
 }
 
-.postHeaderContainer .imgContainer img:hover, #friendPfp:hover, .matchedUserOuterContainer img:hover{
+.postHeaderContainer .imgContainer img:hover, #friendPfp:hover, .matchedUserOuterContainer img:hover, .pfpNameContainer img:hover{
     cursor: pointer;
     opacity: 0.4;
 }
@@ -362,7 +362,7 @@
     padding: 0px 20px;
 }
 
-.userHeaderContainer .nameDateContainer h1:hover, .friendListContainer h2:hover, .commentModal .nameDateContainer h2:hover{
+.userHeaderContainer .nameDateContainer h1:hover, .friendListContainer h2:hover, .commentModal .nameDateContainer h2:hover, .pfpNameContainer h2:hover{
     color: #b16a00;
     cursor: pointer;
 }

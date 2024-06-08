@@ -131,6 +131,7 @@ export const Home = () =>{
         setIsLoading(false);
     }
 
+    //opens popup for user's profile
     const getProfile = async (userName) =>{
         setIsLoading(true);
 
@@ -148,21 +149,6 @@ export const Home = () =>{
         setComments(await loadComment(currPostId));
         getFeed();
     }
-
-    //loads all comments on the specific post
-    // const loadComment = async (postId) =>{
-    //     setIsLoading(true);
-
-    //     const postDocs = await getDocs(collection(db, "Homepage Feed", postId, "comments"));
-    //     const docComments = postDocs.docs.map(doc =>({
-    //         userCommentName: doc.data().name,
-    //         comment: doc.data().comment,
-    //         date: doc.data().date
-    //     }))
-    //     setComments(docComments);
-
-    //     setIsLoading(false);
-    // }
 
     //sends friend req to the current user popup
     const sendFriendReq = async (userName) =>{
@@ -369,8 +355,8 @@ export const Home = () =>{
                                             {comments.map(comment =>(
                                                 <div key={comment.id}>
                                                     <div className="pfpNameContainer">
-                                                        <img src={comment.pfp} alt="userPfp"/>
-                                                        <h2> {comment.userCommentName} </h2>
+                                                        <img src={comment.pfp} alt="userPfp" onClick={() =>{getProfile(comment.userCommentName)}}/>
+                                                        <h2 onClick={() =>{getProfile(comment.userCommentName)}}> {comment.userCommentName} </h2>
                                                     </div>
                                                     <div className="commentDateContainer">
                                                         <p> {comment.comment} </p>
