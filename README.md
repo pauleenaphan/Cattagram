@@ -1,6 +1,6 @@
 ![Untitled design (1)](https://github.com/pauleenaphan/Cattagram/assets/77126730/f6d76d6a-e60f-41bf-9e19-4a0c348ab1a6)
 
-[Live Site](https://665a6e451a96a20008aee477--cattagram.netlify.app) 
+[Live Site](https://6668d4121f472c000763364f--cattagram.netlify.app) 
 
 A social media web app where users can post their cats and rule the web.
 
