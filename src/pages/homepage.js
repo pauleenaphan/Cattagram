@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from "flowbite-react";
-import { collection, addDoc, getDocs, updateDoc, doc, getDoc, deleteDoc, setDoc } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, doc, setDoc } from "firebase/firestore"; 
 import catAd from "../imgs/adoptAd.gif";
 
 import { Navbar } from './navbar';
