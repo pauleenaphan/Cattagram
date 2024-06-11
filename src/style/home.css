@@ -50,7 +50,6 @@
     border-top: 5px solid rgb(173, 173, 173);
     border-right: 5px solid rgb(173, 173, 173);
     border-left: 5px solid rgb(173, 173, 173);
-    cursor: pointer;
     display: flex;
     gap: 20px;
     padding: 15px 20px;
@@ -79,7 +78,9 @@
     width: 100%;
 }
 
-.postHeaderContainer .imgContainer img:hover, #friendPfp:hover, .matchedUserOuterContainer img:hover, .pfpNameContainer img:hover{
+.postHeaderContainer .imgContainer img:hover, 
+#friendPfp:hover, .matchedUserOuterContainer img:hover, 
+.pfpNameContainer img:hover, .suggestedUsers .userContainer img:hover{
     cursor: pointer;
     opacity: 0.4;
 }
@@ -312,6 +313,10 @@
     padding: 0; /* Reset padding */
 }
 
+.userButtons .addFriendBtn{
+    width: auto !important;
+}
+
 .addFriendBtn, #accFriBtn, #decFriBtn, #removeFriBtn, #removeBtn, #nvmBtn, #logoutBtn{
     background-color: #f8a526;
     border-radius: 10px;
@@ -362,7 +367,14 @@
     padding: 0px 20px;
 }
 
-.userHeaderContainer .nameDateContainer h1:hover, .friendListContainer h2:hover, .commentModal .nameDateContainer h2:hover, .pfpNameContainer h2:hover{
+/* !USED FOR ALL PROFILE NAMES HOVER */
+.userHeaderContainer .nameDateContainer h1:hover, 
+.friendListContainer h2:hover, 
+.commentModal .nameDateContainer h2:hover, 
+.pfpNameContainer h2:hover, 
+.matchUserContainer .userDescOuterContainer h3:hover,
+.suggestedUsers .userDescContainer h2:hover,
+.pageContainer .postHeaderContainer h1:hover{
     color: #b16a00;
     cursor: pointer;
 }
@@ -532,4 +544,59 @@
     margin: 10px;
     border-radius: 10px;
     height: 98vh;
+    overflow-y: auto;
+}
+
+#catAd{
+    width: 100%;
+}
+
+/* !Suggested section  */
+.suggestedUsers{
+    /* background-color: pink; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px;
+}
+
+.catAdContainer{
+    margin: 20px 20px;
+    border-bottom: solid 3px black;
+    padding-bottom: 10px;
+    text-align: right;
+}
+
+.catAdContainer p{
+    margin: 5px 0 0 10px;
+}
+
+/* suggested user container */
+.suggestedUsers{
+    margin: 20px;
+}
+
+.suggestedUsers .userContainer{
+    background-color: #d6d6d6;
+    border: 3px rgb(173, 173, 173) solid;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.suggestedUsers .userDescContainer .addFriendBtn{
+    width: auto !important;
+}
+
+.suggestedUsers h1, .suggestedUsers .userDescContainer h2{
+    margin: 3px 0;
+}
+
+.suggestedUsers img{
+    height: 30%;
+    width: 30%;
+    border-radius: 500px;
+    border: 3px rgb(173, 173, 173) solid;
 }

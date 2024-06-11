@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from "flowbite-react";
 import { collection, addDoc, getDocs, updateDoc, doc, getDoc, deleteDoc, setDoc } from "firebase/firestore"; 
+import catAd from "../imgs/adoptAd.gif";
 
 import { Navbar } from './navbar';
 import { db } from '../firebaseConfig.js';
@@ -22,6 +23,7 @@ export const Home = () =>{
         "pfp": null,
     })
     const [feedPost, setFeedPost] = useState([]); //feed post on the homepage
+    const [suggestedUsers, setSuggestedUsers] = useState([]);
     const [postPopup, setPostPopup] = useState(false); //visbiilty of creating a new post popup
     const [userPopup, setUserPopup] = useState(false); //visbility of seeing a users profile popup
     const [commentPopup, setCommentPopup] = useState(false); //visbility of the comment popup
@@ -29,6 +31,7 @@ export const Home = () =>{
     const [userComment, setUserComment] = useState(""); //comment that user submited
     const [comments, setComments] = useState([]); //comments on the post 
     const [currPostId, setCurrPostId] = useState(""); //stores the id of the post that the user is interacting with
+    const [usersFriend, setUsersFriend] = useState([]);
 
     const [alertPopup, setAlertPopup] = useState(false); //notification popups
     const [alertMsg, setAlertMsg] = useState("");
@@ -60,6 +63,7 @@ export const Home = () =>{
     useEffect(() => {
         if (isMounted.current) {
             getFeed();
+            getSuggestedUsers();
             isMounted.current = false;
         }
     }, [feedPost]);
@@ -87,11 +91,9 @@ export const Home = () =>{
         try {
             //creates new doc in the homepage feed
             await setDoc(newDocRef, newPostData);
-            console.log("Post added to feed successfully");
     
             //creates new doc in the user's post collection
             await setDoc(doc(db, "Users", localStorage.getItem("userEmail"), "post", newDocId), newPostData);
-            console.log("Post added to user's feed successfully");
         } catch (error) {
             console.log("Error adding document: ", error);
         }
@@ -127,12 +129,16 @@ export const Home = () =>{
         }catch(error){
             console.log("error ", error);
         }
-
         setIsLoading(false);
     }
 
     //opens popup for user's profile
     const getProfile = async (userName) =>{
+        const friendList = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "friendList"))
+        const friends = friendList.docs.map(doc =>({
+            name: doc.data().name
+        }))
+        setUsersFriend(friends);
         setIsLoading(true);
 
         const userInfo = await fetchUserInfo(userName);
@@ -193,6 +199,39 @@ export const Home = () =>{
         })    
     }
 
+    const getSuggestedUsers = async () => {
+        //gets list of the user's current friends
+        let usersFriend = [];
+        const friendList = await getDocs(collection(db, "Users", localStorage.getItem("userEmail"), "friendList"))
+        friendList.forEach((friend) =>{
+            usersFriend.push(friend.data().name);
+        })
+        setIsLoading(true);
+        try {
+            const usersSnapshot = await getDocs(collection(db, "Users"));
+            const suggestedUsers = [];
+    
+            // Fetching names from the userinfo sub-collections
+            for (const userDoc of usersSnapshot.docs) {
+                const userInfoSnapshot = await getDocs(collection(userDoc.ref, "userInfo"));
+                userInfoSnapshot.forEach(doc => {
+                    //check that user is not being put into the pool
+                    //or users on the user's friend list
+                    if (doc.data().name !== localStorage.getItem("userName") && !usersFriend.includes(doc.data().name)) {
+                        suggestedUsers.push({
+                            name: doc.data().name,
+                            pfp: doc.data().pic
+                        })
+                    }
+                });
+            }
+            setSuggestedUsers(suggestedUsers.sort(() => 0.5 - Math.random()).slice(0, 3));
+        } catch (error) {
+            console.error("Error fetching names: ", error);
+        }
+        setIsLoading(false);
+    };
+
     return (
         <div className="homeContainer">
             <button id="hiddenButton" style={{display:'none'}} onClick={() =>{console.log("btn being clicked")}}></button>
@@ -230,9 +269,8 @@ export const Home = () =>{
                         <Modal.Header className="modalHeader"></Modal.Header>
                         <div className="userBodyModalContainer">
                             <Modal.Body>
-                            <section className="profileContainer">
-                                <img src={userProfile.img} className="userPfp" alt="userPfp"/>
-                                {/* <div className="descContainerSide"> */}
+                                <section className="profileContainer">
+                                    <img src={userProfile.img} className="userPfp" alt="userPfp"/>
                                     <div className="profileDescContainer">
                                         <div className="profileNameDescContainer">
                                             <h1> {userProfile.name} </h1>
@@ -240,43 +278,45 @@ export const Home = () =>{
                                         </div>
                                         <div className="userButtons">
                                             <p id="userDate"> Member since: {userProfile.date} </p>
-                                            {/* makes sure that you cannot add yourself to the friend's list */}
-                                            {userProfile.name !== localStorage.getItem("userName") && ( 
-                                                <button className="addFriendBtn" onClick={() => sendFriendReq(userProfile.name)}>+ Add Friend</button>
+                                            {/* Check if userProfile.name is not in usersFriend */}
+                                            {!usersFriend.some(friend => friend.name === userProfile.name) && (
+                                                // Makes sure that you cannot add yourself to the friend's list
+                                                userProfile.name !== localStorage.getItem("userName") && ( 
+                                                    <button className="addFriendBtn" onClick={() => sendFriendReq(userProfile.name)}>+ Add Friend</button>
+                                                )
                                             )}
                                         </div>
                                     </div>
-                                {/* </div> */}
-                            </section>
-                            <section className="userProfilePostContainer">
-                                {userProfilePost.map(post =>(
-                                    <div key={post.id} className="userPostContainer">
-                                        <div className="nameDateContainer">
-                                            <h1 className="userPostName">{post.user}</h1>
-                                            <p className="postDate">{post.date}</p>
-                                        </div>
-                                        <div className="postImgContainer">
-                                            {post.img && (
-                                                <img src={post.img} alt="user post" className="imgPost"/>
-                                            )}
-                                        </div>
-                                        <div className="postBodyContainer">
-                                            <h2>{post.title}</h2>
-                                            <p className="postDesc">{post.desc}</p>
-                                            <div className="footerContainer">
-                                                <div className="likeComContainer" onClick={() =>{likeUserPost(post.id, post.user)}}>
-                                                    <AiOutlineLike className="icons"/>
-                                                    <p>{post.likeCount}</p>
-                                                </div>
-                                                <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}>
-                                                    <FaRegComment className="icons" id="commentIcon"/>
-                                                    <p> {post.commentCount} </p>
+                                </section>
+                                <section className="userProfilePostContainer">
+                                    {userProfilePost.map(post =>(
+                                        <div key={post.id} className="userPostContainer">
+                                            <div className="nameDateContainer">
+                                                <h1 className="userPostName">{post.user}</h1>
+                                                <p className="postDate">{post.date}</p>
+                                            </div>
+                                            <div className="postImgContainer">
+                                                {post.img && (
+                                                    <img src={post.img} alt="user post" className="imgPost"/>
+                                                )}
+                                            </div>
+                                            <div className="postBodyContainer">
+                                                <h2>{post.title}</h2>
+                                                <p className="postDesc">{post.desc}</p>
+                                                <div className="footerContainer">
+                                                    <div className="likeComContainer" onClick={() =>{likeUserPost(post.id, post.user)}}>
+                                                        <AiOutlineLike className="icons"/>
+                                                        <p>{post.likeCount}</p>
+                                                    </div>
+                                                    <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}>
+                                                        <FaRegComment className="icons" id="commentIcon"/>
+                                                        <p> {post.commentCount} </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </section>
+                                    ))}
+                                </section>
                             </Modal.Body>
                         </div>
                     </Modal>
@@ -314,36 +354,36 @@ export const Home = () =>{
                     {/* change className later */}
                     <Modal show={commentPopup} onClose={()=> setCommentPopup(false)} className="commentModal">
                         <Modal.Header className="modalHeader"></Modal.Header>
-                            <Modal.Body>
+                        <Modal.Body>
                             <div className="bodyModalContainer">
                                 <div className="currentPostContainer">
-                                {feedPost.map((post) => {
-                                    if (post.id === currPostId) {
-                                        return (
-                                            <div key={post.id}>
-                                                <div className="postContainer">
-                                                    <div className="userHeaderContainer">
-                                                        <div className="imgContainer">
-                                                            <img src={post.pfp} className="userPfp" onClick={() => getProfile(post.user)} alt="userpfp"/>
+                                    {feedPost.map((post) => {
+                                        if (post.id === currPostId) {
+                                            return (
+                                                <div key={post.id}>
+                                                    <div className="postContainer">
+                                                        <div className="userHeaderContainer">
+                                                            <div className="imgContainer">
+                                                                <img src={post.pfp} className="userPfp" onClick={() => getProfile(post.user)} alt="userpfp"/>
+                                                            </div>
+                                                            <div className="nameDateContainer">
+                                                                <h2 className="userPostName" onClick={() => getProfile(post.user)}>{post.user}</h2>
+                                                                <p className="postDate">{post.date}</p>
+                                                            </div>     
                                                         </div>
-                                                        <div className="nameDateContainer">
-                                                            <h2 className="userPostName" onClick={() => getProfile(post.user)}>{post.user}</h2>
-                                                            <p className="postDate">{post.date}</p>
-                                                        </div>     
-                                                    </div>
-                                                    <div className="imgContainer2">
-                                                        {post.img && (
-                                                            <img src={post.img} alt="user post" className="imgPost"/>
-                                                        )}
-                                                    </div>
-                                                    <div className="captionContainer">
-                                                        <h2>{post.title}</h2>
-                                                        <p className="postDesc">{post.desc}</p>
+                                                        <div className="imgContainer2">
+                                                            {post.img && (
+                                                                <img src={post.img} alt="user post" className="imgPost"/>
+                                                            )}
+                                                        </div>
+                                                        <div className="captionContainer">
+                                                            <h2>{post.title}</h2>
+                                                            <p className="postDesc">{post.desc}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    }
+                                            );
+                                        }
                                     // If no matching post is found, return null
                                     return null;
                                 })}
@@ -396,12 +436,12 @@ export const Home = () =>{
                 <section className="postOuterContainer">
                     {feedPost.map((post) => (
                         <div key={post.id} className="postContainer">
-                            <div className="postHeaderContainer" onClick={() => getProfile(post.user)}>
+                            <div className="postHeaderContainer">
                                 <div className="imgContainer">
-                                    <img src={post.pfp} className="userPfp" alt="userpfp"/>
+                                    <img src={post.pfp} onClick={() => getProfile(post.user)} className="userPfp" alt="userpfp"/>
                                 </div>
                                 <div className="nameDateContainer">
-                                    <h1 className="userPostName">{post.user}</h1>
+                                    <h1 className="userPostName" onClick={() => getProfile(post.user)}>{post.user}</h1>
                                     <p className="postDate">{post.date}</p>
                                 </div>     
                             </div>
@@ -414,11 +454,11 @@ export const Home = () =>{
                                 <h2>{post.title}</h2>
                                 <p className="postDesc">{post.desc}</p>
                                 <div className="footerContainer">
-                                    <div className="likeComContainer" onClick={() =>{likeUserPost(post.id, post.user)}}>
+                                    <div className="likeComContainer" onClick={() => likeUserPost(post.id, post.user)}>
                                         <AiOutlineLike className="icons"/>
-                                        <p>{post.likeCount}</p>
+                                        <p> {post.likeCount} </p>
                                     </div>
-                                    <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}>
+                                    <div className="likeComContainer" onClick={() => toggleCommentPopup(post.id)}>
                                         <FaRegComment className="icons" id="commentIcon"/>
                                         <p> {post.commentCount} </p>
                                     </div>
@@ -428,7 +468,22 @@ export const Home = () =>{
                     ))}
                 </section>
                 <section className="suggested">
-                    <p> this is a suggested section </p>
+                    <div className="catAdContainer">
+                        <img id="catAd" src={catAd} alt="cat adopt ad"/>
+                        <p> *not sponsored </p>
+                    </div>
+                    <div className="suggestedUsers">
+                        <h1> Suggested Users </h1>
+                        {suggestedUsers.map((users) =>(
+                            <div key={users.key} className="userContainer">
+                                <img src={users.pfp} alt="userPfp" onClick={()=> getProfile(users.name)}/>
+                                <div className="userDescContainer">
+                                    <h2 onClick={()=> getProfile(users.name)}> {users.name} </h2>
+                                    <button className="addFriendBtn" onClick={() => sendFriendReq(users.name)}> + Add Friend </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </section>
             </div>
         </div>

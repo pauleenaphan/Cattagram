@@ -4,6 +4,7 @@ import { Modal } from "flowbite-react";
 import { GoPersonAdd } from "react-icons/go";
 import { PiMailbox } from "react-icons/pi";
 import { FaSearch, FaRegComment } from "react-icons/fa";
+import { IoIosSend } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
 
 import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore"; 
@@ -13,7 +14,7 @@ import '../style/friend.css';
 import { db } from '../firebaseConfig.js';
 import { Navbar } from './navbar';
 import { getDate, setAlert } from './helpers.js';
-import { fetchUserInfo, getUserPost, likePost } from "./userHelper.js";
+import { fetchUserInfo, getUserPost, likePost, addComment, loadComment } from "./userHelper.js";
 import loadingSpinner from "../imgs/loadingSpinner.gif";
 
 export const Friend = () =>{
@@ -41,6 +42,13 @@ export const Friend = () =>{
     const [userFoundStatus, setUserFoundStatus] = useState("");
     const [alertPopup, setAlertPopup] = useState(false); //notification popups
     const [alertMsg, setAlertMsg] = useState(""); //msg for the notification popup
+
+    const [feedPost, setFeedPost] = useState([]); //feed post on the homepage
+    const [commentPopup, setCommentPopup] = useState(false); //visbility of the comment popup
+    const [userComment, setUserComment] = useState(""); //comment that user submited
+    const [comments, setComments] = useState([]); //comments on the post 
+    const [currPostId, setCurrPostId] = useState(""); //stores the id of the post that the user is interacting with
+
 
     //creates a list of users that have the similar name
     //uses fast-levenshtein to find matching names
@@ -260,6 +268,44 @@ export const Friend = () =>{
         })    
     }
 
+    const getFeed = async () =>{
+        setIsLoading(true);
+        try{
+            const post = await getDocs(collection(db, "Homepage Feed"));
+            const postReceived = post.docs.map(doc =>({
+                id: doc.id,
+                title: doc.data().title,
+                desc: doc.data().desc,
+                img: doc.data().img,
+                user: doc.data().user,
+                date: doc.data().date,
+                pfp: doc.data().userPfp,
+                likeCount: doc.data().likeCount,
+                commentCount: doc.data().commentCount
+            }))
+            setFeedPost(postReceived);
+        }catch(error){
+            console.log("error ", error);
+        }
+
+        setIsLoading(false);
+    }
+
+    const toggleCommentPopup = async (postId) => {
+        console.log(postId);
+        // Open the clicked comment popup
+        getFeed();
+        setCurrPostId(postId);
+        setComments(await loadComment(postId));
+        setCommentPopup(!commentPopup);
+    };
+
+    const addUserComment = async (postUserName) =>{
+        addComment(userComment, currPostId);
+        setComments(await loadComment(currPostId));
+        // getProfile(postUserName)
+    }
+
     //loads the current post on the homepage
     const isMounted = useRef(true);
     useEffect(() => {
@@ -374,8 +420,7 @@ export const Friend = () =>{
                                                     <AiOutlineLike className="icons"/>
                                                     <p>{post.likeCount}</p>
                                                 </div>
-                                                <div className="likeComContainer">
-                                                {/* <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}> */}
+                                                <div className="likeComContainer" onClick={() => {toggleCommentPopup(post.id)}}>
                                                     <FaRegComment className="icons" id="commentIcon"/>
                                                     <p> {post.commentCount} </p>
                                                 </div>
@@ -404,8 +449,8 @@ export const Friend = () =>{
                                         <div key={req.id} className="matchUserContainer">
                                         <img src={req.reqPfp} onClick={() => {getProfile(req.reqUser)}} alt="userpfp"/>
                                             <div className="userDescOuterContainer">
-                                                <h3 onClick={() => {getProfile(req.reqUser)}}> {req.reqUser} </h3>
                                                 <div className="userDescContainer">
+                                                    <h3 onClick={() => {getProfile(req.reqUser)}}> {req.reqUser} </h3>
                                                     <p> {req.reqDate} </p> 
                                                 </div>
                                                 <div className="accDelBtns">
@@ -437,6 +482,85 @@ export const Friend = () =>{
                                 </div> 
                             </Modal.Body>
                         </div>
+                    </Modal>
+                </>
+            )}
+            {commentPopup && (
+                <>
+                    <div className="overlay" onClick={() => setCommentPopup(false)}></div>
+                    {/* change className later */}
+                    <Modal show={commentPopup} onClose={()=> setCommentPopup(false)} className="commentModal">
+                        <Modal.Header className="modalHeader"></Modal.Header>
+                            <Modal.Body>
+                            <div className="bodyModalContainer">
+                                <div className="currentPostContainer">
+                                {feedPost.map((post) => {
+                                    if (post.id === currPostId) {
+                                        return (
+                                            <div key={post.id}>
+                                                <div className="postContainer">
+                                                    <div className="userHeaderContainer">
+                                                        <div className="imgContainer">
+                                                            <img src={post.pfp} className="userPfp" onClick={() => getProfile(post.user)} alt="userpfp"/>
+                                                        </div>
+                                                        <div className="nameDateContainer">
+                                                            <h2 className="userPostName" onClick={() => getProfile(post.user)}>{post.user}</h2>
+                                                            <p className="postDate">{post.date}</p>
+                                                        </div>     
+                                                    </div>
+                                                    <div className="imgContainer2">
+                                                        {post.img && (
+                                                            <img src={post.img} alt="user post" className="imgPost"/>
+                                                        )}
+                                                    </div>
+                                                    <div className="captionContainer">
+                                                        <h2>{post.title}</h2>
+                                                        <p className="postDesc">{post.desc}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    // If no matching post is found, return null
+                                    return null;
+                                })}
+                                </div>
+                                <div className="commentContainer">
+                                    <div className="commentHeaderContainer">
+                                        <h1> Comments </h1>
+                                        <p className="comments">
+                                            {comments.map(comment =>(
+                                                <div key={comment.id}>
+                                                    <div className="pfpNameContainer">
+                                                        <img src={comment.pfp} alt="userPfp" onClick={() =>{getProfile(comment.userCommentName)}}/>
+                                                        <h2 onClick={() =>{getProfile(comment.userCommentName)}}> {comment.userCommentName} </h2>
+                                                    </div>
+                                                    <div className="commentDateContainer">
+                                                        <p> {comment.comment} </p>
+                                                        <p className="commentDate"> {comment.date} </p>
+                                                    </div>
+                                                </div> 
+                                            ))}
+                                        </p>
+                                    </div>
+                                    <div className="inputContainer">
+                                        <input 
+                                            type="text" 
+                                            placeholder="Comment" 
+                                            value={userComment} 
+                                            onChange={(text)=> setUserComment(text.target.value)}
+                                            onKeyDown={(e) =>{if(e.key === "Enter"){
+                                                addUserComment();
+                                                setUserComment("");}}}
+                                            ></input>
+                                        <IoIosSend className="icon" onClick={() => {
+                                            addUserComment();
+                                            setUserComment("");
+                                            }}/> 
+                                    </div>
+                                </div> 
+                            </div> 
+                        </Modal.Body>
                     </Modal>
                 </>
             )}

@@ -13,7 +13,7 @@ export const fetchUserInfo = async (userName) => {
             const userInfoSnapshot = await getDocs(collection(db, 'Users', userDoc.id, 'userInfo'));
             userInfoSnapshot.forEach((userInfoDoc) => {
                 const userInfoData = userInfoDoc.data();
-                console.log("userDoc", userDoc.id);
+                // console.log("userDoc", userDoc.id);
                 if (userInfoData.name === userName) {
                     userInfoArray.push({
                         id: userDoc.id,
@@ -124,9 +124,14 @@ export const addComment = async (userComment, currPostId) =>{
         commentCount: docData.data().commentCount + 1
     })
 
-    await updateDoc(doc(db, "Users", localStorage.getItem("userEmail"), "post", currPostId), {
-        commentCount: docData.data().commentCount + 1
-    })
+    //updates the comment count of the user who posted
+    const docData2 = await getDoc(doc(db, "Homepage Feed", currPostId));
+    const userInfo = await fetchUserInfo(docData2.data().user);
+    if(userInfo && userInfo.length > 0){
+        await updateDoc(doc(db, "Users", userInfo[0].id, "post", currPostId), {
+            commentCount: docData.data().commentCount + 1
+        })
+    }
 }
 
 //loads comments on the clicked post
