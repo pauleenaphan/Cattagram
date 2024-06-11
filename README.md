@@ -13,9 +13,9 @@ A social media web app where users can post their cats and rule the web.
 - Removing Friends
 - Viewing other profiles
 - Commenting on post
+- Liking post
 
 # Future Implementation
-- Adding likes to post and comments 
 - Chat function
 - Post tags
 
